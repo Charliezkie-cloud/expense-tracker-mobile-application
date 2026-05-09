@@ -1,0 +1,134 @@
+import { Alert, View } from "react-native";
+import { Button, Text, TextInput } from "react-native-paper";
+import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useNavigation } from "@react-navigation/native";
+
+import { containers } from "../../styles/containers";
+import { RootParamStackList } from "../../types/navigation.types";
+import { useEffect, useState } from "react";
+import { useCategoryStore } from "../../hooks/useCategoryStore";
+import { useBudgetStore } from "../../hooks/useBudgetStore";
+import { validateAddBudgetForm } from "../../utils/validators";
+import { convertNumberToCurrencyString } from "../../utils/converters";
+
+type RouteProps = NativeStackScreenProps<RootParamStackList, "CategorySetBudget">;
+type NavProps = NativeStackNavigationProp<RootParamStackList, "CategorySetBudget">;
+
+export default function CategorySetBudgetScreen({ route }: RouteProps) {
+  // Route
+  const category = route.params;
+
+  // Hooks
+  const navigation = useNavigation<NavProps>();
+  const categories = useCategoryStore((state) => state.categories);
+  const budgets = useBudgetStore((state) => state.budgets);
+  const setBudget = useBudgetStore((state) => state.setBudget);
+  const deleteBudget = useBudgetStore((state) => state.deleteBudget);
+
+  // States
+  const [budgetAmount, setBudgetAmount] = useState("");
+  const [hasBudget, setHasBudget] = useState(false);
+
+  // Handlers
+  function saveButtonOnPress() {
+    const validationMessage = validateAddBudgetForm(budgetAmount);
+    const categoryExists = categories.some(e => e.id === category.id);
+
+    if (!categoryExists) {
+      Alert.alert(
+        "Category not found",
+        "Would you like to create it?",
+        [
+          {
+            text: "Yes",
+            onPress: () => navigation.navigate("AddCategory")
+          },
+          {
+            text: "No",
+            style: "cancel"
+          }
+        ]
+      );
+      return;
+    }
+
+    if (typeof validationMessage === "string") {
+      Alert.alert("Error", validationMessage);
+      return;
+    }
+
+    const parsedAmount = Number.parseFloat(budgetAmount);
+    const currencyString = convertNumberToCurrencyString(parsedAmount);
+
+    setBudget(category, parsedAmount);
+    Alert.alert("Success", `You've set ${currencyString} to your ${category.name} budget.`);
+    navigation.goBack();
+  }
+
+  function deleteButtonOnPress() {
+    Alert.alert(
+      "Deletion Confirmation",
+      "Are you sure you want to delete the budget for this category? this action can't be undone.",
+      [
+        {
+          text: "Yes",
+          onPress: () => {
+            deleteBudget(category);
+            navigation.goBack();
+          }
+        },
+        {
+          text: "No",
+          style: "cancel"
+        }
+      ]
+    );
+  }
+
+  // Use effects
+  useEffect(() => {
+    const categoryBudget = budgets.find(e => e.category.id === category.id);
+    if (categoryBudget) {
+      setBudgetAmount(categoryBudget.amount.toString());
+      setHasBudget(true);
+    }
+  }, []);
+
+  return (
+    <View style={containers.main}>
+
+      {/* Budget form */}
+      <View style={{ gap: 8 }}>
+        <Text variant="bodyLarge">
+          Amount{" "}
+          <Text variant="bodyLarge" style={{ color: "red" }}>*</Text>
+        </Text>
+        <TextInput
+          value={budgetAmount}
+          onChangeText={(e) => setBudgetAmount(e)}
+          keyboardType="numeric"
+          placeholder="e.g, 76.25"
+        />
+      </View>
+
+      <View style={{ gap: 8 }}>
+        <Button
+          mode="contained"
+          onPress={saveButtonOnPress}
+          labelStyle={{ fontSize: 16 }}
+        >
+          Save
+        </Button>
+        {hasBudget && (
+          <Button
+            onPress={deleteButtonOnPress}
+            labelStyle={{ fontSize: 16 }}
+          >
+            Delete
+          </Button>
+        )}
+      </View>
+
+    </View>
+  )
+}

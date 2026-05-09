@@ -1,20 +1,27 @@
+import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { DefaultTheme, MD3Theme, PaperProvider } from 'react-native-paper';
+
+import RootStack from './navigation/RootStack';
+
+const theme: MD3Theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "#f97316",
+    surfaceVariant: "#e5e7eb",
+    secondary: "#e5e7eb"
+  },
+  roundness: 8
+};
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
+    <PaperProvider theme={theme}>
       <StatusBar style="auto" />
-    </View>
+        <NavigationContainer>
+          <RootStack />
+        </NavigationContainer>
+    </PaperProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
