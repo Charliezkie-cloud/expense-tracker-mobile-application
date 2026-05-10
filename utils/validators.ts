@@ -17,13 +17,12 @@ export function validateAddCategoryForm(categoryName: string): string | boolean 
  * @param name The name of the expense (optional)
  * @returns The message of invalid or false for valid
  */
-export function validateAddExpenseForm(quantity: string, price: string, name: string): string | boolean {
-  if (quantity.trim().length < 1)
+export function validateAddExpenseForm(quantity: number, price: string, name: string): string | boolean {
+  if (quantity < 1)
     return "Quantity is required.";
-  const parsedQuantity = Number.parseInt(quantity);
-  if (isNaN(parsedQuantity))
+  if (isNaN(quantity))
     return "Please use whole numbers only (e.g., 3).";
-  if (parsedQuantity <= 0)
+  if (quantity <= 0)
     return "Quantity must be greater than zero.";
 
   if (price.trim().length < 1)
@@ -42,13 +41,12 @@ export function validateAddExpenseForm(quantity: string, price: string, name: st
  * @param amount The amount of the new expense
  * @returns The message of invalid or false for valid
  */
-export function validateEditExpenseForm(quantity: string, price: string): string | boolean {
-  if (quantity.trim().length < 1)
+export function validateEditExpenseForm(quantity: number, price: string): string | boolean {
+  if (quantity < 1)
     return "Quantity is required.";
-  const parsedQuantity = Number.parseInt(quantity);
-  if (isNaN(parsedQuantity))
+  if (isNaN(quantity))
     return "Please use whole numbers only (e.g., 3).";
-  if (parsedQuantity <= 0)
+  if (quantity <= 0)
     return "Quantity must be greater than zero.";
   
   if (price.trim().length < 1)

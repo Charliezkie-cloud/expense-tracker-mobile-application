@@ -3,6 +3,7 @@ import { Alert, StyleSheet, TextInput, View } from "react-native";
 import { Button, Modal, Portal, Text, TextInput as TextField } from "react-native-paper";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useRef, useState } from "react";
+import InputSpinner from "react-native-input-spinner";
 
 import { containers } from "../../styles/containers";
 import { RootParamStackList } from "../../types/navigation.types";
@@ -25,9 +26,9 @@ export default function EditExpenseScreen({ route }: RouteProps) {
   const deleteExpense = useExpenseStore((state) => state.deleteExpense);
 
   // States
-  const [expenseName, setExpenseName] = useState("");
-  const [expensePrice, setExpensePrice] = useState("");
-  const [expenseQuantity, setExpenseQuantity] = useState("");
+  const [expenseName, setExpenseName] = useState(expense.name);
+  const [expensePrice, setExpensePrice] = useState(expense.price.toString());
+  const [expenseQuantity, setExpenseQuantity] = useState(expense.quantity);
 
   const [expensePriceDisplay, setExpensePriceDisplay] = useState(0.00);
   const [expenseQuantityDisplay, setExpenseQuantityDisplay] = useState(0);
@@ -36,7 +37,6 @@ export default function EditExpenseScreen({ route }: RouteProps) {
   const [detailsModal, setDetailsModal] = useState(false);
 
   // References
-  const quantityTextInputRef = useRef<TextInput | null>(null);
   const priceTextInputRef = useRef<TextInput | null>(null);
 
   // Handlers
@@ -68,11 +68,10 @@ export default function EditExpenseScreen({ route }: RouteProps) {
     }
 
     const parsedPrice = Number.parseFloat(expensePrice);
-    const parsedQuantity = Number.parseInt(expenseQuantity);
     if (expenseName)
-      updateExpense(expense.id, parsedQuantity, parsedPrice, expenseName);
+      updateExpense(expense.id, expenseQuantity, parsedPrice, expenseName);
     else
-      updateExpense(expense.id, parsedQuantity, parsedPrice);
+      updateExpense(expense.id, expenseQuantity, parsedPrice);
 
     Alert.alert("Success", "All set! Your changes are saved.");
     navigation.goBack();
@@ -104,25 +103,18 @@ export default function EditExpenseScreen({ route }: RouteProps) {
 
   // Use effects
   useEffect(() => {
-    setExpenseName(expense.name);
-    setExpenseQuantity(expense.quantity.toString());
-    setExpensePrice(expense.price.toString());
-  }, [expense]);
-
-  useEffect(() => {
     const parsedPrice = Number.parseFloat(expensePrice);
     if (isNaN(parsedPrice))
       setExpensePriceDisplay(0.00);
     else
       setExpensePriceDisplay(parsedPrice)
 
-    const parsedQuantity = Number.parseInt(expenseQuantity);
-    if (isNaN(parsedQuantity))
+    if (isNaN(expenseQuantity))
       setExpenseQuantityDisplay(0);
     else
-      setExpenseQuantityDisplay(parsedQuantity)
+      setExpenseQuantityDisplay(expenseQuantity)
 
-    const result = (isNaN(parsedPrice) ? 0.00 : parsedPrice) * (isNaN(parsedQuantity) ? 0 : parsedQuantity);
+    const result = (isNaN(parsedPrice) ? 0.00 : parsedPrice) * (isNaN(expenseQuantity) ? 0 : expenseQuantity);
     setExpenseTotalDisplay(result);
   }, [expensePrice, expenseQuantity]);
 
@@ -144,7 +136,7 @@ export default function EditExpenseScreen({ route }: RouteProps) {
         <Text variant="displaySmall">{expenseTotalDisplay}</Text>
       </View>
 
-      {/* Edit form */}
+      {/* Expense name input */}
       <View style={styles.formContainer}>
         <View style={styles.inputContainer}>
           <Text variant="bodyLarge">
@@ -154,27 +146,30 @@ export default function EditExpenseScreen({ route }: RouteProps) {
             mode="flat"
             placeholder="e.g, Jeepney fare"
             value={expenseName}
-            onSubmitEditing={() => quantityTextInputRef.current?.focus()}
             onChangeText={(e) => setExpenseName(e)}
           />
         </View>
 
+        {/* Expense quantity input */}
         <View style={styles.inputContainer}>
           <Text variant="bodyLarge">
             Quantity{" "}
             <Text variant="bodyLarge" style={{ color: "red" }}>*</Text>
           </Text>
-          <TextField
-            ref={quantityTextInputRef}
-            mode="flat"
-            placeholder="e.g, 1"
-            keyboardType="numeric"
+          <InputSpinner
+            min={0}
+            max={100}
+            fontSize={20}
+            skin="round"
+            colorMin="#f97316"
+            colorMax="#f97316"
             value={expenseQuantity}
-            onSubmitEditing={() => priceTextInputRef.current?.focus()}
-            onChangeText={(e) => setExpenseQuantity(e)}
+            onChange={(e: number) => setExpenseQuantity(e)}
+            onSubmit={() => priceTextInputRef.current?.focus()}
           />
         </View>
 
+        {/* Expense price input */}
         <View style={styles.inputContainer}>
           <Text variant="bodyLarge">
             Price{" "}
@@ -190,6 +185,7 @@ export default function EditExpenseScreen({ route }: RouteProps) {
           />
         </View>
         
+        {/* Form buttons */}
         <View style={{ gap: 8 }}>
           <Button
             mode="contained"

@@ -7,10 +7,10 @@ import HomeScreen from "../screens/HomeScreen";
 import CategoriesScreen from "../screens/category/CategoriesScreen";
 import AddCategoryScreen from "../screens/category/AddCategoryScreen";
 import CategoryScreen from "../screens/category/CategoryScreen";
-import CategoryAddExpenseScreen from "../screens/category/CategoryAddExpenseScreen";
 import EditExpenseScreen from "../screens/expense/EditExpenseScreen";
 import CategorySetBudgetScreen from "../screens/category/CategorySetBudgetScreen";
 import EditCategoryScreen from "../screens/category/EditCategoryScreen";
+import CategoryAddExpenseScreen from "../screens/expense/CategoryAddExpenseScreen";
 
 const Stack = createNativeStackNavigator<RootParamStackList>();
 const Tab = createBottomTabNavigator<TabParamStackList>();

@@ -1,6 +1,6 @@
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { FlatList, StyleSheet, View } from "react-native";
-import { BanknoteArrowUp, ChevronRight, Pencil, Plus } from "lucide-react-native";
+import { ArrowUpDown, BanknoteArrowUp, ChevronRight, Pencil, Plus } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 
@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 import { Expense } from "../../types/data.types";
 import { useExpenseStore } from "../../hooks/useExpenseStore";
 import { convertNumberToCurrencyString } from "../../utils/converters";
-import { Button, List, Text } from "react-native-paper";
+import { Button, List, Modal, Portal, Text } from "react-native-paper";
 import { useBudgetStore } from "../../hooks/useBudgetStore";
 import { sortExpenses } from "../../utils/sorters";
 
@@ -28,9 +28,15 @@ export default function CategoryScreen({ route }: RouteProps) {
 
   // States
   const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);
+
   const [total, setTotal] = useState(0.00);
   const [budget, setBudget] = useState<number | null>(null);
   const [remainingBudget, setRemainingBudget] = useState<number | null>(null);
+  
+  const [sortingModal, setSortingModal] = useState(false);
+
+  const [sortBySelectedItem, setSortBySelectedItem] = useState<"price" | "quantity" | "createdAt" | "updatedAt">("price");
+  const [sortOrderSelectedItem, setSortOrderSelectedItem] = useState<"ascending" | "descending">("ascending");
 
   // Handlers
   function addExpenseButtonOnPress() {
@@ -45,6 +51,16 @@ export default function CategoryScreen({ route }: RouteProps) {
     navigation.navigate("CategorySetBudget", category);
   }
 
+  function toggleSortingModal() {
+    setSortingModal(prev => !prev);
+  }
+
+  function applySortingButtonOnPress() {
+    const updated = sortExpenses(expenses, sortBySelectedItem, sortOrderSelectedItem);
+    setFilteredExpenses(updated);
+    toggleSortingModal();
+  }
+
   function expenseListItemOnPress(expense: Expense) {
     navigation.navigate("EditExpense", expense);
   }
@@ -52,7 +68,7 @@ export default function CategoryScreen({ route }: RouteProps) {
   // Use effects
   useEffect(() => {
     const updated = expenses.filter(e => e.category.id === category.id);
-    setFilteredExpenses(updated);
+    setFilteredExpenses(sortExpenses(updated, sortBySelectedItem, sortOrderSelectedItem));
 
     const total = updated.reduce((prev, curr) => prev + (curr.price * curr.quantity), 0);
     setTotal(total);
@@ -69,6 +85,7 @@ export default function CategoryScreen({ route }: RouteProps) {
 
   return (
     <View style={styles.mainContainer}>
+      {/* Total display */}
       <Text
         variant="displayMedium"
         style={{ textAlign: "center" }}
@@ -76,6 +93,7 @@ export default function CategoryScreen({ route }: RouteProps) {
         {convertNumberToCurrencyString(total)}
       </Text>
 
+      {/* Budget display */}
       {(budget && remainingBudget) && (
         <View
           style={{
@@ -104,6 +122,7 @@ export default function CategoryScreen({ route }: RouteProps) {
         </View>
       )}
       
+      {/* Category buttons */}
       <View
         style={{
           flexDirection: "row",
@@ -117,7 +136,7 @@ export default function CategoryScreen({ route }: RouteProps) {
           onPress={editCategoryButtonOnPress}
           style={{ width: "50%" }}
           labelStyle={{ fontSize: 16 }}
-          icon={(props) => <Pencil color={props.color} size={20} />}
+          icon={(props) => <Pencil color={props.color} size={props.size} />}
         >
           Edit Category
         </Button>
@@ -125,38 +144,80 @@ export default function CategoryScreen({ route }: RouteProps) {
           onPress={setBudgetButtonOnPress}
           style={{ width: "50%" }}
           labelStyle={{ fontSize: 16 }}
-          icon={(props) => <BanknoteArrowUp color={props.color} size={20} />}
+          icon={(props) => <BanknoteArrowUp color={props.color} size={props.size} />}
         >
           Set Budget
         </Button>
       </View>
 
-      {/* Order */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: 6
-        }}
-        >
-        <View style={{ gap: 8, width: "50%" }}>
-          <Text variant="bodyLarge">Sort by</Text>
-          <Picker style={{ backgroundColor: "#e5e7eb" }}>
-            <Picker.Item label="Price" value="price" />
-            <Picker.Item label="Quantity" value="quantity" />
-            <Picker.Item label="Creation Date & Time" value="createdAt" />
-            <Picker.Item label="Updation Date & Time" value="updatedAt" />
-          </Picker>
-        </View>
-        <View style={{ gap: 8, width: "50%" }}>
-          <Text variant="bodyLarge">Order</Text>
-          <Picker style={{ backgroundColor: "#e5e7eb" }}>
-            <Picker.Item label="Ascending" value="ascending" />
-            <Picker.Item label="Descending" value="descending" />
-          </Picker>
-        </View>
-      </View>
+      {/* Sort button */}
+      <Button
+        labelStyle={{ fontSize: 16 }}
+        icon={(props) => (
+          <ArrowUpDown color={props.color} size={props.size} />
+        )}
+        onPress={toggleSortingModal}
+      >
+        Sort Expenses
+      </Button>
+
+      {/* Sort Modal */}
+      <Portal>
+        <Modal visible={sortingModal} style={{ margin: 24 }}>
+          <View
+            style={{
+              gap: 14,
+              padding: 24,
+              backgroundColor: "#e5e7eb",
+              borderRadius: 8
+            }}
+          >
+            <Text variant="headlineSmall">Expense Sorting</Text>
+
+            <View style={{ gap: 8 }}>
+              <Text variant="bodyLarge">Sort by</Text>
+              <Picker
+                style={{ backgroundColor: "#d1d5db" }}
+                selectedValue={sortBySelectedItem}
+                onValueChange={(e) => setSortBySelectedItem(e)}
+              >
+                <Picker.Item label="Price" value="price" />
+                <Picker.Item label="Quantity" value="quantity" />
+                <Picker.Item label="Creation Date & Time" value="createdAt" />
+                <Picker.Item label="Updation Date & Time" value="updatedAt" />
+              </Picker>
+            </View>
+
+            <View style={{ gap: 8 }}>
+              <Text variant="bodyLarge">Order</Text>
+              <Picker
+                style={{ backgroundColor: "#d1d5db" }}
+                selectedValue={sortOrderSelectedItem}
+                onValueChange={(e) => setSortOrderSelectedItem(e)}
+              >
+                <Picker.Item label="Ascending" value="ascending" />
+                <Picker.Item label="Descending" value="descending" />
+              </Picker>
+            </View>
+
+            <View style={{ gap: 8 }}>
+              <Button
+                labelStyle={{ fontSize: 16 }}
+                mode="contained"
+                onPress={applySortingButtonOnPress}
+              >
+                Apply
+              </Button>
+              <Button
+                labelStyle={{ fontSize: 16 }}
+                onPress={toggleSortingModal}
+              >
+                Close
+              </Button>
+            </View>
+          </View>
+        </Modal>
+      </Portal>
 
       {/* Expense list */}
       <FlatList
@@ -189,7 +250,7 @@ export default function CategoryScreen({ route }: RouteProps) {
       <View style={styles.buttonsContainer}>
         <Button
           mode="contained"
-          icon={(props) => <Plus color={props.color} size={20} />}
+          icon={(props) => <Plus color={props.color} size={props.size} />}
           labelStyle={{ fontSize: 16 }}
           onPress={addExpenseButtonOnPress}
         >

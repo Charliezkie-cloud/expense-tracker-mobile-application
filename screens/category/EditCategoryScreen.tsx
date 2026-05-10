@@ -49,6 +49,15 @@ export default function EditCategoryScreen({ route }: RouteProps) {
   }
 
   function deleteButtonOnPress() {
+    // ========== TEST ==========
+    // const test = async () => {
+    //   const res1 = await AsyncStorage.getItem("categories");
+    //   const res2 = await AsyncStorage.getItem("budgets");
+    //   const res3 = await AsyncStorage.getItem("expenses");
+
+    //   console.log(res3);
+    // }
+
     Alert.alert(
       "Deletion Confirmation",
       "Are you sure you want to delete this category? this action can't be undone.",
@@ -69,7 +78,7 @@ export default function EditCategoryScreen({ route }: RouteProps) {
           style: "cancel"
         }
       ]
-    )
+    );
   }
 
   // Use effects

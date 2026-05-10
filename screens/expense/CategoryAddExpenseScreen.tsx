@@ -3,6 +3,7 @@ import { Button, Text, TextInput as TextField } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useRef, useState } from "react";
+import InputSpinner from "react-native-input-spinner";
 
 import { containers } from "../../styles/containers";
 import { RootParamStackList } from "../../types/navigation.types";
@@ -26,7 +27,7 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
   // States
   const [expenseName, setExpenseName] = useState("");
   const [expensePrice, setExpensePrice] = useState("");
-  const [expenseQuantity, setExpenseQuantity] = useState("");
+  const [expenseQuantity, setExpenseQuantity] = useState(0);
 
   const [expensePriceDisplay, setExpensePriceDisplay] = useState(0.00);
   const [expenseQuantityDisplay, setExpenseQuantityDisplay] = useState(1);
@@ -34,7 +35,6 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
   
   // References
   const priceTextInputRef = useRef<TextInput | null>(null);
-  const quantityTextInputRef = useRef<TextInput | null>(null);
 
   // Handlers
   function saveButtonOnPress() {
@@ -65,11 +65,10 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
     }
 
     const parsedExpensePrice = Number.parseFloat(expensePrice);
-    const parsedExpenseQuantity = Number.parseInt(expenseQuantity);
     if (expenseName)
-      addExpense(category, parsedExpenseQuantity, parsedExpensePrice, expenseName);
+      addExpense(category, expenseQuantity, parsedExpensePrice, expenseName);
     else
-      addExpense(category, parsedExpenseQuantity, parsedExpensePrice);
+      addExpense(category, expenseQuantity, parsedExpensePrice);
 
     Alert.alert("Success", `Successfully saved in ${category.name}.`);
     navigation.goBack();
@@ -83,13 +82,12 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
     else
       setExpensePriceDisplay(parsedPrice)
 
-    const parsedQuantity = Number.parseInt(expenseQuantity);
-    if (isNaN(parsedQuantity))
+    if (isNaN(expenseQuantity))
       setExpenseQuantityDisplay(0);
     else
-      setExpenseQuantityDisplay(parsedQuantity)
+      setExpenseQuantityDisplay(expenseQuantity)
 
-    const result = (isNaN(parsedPrice) ? 0.00 : parsedPrice) * (isNaN(parsedQuantity) ? 0 : parsedQuantity);
+    const result = (isNaN(parsedPrice) ? 0.00 : parsedPrice) * (isNaN(expenseQuantity) ? 0 : expenseQuantity);
     setExpenseTotalDisplay(result);
   }, [expensePrice, expenseQuantity]);
   
@@ -111,6 +109,7 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
         <Text variant="displaySmall">{expenseTotalDisplay}</Text>
       </View>
 
+      {/* Expense name quantity */}
       <View style={styles.inputContainer}>
         <Text variant="bodyLarge">
           Name{" "}
@@ -119,26 +118,30 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
           mode="flat"
           placeholder="e.g, Jeepney fare"
           value={expenseName}
-          onSubmitEditing={() => quantityTextInputRef.current?.focus()}
           onChangeText={(e) => setExpenseName(e)}
         />
       </View>
 
+      {/* Expense quantity input */}
       <View style={styles.inputContainer}>
         <Text variant="bodyLarge">
           Quantity{" "}
           <Text style={{ color: "red" }} variant="bodyLarge">*</Text>
         </Text>
-        <TextField
-          ref={quantityTextInputRef}
-          mode="flat"
-          placeholder="e.g, 1"
-          keyboardType="numeric"
+        <InputSpinner
+          min={0}
+          max={100}
+          fontSize={20}
+          skin="round"
+          colorMin="#f97316"
+          colorMax="#f97316"
           value={expenseQuantity}
-          onSubmitEditing={() => priceTextInputRef.current?.focus()}
-          onChangeText={(e) => setExpenseQuantity(e)}
+          onChange={(e: number) => setExpenseQuantity(e)}
+          onSubmit={() => priceTextInputRef.current?.focus()}
         />
       </View>
+
+      {/* Expense price input */}
       <View style={styles.inputContainer}>
         <Text variant="bodyLarge">
           Price{" "}
