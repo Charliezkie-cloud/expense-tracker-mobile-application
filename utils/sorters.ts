@@ -8,6 +8,7 @@ import { Category, Expense } from "../types/data.types";
  * @returns The sorted array of expenses object ;D
  */
 export function sortExpenses(
+    categoryId: string,
     expenses: Expense[],
     property: "price" | "quantity" | "createdAt" | "updatedAt",
     order: "ascending" | "descending"
@@ -23,7 +24,7 @@ export function sortExpenses(
       result = new Date(a[property]).getTime() - new Date(b[property]).getTime();
 
     return order === "ascending" ? result : -result;
-  });
+  }).filter(e => e.category.id === categoryId);
 }
 
 /**

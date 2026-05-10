@@ -13,7 +13,7 @@ export function buildCategory(name: string): Category {
   
   return {
     id: v4(),
-    name,
+    name: name.trim(),
     createdAt: date.toISOString(),
     updatedAt: date.toISOString(),
   }
@@ -29,7 +29,7 @@ export function buildUpdatedCategory(category: Category, name: string): Category
   return {
     ...category,
     updatedAt: new Date().toISOString(),
-    name
+    name: name.trim()
   }
 }
 
@@ -48,7 +48,7 @@ export function buildExpense(category: Category, quantity: number, price: number
     quantity,
     price,
     category,
-    name: name ?? convertDateToDateString(date),
+    name: name?.trim() ?? convertDateToDateString(date),
     createdAt: date.toISOString(),
     updatedAt: date.toISOString()
   }
@@ -69,7 +69,7 @@ export function buildUpdatedExpense(expense: Expense, quantity: number, price: n
     updatedAt: date.toISOString(),
     quantity,
     price,
-    name: name ?? convertDateToDateString(date)
+    name: name?.trim() ?? convertDateToDateString(date)
   }
 }
 

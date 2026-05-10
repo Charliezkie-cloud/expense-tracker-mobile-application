@@ -32,8 +32,9 @@ export default function CategoryScreen({ route }: RouteProps) {
   const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);
 
   const [total, setTotal] = useState(0.00);
-  const [budget, setBudget] = useState<number | null>(null);
-  const [remainingBudget, setRemainingBudget] = useState<number | null>(null);
+  const [budget, setBudget] = useState<number>(0);
+  const [remainingBudget, setRemainingBudget] = useState<number>(0);
+  const [isBudgetExists, setIsBudgetExists] = useState(false);
   
   const [sortingModal, setSortingModal] = useState(false);
 
@@ -58,7 +59,7 @@ export default function CategoryScreen({ route }: RouteProps) {
   }
 
   function applySortingButtonOnPress() {
-    const updated = sortExpenses(expenses, sortBySelectedItem, sortOrderSelectedItem);
+    const updated = sortExpenses(category.id, expenses, sortBySelectedItem, sortOrderSelectedItem);
     setFilteredExpenses(updated);
     toggleSortingModal();
   }
@@ -70,19 +71,20 @@ export default function CategoryScreen({ route }: RouteProps) {
   // Use effects
   useEffect(() => {
     const updated = expenses.filter(e => e.category.id === category.id);
-    setFilteredExpenses(sortExpenses(updated, sortBySelectedItem, sortOrderSelectedItem));
+    setFilteredExpenses(sortExpenses(category.id, updated, sortBySelectedItem, sortOrderSelectedItem));
 
     const total = updated.reduce((prev, curr) => prev + (curr.price * curr.quantity), 0);
     setTotal(total);
 
     const categoryBudget = budgets.find(e => e.category.id === category.id);
     if (categoryBudget) {
+      setIsBudgetExists(true);
       setBudget(categoryBudget.amount);
       setRemainingBudget(categoryBudget.amount - total);
-    } else {
-      setBudget(null);
-      setRemainingBudget(null);
+      return;
     }
+
+    setIsBudgetExists(false);
   }, [expenses, budgets]);
 
   return (
@@ -96,7 +98,7 @@ export default function CategoryScreen({ route }: RouteProps) {
       </Text>
 
       {/* Budget display */}
-      {(budget && remainingBudget) && (
+      {isBudgetExists && (
         <View
           style={{
             borderColor: "#6b7280",
@@ -118,7 +120,7 @@ export default function CategoryScreen({ route }: RouteProps) {
                 color: remainingBudget <= 0 ? "#dc2626" : "#16a34a"
               }}
             >
-              {convertNumberToCurrencyString(remainingBudget, settings.currencyCode)}
+              {convertNumberToCurrencyString(remainingBudget ?? 0.00, settings.currencyCode)}
             </Text>
           </Text>
         </View>
@@ -143,6 +145,7 @@ export default function CategoryScreen({ route }: RouteProps) {
           Edit Category
         </Button>
         <Button
+          mode="contained-tonal"
           onPress={setBudgetButtonOnPress}
           style={{ width: "50%" }}
           labelStyle={{ fontSize: 16 }}

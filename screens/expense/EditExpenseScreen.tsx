@@ -12,8 +12,8 @@ import { validateEditExpenseForm } from "../../utils/validators";
 import { useExpenseStore } from "../../hooks/useExpenseStore";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { useSettingsStore } from "../../hooks/useSettingsStore";
-import { theme } from "../../App";
 import HorizontalLineWithTitle from "../../components/HorizontalLineWithTitle";
+import { theme } from "../../styles/theme";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "EditExpense">;

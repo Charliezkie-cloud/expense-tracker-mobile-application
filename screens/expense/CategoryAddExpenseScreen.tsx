@@ -12,7 +12,7 @@ import { validateAddExpenseForm } from "../../utils/validators";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { convertNumberToCurrencyString } from "../../utils/converters";
 import { useSettingsStore } from "../../hooks/useSettingsStore";
-import { theme } from "../../App";
+import { theme } from "../../styles/theme";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategoryAddExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategoryAddExpense">;
