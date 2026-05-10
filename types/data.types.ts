@@ -18,4 +18,9 @@ export type Expense = {
 export type Budget = {
   category: Category;
   amount: number;
-}
+};
+
+export type CurrencyCode = "PHP" | "USD" | "EUR" | "GBP" | "JPY" | "CNY" | "CAD" | "AUD" | "INR";
+export type Settings = {
+  currencyCode: CurrencyCode;
+};

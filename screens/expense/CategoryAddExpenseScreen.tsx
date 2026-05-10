@@ -11,6 +11,8 @@ import { useExpenseStore } from "../../hooks/useExpenseStore";
 import { validateAddExpenseForm } from "../../utils/validators";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { convertNumberToCurrencyString } from "../../utils/converters";
+import { useSettingsStore } from "../../hooks/useSettingsStore";
+import { theme } from "../../App";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategoryAddExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategoryAddExpense">;
@@ -23,6 +25,7 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
   const navigation = useNavigation<NavProps>();
   const addExpense = useExpenseStore((state) => state.addExpense);
   const categories = useCategoryStore((state) => state.categories);
+  const settings = useSettingsStore((state) => state.settings);
 
   // States
   const [expenseName, setExpenseName] = useState("");
@@ -102,11 +105,11 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
           alignItems: "center"
         }}
       >
-        <Text variant="displaySmall">{convertNumberToCurrencyString(expensePriceDisplay)}</Text>
-        <Text variant="headlineMedium" style={{ color: "gray" }}>{" "}x{" "}</Text>
-        <Text variant="displaySmall">{expenseQuantityDisplay}</Text>
-        <Text variant="headlineMedium" style={{ color: "gray" }}>{" = "}</Text>
-        <Text variant="displaySmall">{expenseTotalDisplay}</Text>
+        <Text variant="headlineLarge">{convertNumberToCurrencyString(expensePriceDisplay, settings.currencyCode)}</Text>
+        <Text variant="headlineSmall" style={{ color: "gray" }}>{" "}x{" "}</Text>
+        <Text variant="headlineLarge">{expenseQuantityDisplay}</Text>
+        <Text variant="headlineSmall" style={{ color: "gray" }}>{" = "}</Text>
+        <Text variant="headlineLarge">{convertNumberToCurrencyString(expenseTotalDisplay)}</Text>
       </View>
 
       {/* Expense name quantity */}
@@ -133,8 +136,8 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
           max={100}
           fontSize={20}
           skin="round"
-          colorMin="#f97316"
-          colorMax="#f97316"
+          colorMin={theme.colors.primary}
+          colorMax={theme.colors.primary}
           value={expenseQuantity}
           onChange={(e: number) => setExpenseQuantity(e)}
           onSubmit={() => priceTextInputRef.current?.focus()}

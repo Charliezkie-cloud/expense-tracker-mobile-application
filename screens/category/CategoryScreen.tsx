@@ -13,6 +13,7 @@ import { convertNumberToCurrencyString } from "../../utils/converters";
 import { Button, List, Modal, Portal, Text } from "react-native-paper";
 import { useBudgetStore } from "../../hooks/useBudgetStore";
 import { sortExpenses } from "../../utils/sorters";
+import { useSettingsStore } from "../../hooks/useSettingsStore";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "Category">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Category">;
@@ -25,6 +26,7 @@ export default function CategoryScreen({ route }: RouteProps) {
   const navigation = useNavigation<NavProps>();
   const expenses = useExpenseStore((state) => state.expenses);
   const budgets = useBudgetStore((state) => state.budgets);
+  const settings = useSettingsStore((state) => state.settings);
 
   // States
   const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);
@@ -35,7 +37,7 @@ export default function CategoryScreen({ route }: RouteProps) {
   
   const [sortingModal, setSortingModal] = useState(false);
 
-  const [sortBySelectedItem, setSortBySelectedItem] = useState<"price" | "quantity" | "createdAt" | "updatedAt">("price");
+  const [sortBySelectedItem, setSortBySelectedItem] = useState<"price" | "quantity" | "createdAt" | "updatedAt">("createdAt");
   const [sortOrderSelectedItem, setSortOrderSelectedItem] = useState<"ascending" | "descending">("ascending");
 
   // Handlers
@@ -90,7 +92,7 @@ export default function CategoryScreen({ route }: RouteProps) {
         variant="displayMedium"
         style={{ textAlign: "center" }}
       >
-        {convertNumberToCurrencyString(total)}
+        {convertNumberToCurrencyString(total, settings.currencyCode)}
       </Text>
 
       {/* Budget display */}
@@ -106,17 +108,17 @@ export default function CategoryScreen({ route }: RouteProps) {
         >
           <Text variant="bodyLarge">
             Budget:{" "}
-            {convertNumberToCurrencyString(budget)}
+            {convertNumberToCurrencyString(budget, settings.currencyCode)}
           </Text>
           <Text variant="bodyLarge">
-            Remaining budget:{" "}
+            Remaining Budget:{" "}
             <Text
               variant="bodyLarge"
               style={{
-                color: remainingBudget <= 0 ? "#ef4444" : "#166534"
+                color: remainingBudget <= 0 ? "#dc2626" : "#16a34a"
               }}
             >
-              {convertNumberToCurrencyString(remainingBudget)}
+              {convertNumberToCurrencyString(remainingBudget, settings.currencyCode)}
             </Text>
           </Text>
         </View>

@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Home, List } from "lucide-react-native";
+import { Home, List, Settings } from "lucide-react-native";
 
 import { RootParamStackList, TabParamStackList } from "../types/navigation.types";
 import HomeScreen from "../screens/HomeScreen";
@@ -11,10 +11,12 @@ import EditExpenseScreen from "../screens/expense/EditExpenseScreen";
 import CategorySetBudgetScreen from "../screens/category/CategorySetBudgetScreen";
 import EditCategoryScreen from "../screens/category/EditCategoryScreen";
 import CategoryAddExpenseScreen from "../screens/expense/CategoryAddExpenseScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 
 const Stack = createNativeStackNavigator<RootParamStackList>();
 const Tab = createBottomTabNavigator<TabParamStackList>();
 
+// Tabs
 function Tabs() {
   return (
     <Tab.Navigator initialRouteName="Home">
@@ -40,10 +42,21 @@ function Tabs() {
           ))
         }}
       />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          headerShadowVisible: false,
+          tabBarIcon: ((props) => (
+            <Settings color={props.color} size={props.size} />
+          ))
+        }}
+      />
     </Tab.Navigator>
   )
 }
 
+// Root stack
 export default function RootStack() {
   return (
     <Stack.Navigator initialRouteName="Tabs">

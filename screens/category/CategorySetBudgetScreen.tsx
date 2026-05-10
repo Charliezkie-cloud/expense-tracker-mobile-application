@@ -10,6 +10,7 @@ import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { useBudgetStore } from "../../hooks/useBudgetStore";
 import { validateAddBudgetForm } from "../../utils/validators";
 import { convertNumberToCurrencyString } from "../../utils/converters";
+import HorizontalLineWithTitle from "../../components/HorizontalLineWithTitle";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategorySetBudget">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategorySetBudget">;
@@ -95,7 +96,12 @@ export default function CategorySetBudgetScreen({ route }: RouteProps) {
   }, []);
 
   return (
-    <View style={containers.main}>
+    <View
+      style={{
+        ...containers.main,
+        flex: 1
+      }}
+    >
 
       {/* Budget form */}
       <View style={{ gap: 8 }}>
@@ -119,13 +125,24 @@ export default function CategorySetBudgetScreen({ route }: RouteProps) {
         >
           Save
         </Button>
+      </View>
+
+      {/* Danger button */}
+      <View style={{ marginTop: "auto" }}>
         {hasBudget && (
-          <Button
-            onPress={deleteButtonOnPress}
-            labelStyle={{ fontSize: 16 }}
-          >
-            Delete
-          </Button>
+          <>
+            <HorizontalLineWithTitle
+              label="Danger"
+              color="#ef4444"
+              style={{ marginBlock: 14 }}
+            />
+            <Button
+              onPress={deleteButtonOnPress}
+              labelStyle={{ fontSize: 16 }}
+            >
+              Delete
+            </Button>
+          </>
         )}
       </View>
 

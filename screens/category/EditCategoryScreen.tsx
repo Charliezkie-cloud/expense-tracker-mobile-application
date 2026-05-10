@@ -11,6 +11,7 @@ import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { convertDateToDateString } from "../../utils/converters";
 import { useExpenseStore } from "../../hooks/useExpenseStore";
 import { useBudgetStore } from "../../hooks/useBudgetStore";
+import HorizontalLineWithTitle from "../../components/HorizontalLineWithTitle";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditCategory">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
@@ -87,7 +88,10 @@ export default function EditCategoryScreen({ route }: RouteProps) {
   }, []);
 
   return (
-    <View style={containers.main}>
+    <View style={{
+      ...containers.main,
+      flex: 1
+    }}>
 
       {/* Form */}
       <View style={{ gap: 8 }}>
@@ -110,28 +114,30 @@ export default function EditCategoryScreen({ route }: RouteProps) {
         >
           Save
         </Button>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center"
-          }}
+
+        <Button
+          mode="contained-tonal"
+          labelStyle={{ fontSize: 16 }}
+          onPress={toggleModalButtonOnPress}
         >
-          <Button
-            labelStyle={{ fontSize: 16 }}
-            style={{ width: "50%" }}
-            onPress={deleteButtonOnPress}
-          >
-            Delete
-          </Button>
-          <Button
-            labelStyle={{ fontSize: 16 }}
-            style={{ width: "50%" }}
-            onPress={toggleModalButtonOnPress}
-          >
-            Details
-          </Button>
-        </View>
+          Details
+        </Button>
+      </View>
+
+      {/* Danger button */}
+      <View style={{ marginTop: "auto" }}>
+        <HorizontalLineWithTitle
+          label="Danger"
+          color="#ef4444"
+          style={{ marginBlock: 14 }}
+        />
+
+        <Button
+          labelStyle={{ fontSize: 16 }}
+          onPress={deleteButtonOnPress}
+        >
+          Delete
+        </Button>
       </View>
 
       {/* Modal */}

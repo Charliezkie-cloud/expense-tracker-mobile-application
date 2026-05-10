@@ -30,6 +30,8 @@ export function convertDateToDateString(date: Date) {
 export function convertNumberToCurrencyString(amount: number, currency: string = "PHP"): string {
   return amount.toLocaleString("en-US", {
     style: "currency",
-    currency
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
   });
 }

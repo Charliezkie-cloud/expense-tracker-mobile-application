@@ -11,6 +11,9 @@ import { convertDateToDateString, convertNumberToCurrencyString } from "../../ut
 import { validateEditExpenseForm } from "../../utils/validators";
 import { useExpenseStore } from "../../hooks/useExpenseStore";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
+import { useSettingsStore } from "../../hooks/useSettingsStore";
+import { theme } from "../../App";
+import HorizontalLineWithTitle from "../../components/HorizontalLineWithTitle";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "EditExpense">;
@@ -24,6 +27,7 @@ export default function EditExpenseScreen({ route }: RouteProps) {
   const categories = useCategoryStore((state) => state.categories);
   const updateExpense = useExpenseStore((state) => state.updateExpense);
   const deleteExpense = useExpenseStore((state) => state.deleteExpense);
+  const settings = useSettingsStore((state) => state.settings);
 
   // States
   const [expenseName, setExpenseName] = useState(expense.name);
@@ -119,7 +123,12 @@ export default function EditExpenseScreen({ route }: RouteProps) {
   }, [expensePrice, expenseQuantity]);
 
   return (
-    <View style={styles.mainContainer} >
+    <View
+      style={{
+        ...styles.mainContainer,
+        flex: 1
+      }}
+    >
 
       {/* Calculated display */}
       <View
@@ -129,11 +138,11 @@ export default function EditExpenseScreen({ route }: RouteProps) {
           alignItems: "center"
         }}
       >
-        <Text variant="displaySmall">{convertNumberToCurrencyString(expensePriceDisplay)}</Text>
-        <Text variant="headlineMedium" style={{ color: "gray" }}>{" "}x{" "}</Text>
-        <Text variant="displaySmall">{expenseQuantityDisplay}</Text>
-        <Text variant="headlineMedium" style={{ color: "gray" }}>{" = "}</Text>
-        <Text variant="displaySmall">{expenseTotalDisplay}</Text>
+        <Text variant="headlineLarge">{convertNumberToCurrencyString(expensePriceDisplay, settings.currencyCode)}</Text>
+        <Text variant="headlineSmall" style={{ color: "gray" }}>{" "}x{" "}</Text>
+        <Text variant="headlineLarge">{expenseQuantityDisplay}</Text>
+        <Text variant="headlineSmall" style={{ color: "gray" }}>{" = "}</Text>
+        <Text variant="headlineLarge">{convertNumberToCurrencyString(expenseTotalDisplay)}</Text>
       </View>
 
       {/* Expense name input */}
@@ -161,8 +170,8 @@ export default function EditExpenseScreen({ route }: RouteProps) {
             max={100}
             fontSize={20}
             skin="round"
-            colorMin="#f97316"
-            colorMax="#f97316"
+            colorMin={theme.colors.primary}
+            colorMax={theme.colors.primary}
             value={expenseQuantity}
             onChange={(e: number) => setExpenseQuantity(e)}
             onSubmit={() => priceTextInputRef.current?.focus()}
@@ -194,28 +203,30 @@ export default function EditExpenseScreen({ route }: RouteProps) {
           >
             Save
           </Button>
-          <View style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 8
-          }}>
-            <Button
-              labelStyle={{ fontSize: 16 }}
-              style={{ width: "50%" }}
-              onPress={deleteButtonOnPress}
-            >
-              Delete
-            </Button>
-            <Button
-              labelStyle={{ fontSize: 16 }}
-              onPress={toggleModalButtonOnPress}
-              style={{ width: "50%" }}
-            >
-              Details
-            </Button>
-          </View>
+
+          <Button
+            mode="contained-tonal"
+            labelStyle={{ fontSize: 16 }}
+            onPress={toggleModalButtonOnPress}
+          >
+            Details
+          </Button>
         </View>
+      </View>
+
+      <View style={{ marginTop: "auto" }}>
+        <HorizontalLineWithTitle
+          label="Danger"
+          color="#ef4444"
+          style={{ marginBlock: 14 }}
+        />
+
+        <Button
+          labelStyle={{ fontSize: 16 }}
+          onPress={deleteButtonOnPress}
+        >
+          Delete
+        </Button>
       </View>
 
       {/* Information modal */}
