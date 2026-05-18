@@ -12,6 +12,7 @@ import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { Category } from "../../types/data.types"
 import { convertDateToDateString } from "../../utils/converters";
 import { sortCategories } from "../../utils/sorters";
+import { theme } from "../../styles/theme";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "AddCategory">;
 
@@ -67,6 +68,7 @@ export default function CategoriesScreen() {
         Sort Categories
       </Button>
 
+      {/* Sorting modal */}
       <Portal>
         <Modal visible={sortingModal} style={{ margin: 24 }}>
           <View
@@ -135,11 +137,6 @@ export default function CategoriesScreen() {
               </View>
             )}
             onPress={() => listItemButtonOnPress(item)}
-            style={{
-              backgroundColor: "#e5e7eb",
-              borderRadius: 999,
-              marginBottom: 8
-            }}
           />
         ))}
         ListEmptyComponent={(

@@ -12,7 +12,7 @@ import { useExpenseStore } from "../../hooks/useExpenseStore";
 import { convertNumberToCurrencyString } from "../../utils/converters";
 import { Button, List, Modal, Portal, Text } from "react-native-paper";
 import { useBudgetStore } from "../../hooks/useBudgetStore";
-import { sortExpenses } from "../../utils/sorters";
+import { sortExpensesWithCategoryId } from "../../utils/sorters";
 import { useSettingsStore } from "../../hooks/useSettingsStore";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "Category">;
@@ -59,7 +59,7 @@ export default function CategoryScreen({ route }: RouteProps) {
   }
 
   function applySortingButtonOnPress() {
-    const updated = sortExpenses(category.id, expenses, sortBySelectedItem, sortOrderSelectedItem);
+    const updated = sortExpensesWithCategoryId(category.id, expenses, sortBySelectedItem, sortOrderSelectedItem);
     setFilteredExpenses(updated);
     toggleSortingModal();
   }
@@ -71,7 +71,7 @@ export default function CategoryScreen({ route }: RouteProps) {
   // Use effects
   useEffect(() => {
     const updated = expenses.filter(e => e.category.id === category.id);
-    setFilteredExpenses(sortExpenses(category.id, updated, sortBySelectedItem, sortOrderSelectedItem));
+    setFilteredExpenses(sortExpensesWithCategoryId(category.id, updated, sortBySelectedItem, sortOrderSelectedItem));
 
     const total = updated.reduce((prev, curr) => prev + (curr.price * curr.quantity), 0);
     setTotal(total);
@@ -232,11 +232,6 @@ export default function CategoryScreen({ route }: RouteProps) {
             onPress={() => expenseListItemOnPress(item)}
             title={`${convertNumberToCurrencyString(item.price)} x ${item.quantity}`}
             description={item.name}
-            style={{
-              backgroundColor: "#e5e7eb",
-              borderRadius: 8,
-              marginBottom: 8
-            }}
             right={(props) => (
               <View style={{ flex: 1, justifyContent: "center", alignItems: "flex-end" }}>
                 <ChevronRight color={props.color} size={22}/>

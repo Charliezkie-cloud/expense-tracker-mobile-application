@@ -141,6 +141,7 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
           value={expenseQuantity}
           onChange={(e: number) => setExpenseQuantity(e)}
           onSubmit={() => priceTextInputRef.current?.focus()}
+          style={{ elevation: 0, shadowOpacity: 0 }}
         />
       </View>
 

@@ -35,3 +35,12 @@ export function convertNumberToCurrencyString(amount: number, currency: string =
     maximumFractionDigits: 2
   });
 }
+
+/**
+ * Converts the number to a percentage string with two decimal places
+ * @param value The value of the number
+ * @returns The percentage string of the number
+ */
+export function convertNumberToPercentageString(value: number): string {
+  return `${value.toFixed(2)}%`;
+}
