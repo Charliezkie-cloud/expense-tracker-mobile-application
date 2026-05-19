@@ -10,6 +10,7 @@ type CategoryStore = {
   addCategory: (name: string) => void;
   updateCategory: (categoryId: string, name: string) => void;
   deleteCategory: (categoryId: string) => void;
+  clearAllCategories: () => void;
 };
 
 export const useCategoryStore = create<CategoryStore>()(
@@ -32,6 +33,9 @@ export const useCategoryStore = create<CategoryStore>()(
         set((state) => ({
           categories: state.categories.filter((item) => item.id !== categoryId)
         }));
+      },
+      clearAllCategories() {
+        set({ categories: [] });
       },
     }),
     {

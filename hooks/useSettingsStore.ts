@@ -7,6 +7,7 @@ import { CurrencyCode, Settings } from "../types/data.types"
 type SettingsStore = {
   settings: Settings;
   setCurrency: (currencyCode: CurrencyCode) => void;
+  setToDefault: () => void;
 };
 
 const defaultSettings: Settings = {
@@ -21,6 +22,9 @@ export const useSettingsStore = create<SettingsStore>()(
         set((state) => ({
           settings: { ...state.settings, currencyCode }
         }));
+      },
+      setToDefault() {
+        set({ settings: defaultSettings });
       }
     }),
     {

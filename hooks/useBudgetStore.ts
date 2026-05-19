@@ -9,6 +9,7 @@ type BudgeStore = {
   budgets: Budget[];
   setBudget: (category: Category, amount: number) => void;
   deleteBudget: (category: Category) => void;
+  clearAllBudgets: () => void;
 };
 
 export const useBudgetStore = create<BudgeStore>()(
@@ -28,6 +29,9 @@ export const useBudgetStore = create<BudgeStore>()(
         set((state) => ({
           budgets: state.budgets.filter(e => e.category.id !== category.id)
         }));
+      },
+      clearAllBudgets() {
+        set({ budgets: [] });
       }
     }),
     {

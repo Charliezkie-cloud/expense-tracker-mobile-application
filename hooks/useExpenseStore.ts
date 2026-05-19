@@ -11,6 +11,7 @@ type ExpenseStore = {
   updateExpense: (expenseId: string, quantity: number, amount: number, name?: string) => void;
   deleteExpense: (expenseId: string) => void;
   deleteCategoryExpenses: (categoryId: string) => void;
+  clearAllExpenses: () => void;
 };
 
 export const useExpenseStore = create<ExpenseStore>()(
@@ -38,6 +39,9 @@ export const useExpenseStore = create<ExpenseStore>()(
         set((state) => ({
           expenses: state.expenses.filter((item) => item.category.id !== categoryId)
         })); 
+      },
+      clearAllExpenses() {
+        set({ expenses: [] });
       }
     }),
     {

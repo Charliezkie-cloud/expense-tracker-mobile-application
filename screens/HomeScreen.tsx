@@ -1,6 +1,6 @@
 import { FlatList, ScrollView, View } from "react-native";
 import { useEffect, useState } from "react";
-import { List, ProgressBar, Text } from "react-native-paper";
+import { Button, List, ProgressBar, Text } from "react-native-paper";
 import { ChevronRight } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -132,9 +132,9 @@ export default function HomeScreen() {
             </View>
           ))}
           {budgetProgress.length < 1 ? (
-            <Text variant="bodyLarge" style={{ textAlign: "center", marginBlock: 18 }}>
-              Create your first category to get started.
-            </Text>
+            <Button onPress={() => navigation.navigate("Tabs", { screen: "Categories" })}>
+              Set up your category budget to see where your money goes.
+            </Button>
           ) : (<></>)}
         </View>
 
@@ -154,10 +154,10 @@ export default function HomeScreen() {
               onPress={() => navigation.navigate("Category", item)}
             />
           ))}
-          {budgetProgress.length < 1 ? (
-            <Text variant="bodyLarge" style={{ textAlign: "center", marginBlock: 18 }}>
+          {categories.length < 1 ? (
+            <Button onPress={() => navigation.navigate("AddCategory")}>
               Create your first category to get started.
-            </Text>
+            </Button>
           ) : (<></>)}
         </View>
 
@@ -177,10 +177,10 @@ export default function HomeScreen() {
               onPress={() => navigation.navigate("Category", item)}
             />
           ))}
-          {budgetProgress.length < 1 ? (
-            <Text variant="bodyLarge" style={{ textAlign: "center", marginBlock: 18 }}>
-              Create your first category to get started.
-            </Text>
+          {expenses.length < 1 ? (
+            <Button onPress={() => navigation.navigate("Tabs", { screen: "Categories" })}>
+              Log your first expense to see your recent activity.
+            </Button>
           ) : (<></>)}
         </View>
 
