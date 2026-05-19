@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Home, List, Settings } from "lucide-react-native";
+import { useTheme } from "react-native-paper"; // Import this to grab the active theme context
 
 import { RootParamStackList, TabParamStackList } from "../types/navigation.types";
 import HomeScreen from "../screens/HomeScreen";
@@ -16,18 +17,47 @@ import SettingsScreen from "../screens/SettingsScreen";
 const Stack = createNativeStackNavigator<RootParamStackList>();
 const Tab = createBottomTabNavigator<TabParamStackList>();
 
-// Tabs
+// Styled Tabs Component
 function Tabs() {
+  const theme = useTheme(); // Hook to fetch the active color settings
+
   return (
-    <Tab.Navigator initialRouteName="Home">
+    <Tab.Navigator 
+      initialRouteName="Home"
+      screenOptions={{
+        headerShadowVisible: false,
+        // Match the top navbar to your active theme
+        headerStyle: {
+          backgroundColor: theme.colors.surface,
+        },
+        headerTitleStyle: {
+          color: theme.colors.onSurface,
+          fontWeight: "700",
+        },
+        // Match the bottom tab bar to your active theme
+        tabBarStyle: {
+          backgroundColor: theme.colors.surface,
+          borderTopColor: theme.colors.surfaceVariant,
+          borderTopWidth: 1,
+          height: 60,
+          // paddingBottom: 8,
+          // paddingTop: 8,
+        },
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.onSurfaceVariant,
+        tabBarLabelStyle: {
+          fontWeight: "600",
+          fontSize: 12,
+        }
+      }}
+    >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
           title: "Dashboard",
-          headerShadowVisible: false,
           tabBarIcon: (({ color, size }) => (
-            <Home color={color} size={size} />
+            <Home color={color} size={size - 2} />
           ))
         }}
       />
@@ -35,10 +65,9 @@ function Tabs() {
         name="Categories"
         component={CategoriesScreen}
         options={{
-          headerShadowVisible: false,
-          headerTitle: "My Categories",
+          title: "Categories",
           tabBarIcon: (({ color, size }) => (
-            <List color={color} size={size} />
+            <List color={color} size={size - 2} />
           ))
         }}
       />
@@ -46,20 +75,34 @@ function Tabs() {
         name="Settings"
         component={SettingsScreen}
         options={{
-          headerShadowVisible: false,
-          tabBarIcon: ((props) => (
-            <Settings color={props.color} size={props.size} />
+          title: "Settings",
+          tabBarIcon: (({ color, size }) => (
+            <Settings color={color} size={size - 2} />
           ))
         }}
       />
     </Tab.Navigator>
-  )
+  );
 }
 
-// Root stack
+// Master Root Stack Component
 export default function RootStack() {
+  const theme = useTheme(); // Dynamic theme implementation for full screens
+
   return (
-    <Stack.Navigator initialRouteName="Tabs">
+    <Stack.Navigator
+      screenOptions={{
+        headerShadowVisible: false,
+        headerStyle: {
+          backgroundColor: theme.colors.surface,
+        },
+        headerTitleStyle: {
+          color: theme.colors.onSurface,
+          fontWeight: "700",
+        },
+        headerTintColor: theme.colors.primary, // Updates back button arrow colors automatically
+      }}
+    >
       <Stack.Screen
         name="Tabs"
         component={Tabs}
@@ -72,7 +115,6 @@ export default function RootStack() {
         component={AddCategoryScreen}
         options={{
           title: "Add Category",
-          headerShadowVisible: false
         }}
       />
       <Stack.Screen
@@ -80,7 +122,6 @@ export default function RootStack() {
         component={EditCategoryScreen}
         options={{
           title: "Edit Category",
-          headerShadowVisible: false
         }}
       />
       <Stack.Screen
@@ -88,7 +129,6 @@ export default function RootStack() {
         component={CategoryScreen}
         options={(({ route }) => ({
           headerTitle: `${route.params.name} Expenses`,
-          headerShadowVisible: false
         }))}
       />
       <Stack.Screen
@@ -96,7 +136,6 @@ export default function RootStack() {
         component={CategoryAddExpenseScreen}
         options={(({ route }) => ({
           headerTitle: `Add ${route.params.name} Expense`,
-          headerShadowVisible: false
         }))}
       />
       <Stack.Screen
@@ -104,7 +143,6 @@ export default function RootStack() {
         component={EditExpenseScreen}
         options={(({ route }) => ({
           headerTitle: `Edit ${route.params.name} Expense`,
-          headerShadowVisible: false
         }))}
       />
       <Stack.Screen
@@ -112,9 +150,8 @@ export default function RootStack() {
         component={CategorySetBudgetScreen}
         options={(({ route }) => ({
           headerTitle: `Set ${route.params.name} Budget`,
-          headerShadowVisible: false
         }))}
       />
     </Stack.Navigator>
-  )
+  );
 }

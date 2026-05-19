@@ -1,17 +1,18 @@
-import { Alert, Linking, StyleSheet, Touchable, TouchableOpacity, View } from "react-native";
-import { Button, Text } from "react-native-paper";
+import { Alert, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Button, Text, useTheme } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useRef, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { logger } from "react-native-logs";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { containers } from "../styles/containers";
 import { useSettingsStore } from "../hooks/useSettingsStore";
 import { CurrencyCode } from "../types/data.types";
 import { useCategoryStore } from "../hooks/useCategoryStore";
 import { useExpenseStore } from "../hooks/useExpenseStore";
 import { useBudgetStore } from "../hooks/useBudgetStore";
+import { getSettingsStyles } from "../styles/theme";
+import { ThemeMode } from "../styles/themeSchemes";
 
 const socials = [
   {
@@ -32,154 +33,187 @@ const socials = [
   {
     title: "LinkedIn",
     icon: "linkedin",
-    url: "https://ph.linkedin.com/in/charles-henry-m-tinoy-jr-275612341"
-  },
+    url: "https://ph.linkedin.com/in/charles-henry-tinoy-jr-850b1831b"
+  }
 ];
 
-export default function SettingsScreen() {
-  // Log
-  const log = logger.createLogger();
+// const themes = ["Default", "Emerald Green", "Dark Slate", "Sunset Orange"];
+const themes: { name: string, value: ThemeMode }[] = [
+  { name: "Default", value: "defaultBlue" },
+  { name: "Dark Slate", value: "darkSlate" },
+  { name: "Emerald Green", value: "emeraldGreen" },
+  { name: "Sunset Orange", value: "sunsetOrange" },
+];
+const currencies = ["PHP", "USD", "EUR", "JPY", "GBP"];
 
+const log = logger.createLogger();
+
+export default function SettingsScreen() {
   // Hooks
   const settings = useSettingsStore((state) => state.settings);
-  const clearAllBudgets = useBudgetStore((state) => state.clearAllBudgets);
-  const clearAllCategories = useCategoryStore((state) => state.clearAllCategories);
-  const clearAllExpenses = useExpenseStore((state) => state.clearAllExpenses);
-  const setCurrency = useSettingsStore((state) => state.setCurrency);
+  const setCurrencyCode = useSettingsStore((state) => state.setCurrency);
+
+  const clearCategories = useCategoryStore((state) => state.clearAllCategories);
+  const clearExpenses = useExpenseStore((state) => state.clearAllExpenses);
+  const clearBudgets = useBudgetStore((state) => state.clearAllBudgets);
+
+  // Theme & Style Hooks
+  const theme = useTheme();
+  const styles = getSettingsStyles(theme);
 
   // States
-  const [selectedCurrency, setSelectedCurrency] = useState<CurrencyCode>(settings.currencyCode)
+  const [currencySelectedItem, setCurrencySelectedItem] = useState<CurrencyCode>("PHP");
+  const [selectedTheme, setSelectedTheme] = useState<ThemeMode>("defaultBlue");
 
-  // References
-  const currencyValues = useRef<CurrencyCode[]>(
-    ["PHP", "USD", "EUR", "GBP", "JPY", "CNY", "CAD", "AUD", "INR"]
-  );
-  
   // Handlers
+  function currencyPickerOnValueChange(itemValue: CurrencyCode) {
+    setCurrencySelectedItem(itemValue);
+    setCurrencyCode(itemValue);
+  }
+
   function clearCacheOnPress() {
     Alert.alert(
-      "Delete your application data?",
-      "This will permanently remove all your data. You cannot undo this action.",
+      "Clear cache confirmation",
+      "Are you sure you want to clear your local data? This action will remove all categories, expenses, and budgets permanently.",
       [
         {
           text: "Yes",
-          onPress: clearCache
+          onPress: async () => {
+            try {
+              await AsyncStorage.clear();
+
+              clearCategories();
+              clearExpenses();
+              clearBudgets();
+
+              Alert.alert("Success", "Cache cleared successfully.");
+            } catch (e) {
+              log.error(e);
+              Alert.alert("Error", "Failed to clear cache.");
+            }
+          }
         },
-        {
-          text: "No",
-          style: "cancel"
-        }
+        { text: "No", style: "cancel" }
       ]
     );
   }
 
-  async function openLink(url: string) {
-    const supported = await Linking.canOpenURL(url);
-
-    if (supported)
-      await Linking.openURL(url);
-    else
-      log.error(`Don't know how to open this URL: ${url}`);
-  }
-
-  // Helpers
-  async function clearCache() {
-    try {
-      await AsyncStorage.clear();
-
-      clearAllBudgets();
-      clearAllCategories();
-      clearAllExpenses();
-
-      log.info("Your app data has been cleared!");
-      Alert.alert("Success", "Your application data has successfully been cleared.");
-    } catch (error: unknown) {
-      if (error instanceof Error)
-        log.error("Something went wrong!", {
-          error: error.message
-        });
-      else
-        log.error("Something went wrong!", {
-          error: String(error)
-        });
-    }
+  function openLink(url: string) {
+    Linking.openURL(url);
   }
 
   // Use effects
   useEffect(() => {
-    setCurrency(selectedCurrency);
-  }, [selectedCurrency]);
+    setCurrencySelectedItem(settings.currencyCode);
+  }, [settings]);
 
   return (
-    <View style={{
-      ...containers.main,
-      gap: 24
-    }}>
+    <View style={styles.mainContainer}>
 
-      <View style={{ gap: 12 }}>
-        <Text variant="bodyLarge">Currency</Text>
-        <Picker
-          style={{
-            backgroundColor: "#e5e7eb"
-          }}
-          selectedValue={selectedCurrency}
-          onValueChange={(e) => setSelectedCurrency(e)}
-        >
-          {currencyValues.current.map((item, index) => (
-            <Picker.Item
-              key={`currency-item-${index}`}
-              label={item}
-              value={item}
-            />
-          ))}
-        </Picker>
+      {/* Theme Config Section */}
+      <View style={styles.sectionContainer}>
+        <Text variant="bodyLarge" style={styles.sectionLabel}>Theme</Text>
+        <View style={styles.pickerWrapper}>
+          <Picker
+            style={styles.picker}
+            dropdownIconColor={theme.colors.onSurfaceVariant}
+            selectedValue={selectedTheme}
+            onValueChange={(itemValue) => currencyPickerOnValueChange(itemValue as CurrencyCode)}
+          >
+            {themes.map((item, index) => (
+              <Picker.Item
+                key={`currency-picker-item-${index}`}
+                label={item.name}
+                value={item.value}
+              />
+            ))}
+          </Picker>
+        </View>
       </View>
 
-      <View style={{ gap: 12 }}>
-        <Text variant="bodyLarge">Cache</Text>
-        <Button mode="contained" onPress={clearCacheOnPress}>
+      {/* Currency Config Section */}
+      <View style={styles.sectionContainer}>
+        <Text variant="bodyLarge" style={styles.sectionLabel}>Currency</Text>
+        <View style={styles.pickerWrapper}>
+          <Picker
+            style={styles.picker}
+            dropdownIconColor={theme.colors.onSurfaceVariant}
+            selectedValue={currencySelectedItem}
+            onValueChange={(itemValue) => currencyPickerOnValueChange(itemValue as CurrencyCode)}
+          >
+            {currencies.map((item, index) => (
+              <Picker.Item
+                key={`currency-picker-item-${index}`}
+                label={item}
+                value={item}
+              />
+            ))}
+          </Picker>
+        </View>
+      </View>
+
+      {/* Cache Config Section */}
+      <View style={styles.sectionContainer}>
+        <Text variant="bodyLarge" style={styles.sectionLabel}>Cache</Text>
+        <Button
+          mode="contained-tonal"
+          buttonColor={theme.colors.errorContainer}
+          textColor={theme.colors.onErrorContainer}
+          style={styles.actionButton}
+          onPress={clearCacheOnPress}
+        >
           Clear Cache
         </Button>
       </View>
 
-      <View
-        style={{
-          padding: 12,
-          gap: 24,
-          borderWidth: StyleSheet.hairlineWidth,
-          borderColor: "gray",
-          borderRadius: 8
-        }}
-      >
-        <Text variant="titleLarge">Project Information</Text>
-
-        <View>
-          <Text variant="bodyLarge">Version: 1.0.1</Text>
-          <Text variant="bodyLarge">Developed by Charles Henry M. Tinoy Jr.</Text>
-        </View>
-
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 24
-          }}
+      {/* Support section */}
+      <View style={styles.sectionContainer}>
+        <Text variant="bodyLarge" style={styles.sectionLabel}>Support</Text>
+        <Button
+          mode="contained-tonal"
+          style={styles.actionButton}
+          onPress={() => openLink("https://github.com/Charliezkie-cloud/expense-tracker-mobile-application/issues/new")}
         >
-          {socials.map(item => (
-            <TouchableOpacity onPress={() => openLink(item.url)}>
-              <FontAwesome6 key={item.title} name={item.icon} size={32} color="black" />
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        ========== CONTINUE HERE ==========
-
-        <Button onPress={() => openLink("https://github.com/Charliezkie-cloud/expense-tracker-mobile-application/issues/new")}>
-          Report an issue
+          Report an Issue
         </Button>
       </View>
 
+      {/* Modernized Project Card Component */}
+      <View style={styles.infoCard}>
+        <Text variant="titleLarge" style={styles.infoTitle}>Project Information</Text>
+
+        <View style={styles.textGroup}>
+          <Text variant="bodyLarge" style={styles.infoText}>Version: 1.0.1</Text>
+          <Text variant="bodyLarge" style={styles.infoText}>Developed by Charles Henry M. Tinoy Jr.</Text>
+        </View>
+
+        {/* Brand Link Matrix Grid */}
+        <View>
+          <View style={styles.socialsRow}>
+            {socials.map((item) => (
+              <TouchableOpacity
+                key={item.title}
+                style={styles.socialTouchTarget}
+                onPress={() => openLink(item.url)}
+              >
+                <FontAwesome6
+                  name={item.icon}
+                  size={26}
+                  color={theme.colors.primary}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Button
+            mode="contained"
+            style={styles.developerButton}
+            onPress={() => openLink("https://charlzk.vercel.app/")}
+          >
+            View Developer Portfolio
+          </Button>
+        </View>
+      </View>
+
     </View>
-  )
+  );
 }

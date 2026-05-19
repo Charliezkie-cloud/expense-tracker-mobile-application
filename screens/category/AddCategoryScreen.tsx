@@ -1,13 +1,13 @@
-import { Alert, StyleSheet, View } from "react-native";
+import { Alert, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useState } from "react";
-import { Button, Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 
-import { containers } from "../../styles/containers";
 import { RootParamStackList } from "../../types/navigation.types";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { validateAddCategoryForm } from "../../utils/validators";
+import { getCategoryDetailStyles } from "../../styles/theme";
 
 type NavProp = NativeStackNavigationProp<RootParamStackList, "AddCategory">;
 
@@ -15,6 +15,8 @@ export default function AddCategoryScreen() {
   // Hooks
   const navigation = useNavigation<NavProp>();
   const addCategory = useCategoryStore((state) => state.addCategory);
+  const theme = useTheme();
+  const styles = getCategoryDetailStyles(theme);
 
   // States
   const [categoryName, setCategoryName] = useState("");
@@ -34,32 +36,28 @@ export default function AddCategoryScreen() {
   }
 
   return (
-    <View style={containers.main}>
-
-      <View style={styles.inputContainer}>
-        <Text variant="bodyLarge">
-          Category name{" "}
-          <Text variant="bodyLarge" style={{ color: "red" }}>*</Text>
+    <View style={styles.formContainer}>
+      <View style={styles.inputGroup}>
+        <Text variant="bodyLarge" style={styles.inputLabel}>
+          Category name <Text style={{ color: theme.colors.error }}>*</Text>
         </Text>
         <TextInput
           value={categoryName}
-          mode="flat"
+          mode="outlined"
+          style={styles.textInput}
           onChangeText={(e) => setCategoryName(e)}
           placeholder="e.g., Groceries"
         />
       </View>
+      
       <Button
         mode="contained"
+        style={styles.formButton}
+        labelStyle={{ fontSize: 16, fontWeight: "600" }}
         onPress={saveButtonOnPress}
-        labelStyle={{ fontSize: 16 }}
       >
-        Save
+        Save Category
       </Button>
-
     </View>
-  )
+  );
 }
-
-const styles = StyleSheet.create({
-  inputContainer: { gap: 8 }
-});

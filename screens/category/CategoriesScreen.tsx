@@ -1,18 +1,17 @@
-import { FlatList, StyleSheet, View } from "react-native";
-import { Button, List, Modal, Portal, Text } from "react-native-paper";
+import { FlatList, View } from "react-native";
+import { Button, List, Modal, Portal, Text, useTheme } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowUpDown, ChevronRight, Plus } from "lucide-react-native";
+import { ArrowUpDown, ChevronRight, Plus, Layers } from "lucide-react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
 
-import { containers } from "../../styles/containers";
 import { RootParamStackList } from "../../types/navigation.types";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { Category } from "../../types/data.types"
 import { convertDateToDateString } from "../../utils/converters";
 import { sortCategories } from "../../utils/sorters";
-import { theme } from "../../styles/theme";
+import { getCategoriesStyles } from "../../styles/theme";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "AddCategory">;
 
@@ -21,11 +20,13 @@ export default function CategoriesScreen() {
   const navigation = useNavigation<NavProps>();
   const categories = useCategoryStore((state) => state.categories);
 
+  // Theme & Styles
+  const theme = useTheme();
+  const styles = getCategoriesStyles(theme);
+
   // States
   const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
-
   const [sortingModal, setSortingModal] = useState(false);
-
   const [sortBySelectedItem, setSortBySelectedItem] = useState<"createdAt" | "updatedAt">("createdAt");
   const [sortOrderSelectedItem, setSortOrderSelectedItem] = useState<"ascending" | "descending">("ascending");
 
@@ -59,7 +60,9 @@ export default function CategoriesScreen() {
 
       {/* Sort button */}
       <Button
-        labelStyle={{ fontSize: 16 }}
+        mode="text"
+        style={styles.sortButton}
+        labelStyle={styles.sortButtonLabel}
         icon={(props) => (
           <ArrowUpDown color={props.color} size={props.size} />
         )}
@@ -70,51 +73,53 @@ export default function CategoriesScreen() {
 
       {/* Sorting modal */}
       <Portal>
-        <Modal visible={sortingModal} style={{ margin: 24 }}>
-          <View
-            style={{
-              gap: 14,
-              padding: 24,
-              backgroundColor: "#e5e7eb",
-              borderRadius: 8
-            }}
-          >
-            <Text variant="headlineSmall">Category Sorting</Text>
+        <Modal visible={sortingModal} style={styles.modalBackdrop}>
+          <View style={styles.modalContent}>
+            <Text variant="headlineSmall" style={styles.modalTitle}>Category Sorting</Text>
 
-            <View style={{ gap: 8 }}>
-              <Text variant="bodyLarge">Sort by</Text>
-              <Picker
-                style={{ backgroundColor: "#d1d5db" }}
-                selectedValue={sortBySelectedItem}
-                onValueChange={(e) => setSortBySelectedItem(e)}
-              >
-                <Picker.Item label="Creation Date & Time" value="createdAt" />
-                <Picker.Item label="Updation Date & Time" value="updatedAt" />
-              </Picker>
+            <View style={styles.pickerContainer}>
+              <Text variant="bodyMedium" style={styles.pickerLabel}>Sort by</Text>
+              <View style={styles.pickerWrapper}>
+                <Picker
+                  style={styles.picker}
+                  dropdownIconColor={theme.colors.onSurfaceVariant}
+                  selectedValue={sortBySelectedItem}
+                  onValueChange={(e) => setSortBySelectedItem(e)}
+                >
+                  <Picker.Item label="Creation Date & Time" value="createdAt" />
+                  <Picker.Item label="Updation Date & Time" value="updatedAt" />
+                </Picker>
+              </View>
             </View>
 
-            <View style={{ gap: 8 }}>
-              <Text variant="bodyLarge">Order</Text>
-              <Picker
-                style={{ backgroundColor: "#d1d5db" }}
-                selectedValue={sortOrderSelectedItem}
-                onValueChange={(e) => setSortOrderSelectedItem(e)}
-              >
-                <Picker.Item label="Ascending" value="ascending" />
-                <Picker.Item label="Descending" value="descending" />
-              </Picker>
+            <View style={styles.pickerContainer}>
+              <Text variant="bodyMedium" style={styles.pickerLabel}>Order</Text>
+              <View style={styles.pickerWrapper}>
+                <Picker
+                  style={styles.picker}
+                  dropdownIconColor={theme.colors.onSurfaceVariant}
+                  selectedValue={sortOrderSelectedItem}
+                  onValueChange={(e) => setSortOrderSelectedItem(e)}
+                >
+                  <Picker.Item label="Ascending" value="ascending" />
+                  <Picker.Item label="Descending" value="descending" />
+                </Picker>
+              </View>
             </View>
 
-            <View style={{ gap: 8 }}>
+            <View style={styles.modalButtonsContainer}>
               <Button
                 mode="contained"
-                labelStyle={{ fontSize: 16 }}
+                style={styles.modalActionButton}
+                labelStyle={{ fontSize: 16, fontWeight: "600" }}
                 onPress={applySortingButtonOnPress}
               >
                 Apply
               </Button>
               <Button
-                labelStyle={{ fontSize: 16 }}
+                mode="text"
+                style={styles.modalActionButton}
+                labelStyle={{ fontSize: 16, fontWeight: "600" }}
                 onPress={toggleSortingModal}
               >
                 Close
@@ -124,35 +129,51 @@ export default function CategoriesScreen() {
         </Modal>
       </Portal>
 
-      {/* Category list */}
-      <FlatList
-        data={filteredCategories}
-        renderItem={(({ item }) => (
-          <List.Item
-            title={item.name}
-            description={convertDateToDateString(new Date(item.updatedAt))}
-            right={(props) => (
-              <View style={{ flex: 1, justifyContent: "center", alignItems: "flex-end" }}>
-                <ChevronRight color={props.color} size={22} />
-              </View>
+      {/* Category list wrapped in premium iOS container layout */}
+      {filteredCategories && filteredCategories.length > 0 ? (
+        <View style={styles.listContainer}>
+          <FlatList
+            data={filteredCategories}
+            ItemSeparatorComponent={() => <View style={styles.listSeparator} />}
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <List.Item
+                title={item.name}
+                description={convertDateToDateString(new Date(item.updatedAt))}
+                titleStyle={styles.itemTitleText}
+                descriptionStyle={styles.itemDescriptionText}
+                left={() => (
+                  <View style={styles.iconWrapper}>
+                    <Layers size={20} color={theme.colors.primary} />
+                  </View>
+                )}
+                right={() => (
+                  <View style={styles.chevronWrapper}>
+                    <ChevronRight color={theme.colors.onSurfaceVariant} size={20} />
+                  </View>
+                )}
+                onPress={() => listItemButtonOnPress(item)}
+                style={styles.listItemStyle}
+              />
             )}
-            onPress={() => listItemButtonOnPress(item)}
           />
-        ))}
-        ListEmptyComponent={(
-          <Text variant="bodyLarge" style={{ textAlign: "center" }}>
+        </View>
+      ) : (
+        <View style={styles.emptyContainer}>
+          <Text variant="bodyLarge" style={styles.emptyText}>
             Create your first category to get started.
           </Text>
-        )}
-      />
+        </View>
+      )}
 
-      {/* Buttons */}
+      {/* Bottom Actions Container */}
       <View style={styles.buttonsContainer}>
         <Button
           mode="contained"
+          style={styles.newCategoryButton}
+          labelStyle={{ fontSize: 16, fontWeight: "600" }}
           icon={(props) => <Plus color={props.color} size={20} />}
           onPress={addCategoryButtonOnPress}
-          labelStyle={{ fontSize: 16 }}
         >
           New Category
         </Button>
@@ -160,15 +181,3 @@ export default function CategoriesScreen() {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    ...containers.main,
-    flex: 1,
-    justifyContent: "space-between",
-  },
-  buttonsContainer: {
-    flexDirection: "row",
-    justifyContent: "flex-end"
-  }
-});

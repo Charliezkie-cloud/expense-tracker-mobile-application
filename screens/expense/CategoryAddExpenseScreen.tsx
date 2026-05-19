@@ -1,18 +1,17 @@
 import { Alert, StyleSheet, TextInput, View } from "react-native";
-import { Button, Text, TextInput as TextField } from "react-native-paper";
+import { Button, Text, TextInput as TextField, useTheme } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useRef, useState } from "react";
 import InputSpinner from "react-native-input-spinner";
 
-import { containers } from "../../styles/containers";
 import { RootParamStackList } from "../../types/navigation.types";
 import { useExpenseStore } from "../../hooks/useExpenseStore";
 import { validateAddExpenseForm } from "../../utils/validators";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { convertNumberToCurrencyString } from "../../utils/converters";
 import { useSettingsStore } from "../../hooks/useSettingsStore";
-import { theme } from "../../styles/theme";
+import { getExpenseStyles } from "../../styles/theme";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategoryAddExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategoryAddExpense">;
@@ -27,134 +26,103 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
   const categories = useCategoryStore((state) => state.categories);
   const settings = useSettingsStore((state) => state.settings);
 
+  // Theme & Style Hook
+  const theme = useTheme();
+  const styles = getExpenseStyles(theme);
+
   // States
   const [expenseName, setExpenseName] = useState("");
+  const [expenseQuantity, setExpenseQuantity] = useState(1);
   const [expensePrice, setExpensePrice] = useState("");
-  const [expenseQuantity, setExpenseQuantity] = useState(0);
 
-  const [expensePriceDisplay, setExpensePriceDisplay] = useState(0.00);
-  const [expenseQuantityDisplay, setExpenseQuantityDisplay] = useState(1);
-  const [expenseTotalDisplay, setExpenseTotalDisplay] = useState(0.00);
-  
-  // References
-  const priceTextInputRef = useRef<TextInput | null>(null);
+  // Refs
+  const priceTextInputRef = useRef<TextInput>(null);
 
   // Handlers
   function saveButtonOnPress() {
-    const validationMessage = validateAddExpenseForm(expenseQuantity, expensePrice, expenseName);
     const categoryExists = categories.some(e => e.id === category.id);
 
     if (!categoryExists) {
       Alert.alert(
         "Category not found",
-        "Would you like to create it?",
+        "The category you are assigning this expense to does not exist. Would you like to create a new category?",
         [
-          {
-            text: "Yes",
-            onPress: () => navigation.navigate("AddCategory")
-          },
-          {
-            text: "No",
-            style: "cancel"
-          }
+          { text: "Yes", onPress: () => navigation.navigate("AddCategory") },
+          { text: "No", style: "cancel" }
         ]
       );
       return;
     }
+
+    const validationMessage = validateAddExpenseForm(expenseQuantity, expensePrice, expenseName);
 
     if (typeof validationMessage === "string") {
       Alert.alert("Error", validationMessage);
       return;
     }
 
-    const parsedExpensePrice = Number.parseFloat(expensePrice);
-    if (expenseName)
-      addExpense(category, expenseQuantity, parsedExpensePrice, expenseName);
-    else
-      addExpense(category, expenseQuantity, parsedExpensePrice);
+    const parsedPrice = Number.parseFloat(expensePrice);
 
-    Alert.alert("Success", `Successfully saved in ${category.name}.`);
+    if (expenseName)
+      addExpense(category, expenseQuantity, parsedPrice, expenseName);
+    else
+      addExpense(category, expenseQuantity, parsedPrice);
+
+    const priceString = convertNumberToCurrencyString(parsedPrice * expenseQuantity, settings.currencyCode);
+    Alert.alert("Success", `${expenseName} worth ${priceString} successfully added.`);
     navigation.goBack();
   }
 
-  // Use effect
-  useEffect(() => {
-    const parsedPrice = Number.parseFloat(expensePrice);
-    if (isNaN(parsedPrice))
-      setExpensePriceDisplay(0.00);
-    else
-      setExpensePriceDisplay(parsedPrice)
-
-    if (isNaN(expenseQuantity))
-      setExpenseQuantityDisplay(0);
-    else
-      setExpenseQuantityDisplay(expenseQuantity)
-
-    const result = (isNaN(parsedPrice) ? 0.00 : parsedPrice) * (isNaN(expenseQuantity) ? 0 : expenseQuantity);
-    setExpenseTotalDisplay(result);
-  }, [expensePrice, expenseQuantity]);
-  
   return (
-    <View style={containers.main}>
+    <View style={styles.formContainer}>
 
-      {/* Calculated display */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center"
-        }}
-      >
-        <Text variant="headlineLarge">{convertNumberToCurrencyString(expensePriceDisplay, settings.currencyCode)}</Text>
-        <Text variant="headlineSmall" style={{ color: "gray" }}>{" "}x{" "}</Text>
-        <Text variant="headlineLarge">{expenseQuantityDisplay}</Text>
-        <Text variant="headlineSmall" style={{ color: "gray" }}>{" = "}</Text>
-        <Text variant="headlineLarge">{convertNumberToCurrencyString(expenseTotalDisplay)}</Text>
-      </View>
-
-      {/* Expense name quantity */}
-      <View style={styles.inputContainer}>
-        <Text variant="bodyLarge">
-          Name{" "}
+      {/* Expense name input */}
+      <View style={styles.inputGroup}>
+        <Text variant="bodyLarge" style={styles.inputLabel}>
+          Expense name <Text style={styles.requiredAsterisk}>*</Text>
         </Text>
         <TextField
-          mode="flat"
-          placeholder="e.g, Jeepney fare"
+          mode="outlined"
+          style={styles.textInput}
+          placeholder="e.g., Jeepney fare"
           value={expenseName}
           onChangeText={(e) => setExpenseName(e)}
         />
       </View>
 
       {/* Expense quantity input */}
-      <View style={styles.inputContainer}>
-        <Text variant="bodyLarge">
-          Quantity{" "}
-          <Text style={{ color: "red" }} variant="bodyLarge">*</Text>
+      <View style={styles.inputGroup}>
+        <Text variant="bodyLarge" style={styles.inputLabel}>
+          Quantity <Text style={styles.requiredAsterisk}>*</Text>
         </Text>
-        <InputSpinner
-          min={0}
-          max={100}
-          fontSize={20}
-          skin="round"
-          colorMin={theme.colors.primary}
-          colorMax={theme.colors.primary}
-          value={expenseQuantity}
-          onChange={(e: number) => setExpenseQuantity(e)}
-          onSubmit={() => priceTextInputRef.current?.focus()}
-          style={{ elevation: 0, shadowOpacity: 0 }}
-        />
+        <View style={styles.spinnerContainer}>
+          <InputSpinner
+            min={1}
+            max={100}
+            fontSize={18}
+            skin="round"
+            colorMax={theme.colors.error}
+            colorMin={theme.colors.primary}
+            background={theme.colors.surface}
+            textColor={theme.colors.onSurface}
+            value={expenseQuantity}
+            onChange={(e: number) => setExpenseQuantity(e)}
+            onSubmit={() => priceTextInputRef.current?.focus()}
+            style={{ elevation: 0, shadowOpacity: 0, width: "100%" }}
+          />
+        </View>
       </View>
 
       {/* Expense price input */}
-      <View style={styles.inputContainer}>
-        <Text variant="bodyLarge">
-          Price{" "}
-          <Text style={{ color: "red" }} variant="bodyLarge">*</Text>
+      <View style={styles.inputGroup}>
+        <Text variant="bodyLarge" style={styles.inputLabel}>
+          Price <Text style={styles.requiredAsterisk}>*</Text>
         </Text>
         <TextField
           ref={priceTextInputRef}
-          mode="flat"
-          placeholder="e.g, 67.25"
+          mode="outlined"
+          style={styles.textInput}
+          placeholder="e.g., 67.25"
           keyboardType="numeric"
           value={expensePrice}
           onChangeText={(e) => setExpensePrice(e)}
@@ -163,18 +131,12 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
 
       <Button
         mode="contained"
-        labelStyle={{ fontSize: 16 }}
+        style={styles.formButton}
+        labelStyle={{ fontSize: 16, fontWeight: "600" }}
         onPress={saveButtonOnPress}
       >
-        Save
+        Save Expense
       </Button>
-
     </View>
-  )
+  );
 }
-
-const styles = StyleSheet.create({
-  inputContainer: {
-    gap: 8
-  }
-});

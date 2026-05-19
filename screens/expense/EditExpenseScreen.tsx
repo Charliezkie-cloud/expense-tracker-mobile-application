@@ -1,19 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import { Alert, StyleSheet, TextInput, View } from "react-native";
-import { Button, Modal, Portal, Text, TextInput as TextField } from "react-native-paper";
+import { Button, Modal, Portal, Text, TextInput as TextField, useTheme } from "react-native-paper";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useRef, useState } from "react";
 import InputSpinner from "react-native-input-spinner";
 
-import { containers } from "../../styles/containers";
 import { RootParamStackList } from "../../types/navigation.types";
-import { convertDateToDateString, convertNumberToCurrencyString } from "../../utils/converters";
+import { convertDateToDateString } from "../../utils/converters";
 import { validateEditExpenseForm } from "../../utils/validators";
 import { useExpenseStore } from "../../hooks/useExpenseStore";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { useSettingsStore } from "../../hooks/useSettingsStore";
 import HorizontalLineWithTitle from "../../components/HorizontalLineWithTitle";
-import { theme } from "../../styles/theme";
+import { getExpenseStyles } from "../../styles/theme";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "EditExpense">;
@@ -29,42 +28,33 @@ export default function EditExpenseScreen({ route }: RouteProps) {
   const deleteExpense = useExpenseStore((state) => state.deleteExpense);
   const settings = useSettingsStore((state) => state.settings);
 
+  // Theme & Style Hook
+  const theme = useTheme();
+  const styles = getExpenseStyles(theme);
+
   // States
-  const [expenseName, setExpenseName] = useState(expense.name);
-  const [expensePrice, setExpensePrice] = useState(expense.price.toString());
-  const [expenseQuantity, setExpenseQuantity] = useState(expense.quantity);
-
-  const [expensePriceDisplay, setExpensePriceDisplay] = useState(0.00);
-  const [expenseQuantityDisplay, setExpenseQuantityDisplay] = useState(0);
-  const [expenseTotalDisplay, setExpenseTotalDisplay] = useState(0);
-
+  const [expenseName, setExpenseName] = useState("");
+  const [expenseQuantity, setExpenseQuantity] = useState(0);
+  const [expensePrice, setExpensePrice] = useState("");
   const [detailsModal, setDetailsModal] = useState(false);
 
-  // References
-  const priceTextInputRef = useRef<TextInput | null>(null);
+  // Refs
+  const priceTextInputRef = useRef<TextInput>(null);
 
   // Handlers
+  function toggleModalButtonOnPress() {
+    setDetailsModal(prev => !prev);
+  }
+
   function saveButtonOnPress() {
-    const validationMessage = validateEditExpenseForm(expenseQuantity, expensePrice);
     const categoryExists = categories.some(e => e.id === expense.category.id);
 
     if (!categoryExists) {
-      Alert.alert(
-        "Category not found",
-        "Would you like to create it?",
-        [
-          {
-            text: "Yes",
-            onPress: () => navigation.navigate("AddCategory")
-          },
-          {
-            text: "No",
-            style: "cancel"
-          }
-        ]
-      );
+      Alert.alert("Category not found", "The category assigned to this expense cannot be resolved.");
       return;
     }
+
+    const validationMessage = validateEditExpenseForm(expenseQuantity, expensePrice);
 
     if (typeof validationMessage === "string") {
       Alert.alert("Error", validationMessage);
@@ -72,19 +62,20 @@ export default function EditExpenseScreen({ route }: RouteProps) {
     }
 
     const parsedPrice = Number.parseFloat(expensePrice);
+
     if (expenseName)
       updateExpense(expense.id, expenseQuantity, parsedPrice, expenseName);
     else
       updateExpense(expense.id, expenseQuantity, parsedPrice);
 
-    Alert.alert("Success", "All set! Your changes are saved.");
+    Alert.alert("Success", "Expense updated successfully.");
     navigation.goBack();
   }
 
   function deleteButtonOnPress() {
     Alert.alert(
       "Deletion Confirmation",
-      "Are you sure you want to delete this item? this action can't be undone.",
+      "Are you sure you want to completely drop this entry? This action cannot be reverted.",
       [
         {
           text: "Yes",
@@ -93,174 +84,148 @@ export default function EditExpenseScreen({ route }: RouteProps) {
             navigation.goBack();
           }
         },
-        {
-          text: "No",
-          style: "cancel"
-        }
+        { text: "No", style: "cancel" }
       ]
-    )
-  }
-
-  function toggleModalButtonOnPress() {
-    setDetailsModal(prev => !prev);
+    );
   }
 
   // Use effects
   useEffect(() => {
-    const parsedPrice = Number.parseFloat(expensePrice);
-    if (isNaN(parsedPrice))
-      setExpensePriceDisplay(0.00);
-    else
-      setExpensePriceDisplay(parsedPrice)
-
-    if (isNaN(expenseQuantity))
-      setExpenseQuantityDisplay(0);
-    else
-      setExpenseQuantityDisplay(expenseQuantity)
-
-    const result = (isNaN(parsedPrice) ? 0.00 : parsedPrice) * (isNaN(expenseQuantity) ? 0 : expenseQuantity);
-    setExpenseTotalDisplay(result);
-  }, [expensePrice, expenseQuantity]);
+    setExpenseName(expense.name);
+    setExpenseQuantity(expense.quantity);
+    setExpensePrice(expense.price.toString());
+  }, []);
 
   return (
-    <View
-      style={{
-        ...styles.mainContainer,
-        flex: 1
-      }}
-    >
+    <View style={styles.formContainer}>
 
-      {/* Calculated display */}
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "center",
-          alignItems: "center"
-        }}
-      >
-        <Text variant="headlineLarge">{convertNumberToCurrencyString(expensePriceDisplay, settings.currencyCode)}</Text>
-        <Text variant="headlineSmall" style={{ color: "gray" }}>{" "}x{" "}</Text>
-        <Text variant="headlineLarge">{expenseQuantityDisplay}</Text>
-        <Text variant="headlineSmall" style={{ color: "gray" }}>{" = "}</Text>
-        <Text variant="headlineLarge">{convertNumberToCurrencyString(expenseTotalDisplay)}</Text>
+      {/* Expense Name field */}
+      <View style={styles.inputGroup}>
+        <Text variant="bodyLarge" style={styles.inputLabel}>
+          Name <Text style={styles.requiredAsterisk}>*</Text>
+        </Text>
+        <TextField
+          mode="outlined"
+          style={styles.textInput}
+          placeholder="e.g., Grocery Item"
+          value={expenseName}
+          onChangeText={(e) => setExpenseName(e)}
+        />
       </View>
 
-      {/* Expense name input */}
-      <View style={styles.formContainer}>
-        <View style={styles.inputContainer}>
-          <Text variant="bodyLarge">
-            Name{" "}
-          </Text>
-          <TextField
-            mode="flat"
-            placeholder="e.g, Jeepney fare"
-            value={expenseName}
-            onChangeText={(e) => setExpenseName(e)}
-          />
-        </View>
-
-        {/* Expense quantity input */}
-        <View style={styles.inputContainer}>
-          <Text variant="bodyLarge">
-            Quantity{" "}
-            <Text variant="bodyLarge" style={{ color: "red" }}>*</Text>
-          </Text>
+      {/* Expense Quantity field */}
+      <View style={styles.inputGroup}>
+        <Text variant="bodyLarge" style={styles.inputLabel}>
+          Quantity <Text style={styles.requiredAsterisk}>*</Text>
+        </Text>
+        <View style={styles.spinnerContainer}>
           <InputSpinner
-            min={0}
+            min={1}
             max={100}
-            fontSize={20}
+            fontSize={18}
             skin="round"
+            colorMax={theme.colors.error}
             colorMin={theme.colors.primary}
-            colorMax={theme.colors.primary}
+            background={theme.colors.surface}
+            textColor={theme.colors.onSurface}
             value={expenseQuantity}
             onChange={(e: number) => setExpenseQuantity(e)}
             onSubmit={() => priceTextInputRef.current?.focus()}
-            style={{ elevation: 0, shadowOpacity: 0 }}
+            style={{ elevation: 0, shadowOpacity: 0, width: "100%" }}
           />
-        </View>
-
-        {/* Expense price input */}
-        <View style={styles.inputContainer}>
-          <Text variant="bodyLarge">
-            Price{" "}
-            <Text variant="bodyLarge" style={{ color: "red" }}>*</Text>
-          </Text>
-          <TextField
-            ref={priceTextInputRef}
-            mode="flat"
-            placeholder="e.g, 67.25"
-            keyboardType="numeric"
-            value={expensePrice}
-            onChangeText={(e) => setExpensePrice(e)}
-          />
-        </View>
-        
-        {/* Form buttons */}
-        <View style={{ gap: 8 }}>
-          <Button
-            mode="contained"
-            labelStyle={{ fontSize: 16 }}
-            onPress={saveButtonOnPress}
-          >
-            Save
-          </Button>
-
-          <Button
-            mode="contained-tonal"
-            labelStyle={{ fontSize: 16 }}
-            onPress={toggleModalButtonOnPress}
-          >
-            Details
-          </Button>
         </View>
       </View>
 
-      <View style={{ marginTop: "auto" }}>
-        <HorizontalLineWithTitle
-          label="Danger"
-          color="#ef4444"
-          style={{ marginBlock: 14 }}
+      {/* Expense Price field */}
+      <View style={styles.inputGroup}>
+        <Text variant="bodyLarge" style={styles.inputLabel}>
+          Price <Text style={styles.requiredAsterisk}>*</Text>
+        </Text>
+        <TextField
+          ref={priceTextInputRef}
+          mode="outlined"
+          style={styles.textInput}
+          placeholder="e.g., 150.00"
+          keyboardType="numeric"
+          value={expensePrice}
+          onChangeText={(e) => setExpensePrice(e)}
         />
+      </View>
+
+      {/* Main Form Actions */}
+      <View style={styles.buttonGroup}>
+        <Button
+          mode="contained"
+          style={styles.formButton}
+          labelStyle={{ fontSize: 16, fontWeight: "600" }}
+          onPress={saveButtonOnPress}
+        >
+          Save Changes
+        </Button>
 
         <Button
-          labelStyle={{ fontSize: 16 }}
-          onPress={deleteButtonOnPress}
+          mode="contained-tonal"
+          style={styles.formButton}
+          labelStyle={{ fontSize: 16, fontWeight: "600" }}
+          onPress={toggleModalButtonOnPress}
         >
-          Delete
+          View Details
         </Button>
       </View>
 
-      {/* Information modal */}
+      {/* Danger Zone Separation */}
+      <View style={styles.dangerSection}>
+        <HorizontalLineWithTitle
+          label="Danger Zone"
+          color={theme.colors.error}
+          style={{ marginVertical: 14 }}
+        />
+        <Button
+          mode="outlined"
+          style={styles.dangerButton}
+          labelStyle={styles.dangerButtonLabel}
+          onPress={deleteButtonOnPress}
+        >
+          Delete Expense
+        </Button>
+      </View>
+
+      {/* Structured Info Portal Sheet */}
       <Portal>
-        <Modal visible={detailsModal} style={{ margin: 24 }}>
-          <View style={styles.informationContainer}>
-            <Text variant="headlineSmall">Details</Text>
-            <Text variant="bodyLarge">Category: {expense.category.name}</Text>
-            <Text variant="bodyLarge">Created at {convertDateToDateString(new Date(expense.createdAt))}</Text>
-            <Text variant="bodyLarge">Updated at {convertDateToDateString(new Date(expense.updatedAt))}</Text>
-            <Button onPress={toggleModalButtonOnPress}>Close</Button>
+        <Modal visible={detailsModal} style={styles.modalBackdrop}>
+          <View style={styles.modalContent}>
+            <Text variant="headlineSmall" style={styles.modalTitle}>Expense Details</Text>
+
+            <View style={{ gap: 8, marginVertical: 4 }}>
+              <View style={styles.detailsRow}>
+                <Text variant="bodyMedium" style={styles.detailsLabel}>Category context</Text>
+                <Text variant="bodyMedium" style={styles.detailsValue}>{expense.category.name}</Text>
+              </View>
+              <View style={styles.detailsRow}>
+                <Text variant="bodyMedium" style={styles.detailsLabel}>Created stamp</Text>
+                <Text variant="bodyMedium" style={styles.detailsValue}>
+                  {convertDateToDateString(new Date(expense.createdAt))}
+                </Text>
+              </View>
+              <View style={styles.detailsRow}>
+                <Text variant="bodyMedium" style={styles.detailsLabel}>Last modified</Text>
+                <Text variant="bodyMedium" style={styles.detailsValue}>
+                  {convertDateToDateString(new Date(expense.updatedAt))}
+                </Text>
+              </View>
+            </View>
+
+            <Button
+              mode="contained-tonal"
+              style={styles.modalActionButton}
+              onPress={toggleModalButtonOnPress}
+            >
+              Close
+            </Button>
           </View>
         </Modal>
       </Portal>
 
     </View>
-  )
+  );
 }
-
-const styles = StyleSheet.create({
-  mainContainer: {
-    ...containers.main,
-  },
-  inputContainer: {
-    gap: 8
-  },
-  informationContainer: {
-    gap: 10,
-    backgroundColor: "#e5e7eb",
-    padding: 24,
-    borderRadius: 8
-  },
-  formContainer: {
-    gap: 14
-  }
-});

@@ -1,16 +1,16 @@
 import { Alert, View } from "react-native";
-import { Button, Text, TextInput } from "react-native-paper";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
-
-import { containers } from "../../styles/containers";
-import { RootParamStackList } from "../../types/navigation.types";
 import { useEffect, useState } from "react";
+
+import { RootParamStackList } from "../../types/navigation.types";
 import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { useBudgetStore } from "../../hooks/useBudgetStore";
 import { validateAddBudgetForm } from "../../utils/validators";
 import { convertNumberToCurrencyString } from "../../utils/converters";
 import HorizontalLineWithTitle from "../../components/HorizontalLineWithTitle";
+import { getCategoryDetailStyles } from "../../styles/theme";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategorySetBudget">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategorySetBudget">;
@@ -26,6 +26,9 @@ export default function CategorySetBudgetScreen({ route }: RouteProps) {
   const setBudget = useBudgetStore((state) => state.setBudget);
   const deleteBudget = useBudgetStore((state) => state.deleteBudget);
 
+  const theme = useTheme();
+  const styles = getCategoryDetailStyles(theme);
+
   // States
   const [budgetAmount, setBudgetAmount] = useState("");
   const [hasBudget, setHasBudget] = useState(false);
@@ -40,14 +43,8 @@ export default function CategorySetBudgetScreen({ route }: RouteProps) {
         "Category not found",
         "Would you like to create it?",
         [
-          {
-            text: "Yes",
-            onPress: () => navigation.navigate("AddCategory")
-          },
-          {
-            text: "No",
-            style: "cancel"
-          }
+          { text: "Yes", onPress: () => navigation.navigate("AddCategory") },
+          { text: "No", style: "cancel" }
         ]
       );
       return;
@@ -78,10 +75,7 @@ export default function CategorySetBudgetScreen({ route }: RouteProps) {
             navigation.goBack();
           }
         },
-        {
-          text: "No",
-          style: "cancel"
-        }
+        { text: "No", style: "cancel" }
       ]
     );
   }
@@ -96,56 +90,49 @@ export default function CategorySetBudgetScreen({ route }: RouteProps) {
   }, []);
 
   return (
-    <View
-      style={{
-        ...containers.main,
-        flex: 1
-      }}
-    >
-
-      {/* Budget form */}
-      <View style={{ gap: 8 }}>
-        <Text variant="bodyLarge">
-          Amount{" "}
-          <Text variant="bodyLarge" style={{ color: "red" }}>*</Text>
+    <View style={styles.formContainer}>
+      <View style={styles.inputGroup}>
+        <Text variant="bodyLarge" style={styles.inputLabel}>
+          Amount <Text style={{ color: theme.colors.error }}>*</Text>
         </Text>
         <TextInput
           value={budgetAmount}
+          mode="outlined"
+          style={styles.textInput}
           onChangeText={(e) => setBudgetAmount(e)}
           keyboardType="numeric"
           placeholder="e.g, 76.25"
         />
       </View>
 
-      <View style={{ gap: 8 }}>
-        <Button
-          mode="contained"
-          onPress={saveButtonOnPress}
-          labelStyle={{ fontSize: 16 }}
-        >
-          Save
-        </Button>
-      </View>
+      <Button
+        mode="contained"
+        style={styles.formButton}
+        labelStyle={{ fontSize: 16, fontWeight: "600" }}
+        onPress={saveButtonOnPress}
+      >
+        Save Limits
+      </Button>
 
-      {/* Danger button */}
-      <View style={{ marginTop: "auto" }}>
+      <View style={styles.dangerSection}>
         {hasBudget && (
           <>
             <HorizontalLineWithTitle
-              label="Danger"
-              color="#ef4444"
-              style={{ marginBlock: 14 }}
+              label="Danger Zone"
+              color={theme.colors.error}
+              style={{ marginVertical: 14 }}
             />
             <Button
+              mode="outlined"
+              style={styles.dangerButton}
+              labelStyle={styles.dangerButtonLabel}
               onPress={deleteButtonOnPress}
-              labelStyle={{ fontSize: 16 }}
             >
-              Delete
+              Remove Budget
             </Button>
           </>
         )}
       </View>
-
     </View>
-  )
+  );
 }

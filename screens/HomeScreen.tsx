@@ -1,11 +1,10 @@
-import { FlatList, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useEffect, useState } from "react";
-import { Button, List, ProgressBar, Text } from "react-native-paper";
-import { ChevronRight } from "lucide-react-native";
+import { Button, List, ProgressBar, Text, useTheme } from "react-native-paper";
+import { ChevronRight, TrendingUp, Wallet, Layers } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import { containers } from "../styles/containers";
 import { useCategoryStore } from "../hooks/useCategoryStore";
 import { useExpenseStore } from "../hooks/useExpenseStore";
 import { useBudgetStore } from "../hooks/useBudgetStore";
@@ -14,6 +13,7 @@ import { useSettingsStore } from "../hooks/useSettingsStore";
 import { Category, Expense } from "../types/data.types";
 import { sortBudget, sortCategories, sortExpenses } from "../utils/sorters";
 import { RootParamStackList } from "../types/navigation.types";
+import { getHomeStyles } from "../styles/theme";
 
 type BudgetProgress = {
   category: Category;
@@ -30,6 +30,10 @@ export default function HomeScreen() {
   const budgets = useBudgetStore((state) => state.budgets);
   const settings = useSettingsStore((state) => state.settings);
 
+  // Access the dynamic Paper theme context
+  const theme = useTheme();
+  const styles = getHomeStyles(theme);
+
   // States
   const [totalExpenses, setTotalExpenses] = useState(0);
   const [totalExpensePercentage, setTotalExpensePercentage] = useState(0);
@@ -39,12 +43,11 @@ export default function HomeScreen() {
   const [recentExpenses, setRecentExpenses] = useState<Expense[]>([]);
 
   // ========== Use effects ==========
-  // Get total expenses and category progress
   useEffect(() => {
     const tempTotalExpenses = expenses.reduce((prev, curr) => prev + (curr.price * curr.quantity), 0);
     const totalBudget = budgets.reduce((prev, curr) => prev + curr.amount, 0);
-    const tempTotalExpensePercentage = totalBudget === 0 ? 0 :(tempTotalExpenses / totalBudget) * 100;
-    
+    const tempTotalExpensePercentage = totalBudget === 0 ? 0 : (tempTotalExpenses / totalBudget) * 100;
+
     setTotalExpenses(tempTotalExpenses);
     setTotalExpensePercentage(tempTotalExpensePercentage);
 
@@ -67,7 +70,6 @@ export default function HomeScreen() {
     }
   }, [expenses, budgets]);
 
-  // Get recent categories
   useEffect(() => {
     const sortedCategories = sortCategories(categories, "createdAt", "descending");
     sortedCategories.splice(5);
@@ -75,7 +77,6 @@ export default function HomeScreen() {
     setRecentCategories(sortedCategories);
   }, [categories]);
 
-  // Get recent expenses
   useEffect(() => {
     const sortedExpenses = sortExpenses(expenses, "createdAt", "descending");
     sortedExpenses.splice(5);
@@ -84,107 +85,155 @@ export default function HomeScreen() {
   }, [expenses]);
 
   return (
-    <ScrollView>
-      <View style={{
-        ...containers.main,
-        gap: 20
-      }}>
+    <ScrollView
+      style={styles.screenBackground}
+      contentContainerStyle={styles.scrollContainer}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.mainContainer}>
 
-        {/* Total spent */}
-        <View style={{ gap: 12, }}>
-          <Text
-            variant="titleMedium"
-            style={{ textAlign: "center" }}
-          >
+        {/* Hero Card: Total Spent */}
+        <View style={styles.heroCard}>
+          <View style={styles.heroGlassOverlay} />
+          <Text variant="labelMedium" style={styles.heroLabel}>
             TOTAL SPEND
           </Text>
-          <Text
-            variant="displayLarge"
-            style={{ textAlign: "center", color: "#16a34a" }}
-          >
+          <Text variant="displayMedium" style={styles.heroAmount}>
             {convertNumberToCurrencyString(totalExpenses, settings.currencyCode)}
           </Text>
-          <Text
-            variant="bodyLarge"
-            style={{ textAlign: "center" }}
-          >
-            "You've used{" "}{convertNumberToPercentageString(totalExpensePercentage)}{" "}of budget"
-          </Text>
+          <View style={styles.pillBadge}>
+            <TrendingUp size={14} color={theme.colors.primary} style={{ marginRight: 4 }} />
+            <Text variant="bodySmall" style={styles.pillText}>
+              Used {convertNumberToPercentageString(totalExpensePercentage)} of budget
+            </Text>
+          </View>
         </View>
 
-        {/* Budget progress bar */}
-        <View>
-          <Text variant="titleMedium" style={{ marginBottom: 8 }}>Budget Progress</Text>
-          {budgetProgress && budgetProgress.map((item, index) => (
-            <View
-              key={`budget-progress-item-${index}`}
-              style={{
-                gap: 6,
-                padding: 12,
-                borderRadius: 8
-              }}
-            >
-              <Text variant="bodyLarge">{item.category.name}</Text>
-              <ProgressBar
-                progress={item.progress}
-                style={{ height: 12, borderRadius: 8, backgroundColor: "white" }}
-              />
+        {/* Section: Budget Progress Bar */}
+        <View style={styles.sectionContainer}>
+          <Text variant="titleMedium" style={styles.sectionTitle}>Budget Progress</Text>
+
+          {budgetProgress && budgetProgress.length > 0 ? (
+            <View style={styles.glassCard}>
+              {budgetProgress.map((item, index) => (
+                <View key={`budget-progress-item-${index}`} style={styles.progressItemRow}>
+                  <View style={styles.progressHeaderRow}>
+                    <Text variant="bodyMedium" style={styles.itemTitleText}>{item.category.name}</Text>
+                    <Text variant="bodySmall" style={styles.mutedText}>
+                      {Math.min(Math.round(item.progress * 100), 100)}%
+                    </Text>
+                  </View>
+                  <ProgressBar
+                    progress={Math.min(item.progress, 1)}
+                    color={item.progress > 0.9 ? theme.colors.error : theme.colors.primary}
+                    style={styles.progressBarLine}
+                  />
+                </View>
+              ))}
             </View>
-          ))}
-          {budgetProgress.length < 1 ? (
-            <Button onPress={() => navigation.navigate("Tabs", { screen: "Categories" })}>
-              Set up your category budget to see where your money goes.
+          ) : null}
+
+          {budgetProgress.length < 1 && (
+            <Button
+              mode="contained-tonal"
+              style={styles.iosActionButton}
+              labelStyle={styles.iosActionLabel}
+              onPress={() => navigation.navigate("Tabs", { screen: "Categories" })}
+            >
+              Set up your category budget
             </Button>
-          ) : (<></>)}
+          )}
         </View>
 
-        {/* Recent categories */}
-        <View>
-          <Text variant="titleMedium" style={{ marginBottom: 8 }}>Recent Categories</Text>
-          {recentCategories && recentCategories.map((item, index) => (
-            <List.Item
-              key={`recent-category-${index}`}
-              title={item.name}
-              description={convertDateToDateString(new Date(item.createdAt))}
-              right={(props) => (
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "flex-end" }}>
-                  <ChevronRight color={props.color} size={22} />
+        {/* Section: Recent Categories */}
+        <View style={styles.sectionContainer}>
+          <Text variant="titleMedium" style={styles.sectionTitle}>Recent Categories</Text>
+
+          {recentCategories && recentCategories.length > 0 ? (
+            <View style={styles.glassCardList}>
+              {recentCategories.map((item, index) => (
+                <View key={`recent-category-${index}`}>
+                  <List.Item
+                    title={item.name}
+                    description={convertDateToDateString(new Date(item.createdAt))}
+                    titleStyle={styles.itemTitleText}
+                    descriptionStyle={styles.itemDescriptionText}
+                    left={() => (
+                      <View style={styles.iconWrapper}>
+                        <Layers size={20} color={theme.colors.primary} />
+                      </View>
+                    )}
+                    right={() => (
+                      <View style={styles.chevronWrapper}>
+                        <ChevronRight color={theme.colors.onSurfaceVariant} size={20} />
+                      </View>
+                    )}
+                    onPress={() => navigation.navigate("Category", item)}
+                    style={styles.listItemStyle}
+                  />
+                  {index < recentCategories.length - 1 && <View style={styles.listSeparator} />}
                 </View>
-              )}
-              onPress={() => navigation.navigate("Category", item)}
-            />
-          ))}
-          {categories.length < 1 ? (
-            <Button onPress={() => navigation.navigate("AddCategory")}>
-              Create your first category to get started.
+              ))}
+            </View>
+          ) : null}
+
+          {categories.length < 1 && (
+            <Button
+              mode="contained-tonal"
+              style={styles.iosActionButton}
+              labelStyle={styles.iosActionLabel}
+              onPress={() => navigation.navigate("AddCategory")}
+            >
+              Create your first category
             </Button>
-          ) : (<></>)}
+          )}
         </View>
 
-        {/* Recent expenses */}
-        <View>
-          <Text variant="titleMedium" style={{ marginBottom: 8 }}>Recent Expenses</Text>
-          {recentExpenses && recentExpenses.map((item, index) => (
-            <List.Item
-              key={`recent-expenses-${index}`}
-              title={item.name}
-              description={convertDateToDateString(new Date(item.createdAt))}
-              right={(props) => (
-                <View style={{ flex: 1, justifyContent: "center", alignItems: "flex-end" }}>
-                  <ChevronRight color={props.color} size={22} />
+        {/* Section: Recent Expenses */}
+        <View style={styles.sectionContainer}>
+          <Text variant="titleMedium" style={styles.sectionTitle}>Recent Expenses</Text>
+
+          {recentExpenses && recentExpenses.length > 0 ? (
+            <View style={styles.glassCardList}>
+              {recentExpenses.map((item, index) => (
+                <View key={`recent-expenses-${index}`}>
+                  <List.Item
+                    title={item.name}
+                    description={convertDateToDateString(new Date(item.createdAt))}
+                    titleStyle={styles.itemTitleText}
+                    descriptionStyle={styles.itemDescriptionText}
+                    left={() => (
+                      <View style={[styles.iconWrapper, { backgroundColor: theme.colors.surfaceVariant }]}>
+                        <Wallet size={20} color={theme.colors.primary} />
+                      </View>
+                    )}
+                    right={() => (
+                      <View style={styles.chevronWrapper}>
+                        <ChevronRight color={theme.colors.onSurfaceVariant} size={20} />
+                      </View>
+                    )}
+                    onPress={() => navigation.navigate("Category", item)}
+                    style={styles.listItemStyle}
+                  />
+                  {index < recentExpenses.length - 1 && <View style={styles.listSeparator} />}
                 </View>
-              )}
-              onPress={() => navigation.navigate("Category", item)}
-            />
-          ))}
-          {expenses.length < 1 ? (
-            <Button onPress={() => navigation.navigate("Tabs", { screen: "Categories" })}>
-              Log your first expense to see your recent activity.
+              ))}
+            </View>
+          ) : null}
+
+          {expenses.length < 1 && (
+            <Button
+              mode="contained-tonal"
+              style={styles.iosActionButton}
+              labelStyle={styles.iosActionLabel}
+              onPress={() => navigation.navigate("Tabs", { screen: "Categories" })}
+            >
+              Log your first expense
             </Button>
-          ) : (<></>)}
+          )}
         </View>
 
       </View>
     </ScrollView>
-  )
+  );
 }
