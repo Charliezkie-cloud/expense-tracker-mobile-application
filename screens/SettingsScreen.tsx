@@ -1,9 +1,10 @@
-import { Alert, View } from "react-native";
+import { Alert, Linking, StyleSheet, Touchable, TouchableOpacity, View } from "react-native";
 import { Button, Text } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { logger } from "react-native-logs";
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 import { containers } from "../styles/containers";
 import { useSettingsStore } from "../hooks/useSettingsStore";
@@ -11,6 +12,29 @@ import { CurrencyCode } from "../types/data.types";
 import { useCategoryStore } from "../hooks/useCategoryStore";
 import { useExpenseStore } from "../hooks/useExpenseStore";
 import { useBudgetStore } from "../hooks/useBudgetStore";
+
+const socials = [
+  {
+    title: "Facebook",
+    icon: "facebook",
+    url: "https://www.facebook.com/Charlzk05"
+  },
+  {
+    title: "Instagram",
+    icon: "instagram",
+    url: "https://www.instagram.com/charlzk_"
+  },
+  {
+    title: "Github",
+    icon: "github",
+    url: "https://github.com/Charliezkie-cloud"
+  },
+  {
+    title: "LinkedIn",
+    icon: "linkedin",
+    url: "https://ph.linkedin.com/in/charles-henry-m-tinoy-jr-275612341"
+  },
+];
 
 export default function SettingsScreen() {
   // Log
@@ -47,6 +71,15 @@ export default function SettingsScreen() {
         }
       ]
     );
+  }
+
+  async function openLink(url: string) {
+    const supported = await Linking.canOpenURL(url);
+
+    if (supported)
+      await Linking.openURL(url);
+    else
+      log.error(`Don't know how to open this URL: ${url}`);
   }
 
   // Helpers
@@ -106,6 +139,44 @@ export default function SettingsScreen() {
         <Text variant="bodyLarge">Cache</Text>
         <Button mode="contained" onPress={clearCacheOnPress}>
           Clear Cache
+        </Button>
+      </View>
+
+      <View
+        style={{
+          padding: 12,
+          gap: 24,
+          borderWidth: StyleSheet.hairlineWidth,
+          borderColor: "gray",
+          borderRadius: 8
+        }}
+      >
+        <Text variant="titleLarge">Project Information</Text>
+
+        <View>
+          <Text variant="bodyLarge">Version: 1.0.1</Text>
+          <Text variant="bodyLarge">Developed by Charles Henry M. Tinoy Jr.</Text>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 24
+          }}
+        >
+          {socials.map(item => (
+            <TouchableOpacity onPress={() => openLink(item.url)}>
+              <FontAwesome6 key={item.title} name={item.icon} size={32} color="black" />
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        ========== CONTINUE HERE ==========
+
+        <Button onPress={() => openLink("https://github.com/Charliezkie-cloud/expense-tracker-mobile-application/issues/new")}>
+          Report an issue
         </Button>
       </View>
 
