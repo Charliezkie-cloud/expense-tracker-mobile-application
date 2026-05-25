@@ -5,7 +5,7 @@
 
 # Expense Tracker Mobile Application
 
-An fully offline basic expense tracker mobile application that allows user to track their expenses by category, set their budgets and add expenses.
+An open-source offline expense tracker application that allows users to track their expenses, such as their groceries, bills, etc., by category, set budgets, and add everyday costs.
 
 # [Download Here](https://github.com/Charliezkie-cloud/expense-tracker-mobile-application/releases)
 
