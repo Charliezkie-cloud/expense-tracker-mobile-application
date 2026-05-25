@@ -1,0 +1,40 @@
+CREATE TABLE IF NOT EXISTS "categories" (
+	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+	"name" TEXT NOT NULL,
+	"created_at" TEXT DEFAULT CURRENT_TIMESTAMP,
+	"updated_at" TEXT DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TRIGGER IF NOT EXISTS "update_categories_timestamp"
+BEFORE UPDATE ON "categories"
+BEGIN
+	UPDATE "categories"
+	SET "updated_at" = CURRENT_TIMESTAMP
+	WHERE id = OLD.id;
+END;
+
+CREATE TABLE IF NOT EXISTS "budgets" (
+	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+	"category_id" INTEGER NOT NULL UNIQUE,
+	"budget" INTEGER NOT NULL,
+	CONSTRAINT "fk_budget_category" FOREIGN KEY ("category_id") REFERENCES categories("id") ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS "expenses" (
+	"id" INTEGER PRIMARY KEY AUTOINCREMENT,
+	"category_id" INTEGER NOT NULL,
+	"name" TEXT DEFAULT CURRENT_TIMESTAMP,
+	"quantity" INTEGER NOT NULL,
+	"price" INTEGER NOT NULL,
+	"created_at" TEXT DEFAULT CURRENT_TIMESTAMP,
+	"updated_at" TEXT DEFAULT CURRENT_TIMESTAMP,
+	CONSTRAINT "fk_expense_category" FOREIGN KEY ("category_id") REFERENCES categories("id") ON DELETE CASCADE
+);
+
+CREATE TRIGGER IF NOT EXISTS "update_expenses_timestamp"
+BEFORE UPDATE ON "expenses"
+BEGIN
+	UPDATE "expenses"
+	SET "updated_at" = CURRENT_TIMESTAMP
+	WHERE id = OLD.id;
+END;

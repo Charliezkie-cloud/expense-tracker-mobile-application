@@ -1,4 +1,8 @@
 {
+  "author": {
+    "name": "Charles Henry M. Tinoy Jr.",
+    "url": "https://charlzk.vercel.app/"
+  },
   "name": "expense-tracker-mobile-application",
   "version": "1.0.0",
   "main": "index.ts",
