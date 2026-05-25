@@ -14,7 +14,9 @@
     },
     "ios": {
       "supportsTablet": true,
-      "customBuildFlags": ["-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"]
+      "customBuildFlags": [
+        "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
+      ]
     },
     "android": {
       "versionCode": 1,
@@ -51,8 +53,13 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "76ae9262-cbf2-4fdc-945d-4a6db8680b3b"
+        "projectId": "c118cf28-2440-4870-80b3-a0f34bae9cb4"
+      },
+      "expo-navigation-bar": {
+        "hidden": true,
+        "style": "light"
       }
-    }
+    },
+    "owner": "charlzk"
   }
 }
