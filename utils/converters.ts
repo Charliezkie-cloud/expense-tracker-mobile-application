@@ -44,3 +44,19 @@ export function convertNumberToCurrencyString(amount: number, currency: string =
 export function convertNumberToPercentageString(value: number): string {
   return `${value.toFixed(2)}%`;
 }
+
+/**
+ * Converts decimal number to whole number
+ * @param amount The amount to convert
+ */
+export function convertDecimalToWholeNumber(amount: number) {
+  return Math.round(amount * 100);
+}
+
+/**
+ * Converts the whole number into decimal number
+ * @param amount The amount to convert
+ */
+export function convertWholeNumberToDecimal(amount: number) {
+  return amount / 100;
+}

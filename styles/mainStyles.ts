@@ -111,7 +111,7 @@ export const getHomeStyles = (theme: MD3Theme) => StyleSheet.create({
     marginBottom: 6,
   },
   progressBarLine: {
-    height: 8,
+    height: 10,
     borderRadius: 99,
   },
   listItemStyle: {
@@ -292,6 +292,15 @@ export const getCategoryDetailStyles = (theme: MD3Theme) => StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 12,
     paddingBottom: 24,
+  },
+  iconWrapper: {
+    width: 40,
+    height: 40,
+    borderRadius: theme.roundness * 1.5,
+    backgroundColor: theme.colors.secondaryContainer,
+    justifyContent: "center",
+    alignItems: "center",
+    marginLeft: 4,
   },
   totalDisplayContainer: {
     paddingVertical: 20,

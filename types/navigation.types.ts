@@ -1,6 +1,6 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
 
-import { Category, Expense } from "./data.types";
+import { Category, Expense } from "./models.types";
 
 export type RootParamStackList = {
   Tabs: NavigatorScreenParams<TabParamStackList>;

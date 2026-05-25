@@ -1,24 +1,24 @@
-import { FlatList, View } from "react-native";
+import {Alert, FlatList, View} from "react-native";
 import { Button, List, Modal, Portal, Text, useTheme } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowUpDown, ChevronRight, Plus, Layers } from "lucide-react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
+import {useSQLiteContext} from "expo-sqlite";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { useCategoryStore } from "../../hooks/useCategoryStore";
-import { Category } from "../../types/data.types"
 import { convertDateToDateString } from "../../utils/converters";
-import { sortCategories } from "../../utils/sorters";
-import { getCategoriesStyles } from "../../styles/theme";
+import { getCategoriesStyles } from "../../styles/mainStyles";
+import { Category } from "../../types/models.types";
+import { getAllCategories } from "../../database/categoryQueries";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "AddCategory">;
 
 export default function CategoriesScreen() {
   // Hooks
+  const db = useSQLiteContext();
   const navigation = useNavigation<NavProps>();
-  const categories = useCategoryStore((state) => state.categories);
 
   // Theme & Styles
   const theme = useTheme();
@@ -27,8 +27,8 @@ export default function CategoriesScreen() {
   // States
   const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
   const [sortingModal, setSortingModal] = useState(false);
-  const [sortBySelectedItem, setSortBySelectedItem] = useState<"createdAt" | "updatedAt">("createdAt");
-  const [sortOrderSelectedItem, setSortOrderSelectedItem] = useState<"ascending" | "descending">("ascending");
+  const [sortBySelectedItem, setSortBySelectedItem] = useState<"created_at" | "updated_at">("created_at");
+  const [sortOrderSelectedItem, setSortOrderSelectedItem] = useState<"ASC" | "DESC">("ASC");
 
   // Handlers
   function addCategoryButtonOnPress() {
@@ -39,21 +39,33 @@ export default function CategoriesScreen() {
     setSortingModal(prev => !prev);
   }
 
-  function applySortingButtonOnPress() {
-    const sortedCategories = sortCategories(categories, sortBySelectedItem, sortOrderSelectedItem);
-    setFilteredCategories(sortedCategories);
-    toggleSortingModal();
+  async function applySortingButtonOnPress() {
+    try {
+      const res = await getAllCategories(db, sortBySelectedItem, sortOrderSelectedItem);
+      setFilteredCategories(res ?? []);
+      toggleSortingModal();
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong while fetching the categories.");
+    }
   }
 
   function listItemButtonOnPress(category: Category) {
-    navigation.navigate("Category", category)
+    navigation.navigate("Category", category);
   }
 
   // Use effects
   useEffect(() => {
-    const sortedCategories = sortCategories(categories, sortBySelectedItem, sortOrderSelectedItem);
-    setFilteredCategories(sortedCategories);
-  }, [categories]);
+    async function fetchAllCategories() {
+      try {
+        const res = await getAllCategories(db);
+        setFilteredCategories(res ?? []);
+      } catch (error) {
+        Alert.alert("Error", "Something went wrong while fetching the categories.");
+      }
+    }
+
+    fetchAllCategories();
+  }, []);
 
   return (
     <View style={styles.mainContainer}>
@@ -86,8 +98,8 @@ export default function CategoriesScreen() {
                   selectedValue={sortBySelectedItem}
                   onValueChange={(e) => setSortBySelectedItem(e)}
                 >
-                  <Picker.Item label="Creation Date & Time" value="createdAt" />
-                  <Picker.Item label="Updation Date & Time" value="updatedAt" />
+                  <Picker.Item label="Creation Date & Time" value="created_at" />
+                  <Picker.Item label="Updation Date & Time" value="updated_at" />
                 </Picker>
               </View>
             </View>
@@ -101,8 +113,8 @@ export default function CategoriesScreen() {
                   selectedValue={sortOrderSelectedItem}
                   onValueChange={(e) => setSortOrderSelectedItem(e)}
                 >
-                  <Picker.Item label="Ascending" value="ascending" />
-                  <Picker.Item label="Descending" value="descending" />
+                  <Picker.Item label="Ascending" value="ASC" />
+                  <Picker.Item label="Descending" value="DESC" />
                 </Picker>
               </View>
             </View>
@@ -139,7 +151,7 @@ export default function CategoriesScreen() {
             renderItem={({ item }) => (
               <List.Item
                 title={item.name}
-                description={convertDateToDateString(new Date(item.updatedAt))}
+                description={convertDateToDateString(new Date(item.updated_at))}
                 titleStyle={styles.itemTitleText}
                 descriptionStyle={styles.itemDescriptionText}
                 left={() => (

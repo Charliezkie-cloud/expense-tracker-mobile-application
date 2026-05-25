@@ -54,3 +54,5 @@ export const themeSchemes: Record<ThemeMode, MD3Theme> = {
     roundness: 6,
   },
 };
+
+export type themeKey = keyof typeof themeSchemes;

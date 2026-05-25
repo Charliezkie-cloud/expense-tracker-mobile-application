@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expense-tracker-mobile-application",
-    "slug": "expense-tracker-mobile-application",
+    "name": "Expense Tracker",
+    "slug": "expense-tracker",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -35,8 +35,15 @@
         "expo-build-properties",
         {
           "android": {
-            "AsyncStorage_db_size_in_MB": 100
+            "AsyncStorage_db_size_in_MB": 50
           }
+        }
+      ],
+      [
+        "expo-navigation-bar",
+        {
+          "hidden": true,
+          "style": "light"
         }
       ],
       "expo-sqlite"

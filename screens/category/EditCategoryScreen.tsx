@@ -1,17 +1,15 @@
-import { Alert, View } from "react-native";
+import {Alert, View} from "react-native";
 import { Button, Modal, Portal, Text, TextInput, useTheme } from "react-native-paper";
-import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
-import { useNavigation } from "@react-navigation/native";
+import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { validateAddCategoryForm } from "../../utils/validators";
-import { useCategoryStore } from "../../hooks/useCategoryStore";
 import { convertDateToDateString } from "../../utils/converters";
-import { useExpenseStore } from "../../hooks/useExpenseStore";
-import { useBudgetStore } from "../../hooks/useBudgetStore";
-import HorizontalLineWithTitle from "../../components/HorizontalLineWithTitle";
-import { getCategoryDetailStyles } from "../../styles/theme";
+import HorizontalLine from "../../components/HorizontalLine";
+import { getCategoryDetailStyles } from "../../styles/mainStyles";
+import {useSQLiteContext} from "expo-sqlite";
+import {useNavigation} from "@react-navigation/native";
+import {deleteCategory, updateCategory} from "../../database/categoryQueries";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditCategory">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
@@ -21,12 +19,8 @@ export default function EditCategoryScreen({ route }: RouteProps) {
   const category = route.params;
 
   // Hooks
+  const db = useSQLiteContext();
   const navigation = useNavigation<NavProps>();
-  const updateCategory = useCategoryStore((state) => state.updateCategory);
-  const deleteCategory = useCategoryStore((state) => state.deleteCategory);
-  const deleteCategoryExpenses = useExpenseStore((state) => state.deleteCategoryExpenses);
-  const deleteBudget = useBudgetStore((state) => state.deleteBudget);
-
   const theme = useTheme();
   const styles = getCategoryDetailStyles(theme);
 
@@ -35,40 +29,32 @@ export default function EditCategoryScreen({ route }: RouteProps) {
   const [detailsModal, setDetailsModal] = useState(false);
 
   // Handlers
-  function saveButtonOnPress() {
-    const validationMessage = validateAddCategoryForm(categoryName);
+  async function saveButtonOnPress() {
+    try {
+      await updateCategory(db, {
+        name: categoryName.trim(),
+        id: category.id
+      });
 
-    if (typeof validationMessage === "string") {
-      Alert.alert("Error", validationMessage);
-      return;
+      navigation.navigate("Tabs", {
+        screen: "Categories"
+      });
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong while updating the category.");
     }
-
-    updateCategory(category.id, categoryName);
-    Alert.alert("Success", "You've successfully updated the category.");
-    navigation.navigate("Tabs", { screen: "Categories" });
   }
 
   function toggleModalButtonOnPress() {
     setDetailsModal(prev => !prev);
   }
 
-  function deleteButtonOnPress() {
-    Alert.alert(
-      "Deletion Confirmation",
-      "Are you sure you want to delete this category? this action can't be undone.",
-      [
-        {
-          text: "Yes",
-          onPress: () => {
-            deleteBudget(category);
-            deleteCategoryExpenses(category.id);
-            deleteCategory(category.id);
-            navigation.navigate("Tabs", { screen: "Categories" });
-          }
-        },
-        { text: "No", style: "cancel" }
-      ]
-    );
+  async function deleteButtonOnPress() {
+    try {
+      await deleteCategory(db, category.id);
+      navigation.navigate("Tabs", { screen: "Categories" });
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong while deleting the category.");
+    }
   }
 
   // Use effects
@@ -112,7 +98,7 @@ export default function EditCategoryScreen({ route }: RouteProps) {
       </View>
 
       <View style={styles.dangerSection}>
-        <HorizontalLineWithTitle
+        <HorizontalLine
           label="Danger Zone"
           color={theme.colors.error}
           style={{ marginVertical: 14 }}
@@ -136,19 +122,19 @@ export default function EditCategoryScreen({ route }: RouteProps) {
             
             <View style={{ gap: 8, marginVertical: 4 }}>
               <View style={styles.detailsRow}>
-                <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>Identity</Text>
+                <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>Name</Text>
                 <Text variant="bodyMedium" style={{ fontWeight: "600" }}>{category.name}</Text>
               </View>
               <View style={styles.detailsRow}>
                 <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>Created</Text>
                 <Text variant="bodyMedium" style={{ fontWeight: "600" }}>
-                  {convertDateToDateString(new Date(category.createdAt))}
+                  {convertDateToDateString(new Date(category.created_at))}
                 </Text>
               </View>
               <View style={styles.detailsRow}>
                 <Text variant="bodyMedium" style={{ color: theme.colors.onSurfaceVariant }}>Modified</Text>
                 <Text variant="bodyMedium" style={{ fontWeight: "600" }}>
-                  {convertDateToDateString(new Date(category.updatedAt))}
+                  {convertDateToDateString(new Date(category.updated_at))}
                 </Text>
               </View>
             </View>

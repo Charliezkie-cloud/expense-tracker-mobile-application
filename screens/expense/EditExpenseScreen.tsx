@@ -1,18 +1,18 @@
-import { useNavigation } from "@react-navigation/native";
-import { Alert, StyleSheet, TextInput, View } from "react-native";
+import {Alert, TextInput, View} from "react-native";
 import { Button, Modal, Portal, Text, TextInput as TextField, useTheme } from "react-native-paper";
-import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
+import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
 import { useEffect, useRef, useState } from "react";
 import InputSpinner from "react-native-input-spinner";
+import {useSQLiteContext} from "expo-sqlite";
+import {useNavigation} from "@react-navigation/native";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { convertDateToDateString } from "../../utils/converters";
-import { validateEditExpenseForm } from "../../utils/validators";
-import { useExpenseStore } from "../../hooks/useExpenseStore";
-import { useCategoryStore } from "../../hooks/useCategoryStore";
-import { useSettingsStore } from "../../hooks/useSettingsStore";
-import HorizontalLineWithTitle from "../../components/HorizontalLineWithTitle";
-import { getExpenseStyles } from "../../styles/theme";
+import { convertDateToDateString, convertDecimalToWholeNumber, convertWholeNumberToDecimal } from "../../utils/converters";
+import HorizontalLine from "../../components/HorizontalLine";
+import { getExpenseStyles } from "../../styles/mainStyles";
+import {deleteExpense, getExpenseCategory, updateExpense} from "../../database/expenseQueries";
+import {validateEditExpenseForm} from "../../utils/validators";
+import {Category} from "../../types/models.types";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "EditExpense">;
@@ -22,17 +22,13 @@ export default function EditExpenseScreen({ route }: RouteProps) {
   const expense = route.params;
 
   // Hooks
+  const db = useSQLiteContext();
   const navigation = useNavigation<NavProps>();
-  const categories = useCategoryStore((state) => state.categories);
-  const updateExpense = useExpenseStore((state) => state.updateExpense);
-  const deleteExpense = useExpenseStore((state) => state.deleteExpense);
-  const settings = useSettingsStore((state) => state.settings);
-
-  // Theme & Style Hook
   const theme = useTheme();
   const styles = getExpenseStyles(theme);
 
   // States
+  const [expenseCategory, setExpenseCategory] = useState<Category | null>(null);
   const [expenseName, setExpenseName] = useState("");
   const [expenseQuantity, setExpenseQuantity] = useState(0);
   const [expensePrice, setExpensePrice] = useState("");
@@ -46,54 +42,56 @@ export default function EditExpenseScreen({ route }: RouteProps) {
     setDetailsModal(prev => !prev);
   }
 
-  function saveButtonOnPress() {
-    const categoryExists = categories.some(e => e.id === expense.category.id);
-
-    if (!categoryExists) {
-      Alert.alert("Category not found", "The category assigned to this expense cannot be resolved.");
-      return;
-    }
-
+  async function saveButtonOnPress() {
     const validationMessage = validateEditExpenseForm(expenseQuantity, expensePrice);
-
-    if (typeof validationMessage === "string") {
-      Alert.alert("Error", validationMessage);
-      return;
-    }
+    if (typeof validationMessage === "string")
+      return Alert.alert("Error", validationMessage);
 
     const parsedPrice = Number.parseFloat(expensePrice);
+    const convertedPrice = convertDecimalToWholeNumber(parsedPrice);
 
-    if (expenseName)
-      updateExpense(expense.id, expenseQuantity, parsedPrice, expenseName);
-    else
-      updateExpense(expense.id, expenseQuantity, parsedPrice);
-
-    Alert.alert("Success", "Expense updated successfully.");
-    navigation.goBack();
+    try {
+      await updateExpense(db, {
+        id: expense.id,
+        name: expenseName.trim(),
+        quantity: expenseQuantity,
+        price: convertedPrice
+      });
+      navigation.goBack();
+    } catch {
+      Alert.alert("Error", "Something went wrong while updating the expense.");
+    }
   }
 
-  function deleteButtonOnPress() {
-    Alert.alert(
-      "Deletion Confirmation",
-      "Are you sure you want to completely drop this entry? This action cannot be reverted.",
-      [
-        {
-          text: "Yes",
-          onPress: () => {
-            deleteExpense(expense.id);
-            navigation.goBack();
-          }
-        },
-        { text: "No", style: "cancel" }
-      ]
-    );
+  async function deleteButtonOnPress() {
+    try {
+      await deleteExpense(db, expense.id);
+      navigation.goBack();
+    } catch {
+      Alert.alert("Error", "Something went wrong while deleting the expense.");
+    }
   }
 
   // Use effects
   useEffect(() => {
     setExpenseName(expense.name);
     setExpenseQuantity(expense.quantity);
-    setExpensePrice(expense.price.toString());
+    setExpensePrice(convertWholeNumberToDecimal(expense.price).toString());
+  }, []);
+
+  useEffect(() => {
+    async function fetchExpenseCategoryDetails() {
+      try {
+        const res = await getExpenseCategory(db, expense.id);
+
+        if (res)
+          setExpenseCategory(res);
+      } catch {
+        Alert.alert("Error", "Something went wrong while fetching the expense category details.");
+      }
+    }
+
+    fetchExpenseCategoryDetails();
   }, []);
 
   return (
@@ -175,7 +173,7 @@ export default function EditExpenseScreen({ route }: RouteProps) {
 
       {/* Danger Zone Separation */}
       <View style={styles.dangerSection}>
-        <HorizontalLineWithTitle
+        <HorizontalLine
           label="Danger Zone"
           color={theme.colors.error}
           style={{ marginVertical: 14 }}
@@ -198,19 +196,19 @@ export default function EditExpenseScreen({ route }: RouteProps) {
 
             <View style={{ gap: 8, marginVertical: 4 }}>
               <View style={styles.detailsRow}>
-                <Text variant="bodyMedium" style={styles.detailsLabel}>Category context</Text>
-                <Text variant="bodyMedium" style={styles.detailsValue}>{expense.category.name}</Text>
+                <Text variant="bodyMedium" style={styles.detailsLabel}>Category</Text>
+                <Text variant="bodyMedium" style={styles.detailsValue}>{expenseCategory?.name}</Text>
               </View>
               <View style={styles.detailsRow}>
                 <Text variant="bodyMedium" style={styles.detailsLabel}>Created stamp</Text>
                 <Text variant="bodyMedium" style={styles.detailsValue}>
-                  {convertDateToDateString(new Date(expense.createdAt))}
+                  {convertDateToDateString(new Date(expense.created_at))}
                 </Text>
               </View>
               <View style={styles.detailsRow}>
                 <Text variant="bodyMedium" style={styles.detailsLabel}>Last modified</Text>
                 <Text variant="bodyMedium" style={styles.detailsValue}>
-                  {convertDateToDateString(new Date(expense.updatedAt))}
+                  {convertDateToDateString(new Date(expense.updated_at))}
                 </Text>
               </View>
             </View>

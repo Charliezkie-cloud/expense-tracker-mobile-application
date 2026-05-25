@@ -12,8 +12,8 @@ export function validateAddCategoryForm(categoryName: string): string | boolean 
 
 /**
  * Validator for add expense form ;D
- * @param categoryId The ID of the category
- * @param amount The amount of the expense
+ * @param quantity The quantity of the expense
+ * @param price The price of the expense
  * @param name The name of the expense (optional)
  * @returns The message of invalid or false for valid
  */
@@ -38,8 +38,9 @@ export function validateAddExpenseForm(quantity: number, price: string, name: st
 
 /**
  * Validator for edit expense form
- * @param amount The amount of the new expense
  * @returns The message of invalid or false for valid
+ * @param quantity The quantity of the updated expense
+ * @param price The price of the updated expense
  */
 export function validateEditExpenseForm(quantity: number, price: string): string | boolean {
   if (quantity < 1)

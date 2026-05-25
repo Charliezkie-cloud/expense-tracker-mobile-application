@@ -1,18 +1,20 @@
-import { Alert, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, Linking, TouchableOpacity, View } from "react-native";
 import { Button, Text, useTheme } from "react-native-paper";
 import { Picker } from "@react-native-picker/picker";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { logger } from "react-native-logs";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {deleteDatabaseAsync, useSQLiteContext} from "expo-sqlite";
+import ExpoUpdates from "expo-updates/src/ExpoUpdates";
 
 import { useSettingsStore } from "../hooks/useSettingsStore";
-import { CurrencyCode } from "../types/data.types";
-import { useCategoryStore } from "../hooks/useCategoryStore";
-import { useExpenseStore } from "../hooks/useExpenseStore";
-import { useBudgetStore } from "../hooks/useBudgetStore";
-import { getSettingsStyles } from "../styles/theme";
-import { ThemeMode } from "../styles/themeSchemes";
+import { getSettingsStyles } from "../styles/mainStyles";
+import { ThemeMode } from "../theme/themeSchemes";
+import { CurrencyCode } from "../types/settings.types";
+import {useAppTheme} from "../components/ThemeContext";
+
+const APPLICATION_DB = "expense_tracker.db";
 
 const socials = [
   {
@@ -36,8 +38,6 @@ const socials = [
     url: "https://ph.linkedin.com/in/charles-henry-tinoy-jr-850b1831b"
   }
 ];
-
-// const themes = ["Default", "Emerald Green", "Dark Slate", "Sunset Orange"];
 const themes: { name: string, value: ThemeMode }[] = [
   { name: "Default", value: "defaultBlue" },
   { name: "Dark Slate", value: "darkSlate" },
@@ -45,30 +45,34 @@ const themes: { name: string, value: ThemeMode }[] = [
   { name: "Sunset Orange", value: "sunsetOrange" },
 ];
 const currencies = ["PHP", "USD", "EUR", "JPY", "GBP"];
-
 const log = logger.createLogger();
 
 export default function SettingsScreen() {
   // Hooks
   const settings = useSettingsStore((state) => state.settings);
+  const setTheme = useSettingsStore((state) => state.setTheme);
   const setCurrencyCode = useSettingsStore((state) => state.setCurrency);
 
-  const clearCategories = useCategoryStore((state) => state.clearAllCategories);
-  const clearExpenses = useExpenseStore((state) => state.clearAllExpenses);
-  const clearBudgets = useBudgetStore((state) => state.clearAllBudgets);
-
-  // Theme & Style Hooks
+  // Hooks
+  const db = useSQLiteContext();
   const theme = useTheme();
   const styles = getSettingsStyles(theme);
+  const { currentThemeKey, setCurrentThemeKey } = useAppTheme();
 
   // States
   const [currencySelectedItem, setCurrencySelectedItem] = useState<CurrencyCode>("PHP");
-  const [selectedTheme, setSelectedTheme] = useState<ThemeMode>("defaultBlue");
+  const [selectedTheme, setSelectedTheme] = useState<ThemeMode>(currentThemeKey);
 
   // Handlers
   function currencyPickerOnValueChange(itemValue: CurrencyCode) {
     setCurrencySelectedItem(itemValue);
     setCurrencyCode(itemValue);
+  }
+
+  function themePickerOnValueChange(itemValue: ThemeMode) {
+    setSelectedTheme(itemValue);
+    setCurrentThemeKey(itemValue);
+    setTheme(itemValue);
   }
 
   function clearCacheOnPress() {
@@ -81,14 +85,14 @@ export default function SettingsScreen() {
           onPress: async () => {
             try {
               await AsyncStorage.clear();
-
-              clearCategories();
-              clearExpenses();
-              clearBudgets();
+              await deleteDatabase();
 
               Alert.alert("Success", "Cache cleared successfully.");
             } catch (e) {
-              log.error(e);
+              log.error({
+                error: "Something went wrong while clearing the cache.",
+                errorInfo: e
+              });
               Alert.alert("Error", "Failed to clear cache.");
             }
           }
@@ -98,8 +102,26 @@ export default function SettingsScreen() {
     );
   }
 
+  // Helpers
   function openLink(url: string) {
     Linking.openURL(url);
+  }
+
+  /** A VERY DANGEROUS HELPER */
+  async function deleteDatabase() {
+    try {
+      if (!db) return;
+
+      await db.closeAsync();
+      await deleteDatabaseAsync(APPLICATION_DB);
+      await ExpoUpdates.reload();
+    } catch (error) {
+      log.error({
+        error: "Something went wrong while deleting the database.",
+        details: error instanceof Error ? error.message : String(error)
+      });
+      Alert.alert("Error", "Something went wrong while deleting the application cache.");
+    }
   }
 
   // Use effects
@@ -118,7 +140,7 @@ export default function SettingsScreen() {
             style={styles.picker}
             dropdownIconColor={theme.colors.onSurfaceVariant}
             selectedValue={selectedTheme}
-            onValueChange={(itemValue) => currencyPickerOnValueChange(itemValue as CurrencyCode)}
+            onValueChange={(itemValue) => themePickerOnValueChange(itemValue)}
           >
             {themes.map((item, index) => (
               <Picker.Item

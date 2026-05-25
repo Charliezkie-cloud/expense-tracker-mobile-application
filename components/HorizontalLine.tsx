@@ -7,7 +7,7 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-export default function HorizontalLineWithTitle({ color = "#6b7280", label, style }: Props) {
+export default function HorizontalLine({ color = "#6b7280", label, style }: Props) {
   return (
     <View
       style={[
