@@ -7,7 +7,6 @@ import RootStack from './navigation/RootStack';
 import { initializeDatabase } from "./database/initializeDatabase";
 import {ThemeProvider} from "./components/ThemeContext";
 import ExpoNavigationBar from "expo-navigation-bar/src/ExpoNavigationBar";
-import {APPLICATION_DB} from "./screens/SettingsScreen";
 
 export default function App() {
     useEffect(() => {
@@ -19,9 +18,8 @@ export default function App() {
     }, []);
 
     return (
-        <SQLiteProvider databaseName={APPLICATION_DB} onInit={initializeDatabase}>
+        <SQLiteProvider databaseName="expense_tracker.db" onInit={initializeDatabase}>
             <ThemeProvider>
-                <StatusBar style="auto" />
                 <NavigationContainer>
                     <RootStack />
                 </NavigationContainer>

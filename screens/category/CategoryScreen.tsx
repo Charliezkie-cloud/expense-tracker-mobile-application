@@ -8,7 +8,7 @@ import { Button,  Modal, Portal, Text, useTheme, List } from "react-native-paper
 import {useSQLiteContext} from "expo-sqlite";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../lib/converters";
+import { convertDateToDateString, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../lib/converters";
 import { useSettingsStore } from "../../hooks/useSettingsStore";
 import { getCategoryDetailStyles } from "../../styles/mainStyles";
 import {getBudget, isBudgetExists} from "../../database/budgetQueries";
@@ -270,7 +270,9 @@ export default function CategoryScreen({ route }: RouteProps) {
                       <List.Item
                           onPress={() => expenseListItemOnPress(item)}
                           title={`${convertNumberToCurrencyString(convertWholeNumberToDecimal(item.price), settings.currencyCode)} x ${item.quantity}`}
-                          description={item.name}
+                          description={
+                            isNaN(new Date(item.name).getTime()) ? item.name : convertDateToDateString(new Date(item.name))
+                          }
                           titleStyle={styles.itemTitleText}
                           descriptionStyle={styles.itemDescriptionText}
                           left={() => (

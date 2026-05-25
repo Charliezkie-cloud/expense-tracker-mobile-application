@@ -1,24 +1,24 @@
 /**
  * Converts date object into a human readable date and time string
- * @param date The date object
+ * @param value The date value
  * @returns The human readable date and time string
  */
-export function convertDateToDateString(date: Date) {
+export function convertDateToDateString(value: Date) {
   const LOCALE = "en-US";
-  
-  const formattedDate = date.toLocaleDateString(LOCALE, {
+
+  const formattedDate = value.toLocaleDateString(LOCALE, {
     month: "long",
     day: "numeric",
     year: "numeric"
   });
 
-  const formattedTime = date.toLocaleTimeString(LOCALE, {
+  const formattedTime = value.toLocaleTimeString(LOCALE, {
     hour: "numeric",
     minute: "2-digit",
     hour12: true
   });
 
-  return `${formattedDate} ${formattedTime}`
+  return `${formattedDate} ${formattedTime}`;
 }
 
 /**

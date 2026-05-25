@@ -14,8 +14,7 @@ import { ThemeMode } from "../theme/themeSchemes";
 import { CurrencyCode } from "../types/settings.types";
 import {useAppTheme} from "../components/ThemeContext";
 
-export const APPLICATION_DB = "expense_tracker.db";
-
+const APPLICATION_DB = "expense_tracker.db";
 const socials = [
   {
     title: "Facebook",

@@ -21,7 +21,6 @@ export async function createExpense(db: SQLiteDatabase, data: CreateExpenseDto) 
             return;
         }
 
-
         await db.runAsync(`
             INSERT INTO "expenses" ("category_id", "name", "quantity", "price")
             VALUES (?, ?, ?, ?)

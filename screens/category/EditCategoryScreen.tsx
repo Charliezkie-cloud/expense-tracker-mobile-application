@@ -10,6 +10,7 @@ import { convertDateToDateString } from "../../lib/converters";
 import HorizontalLine from "../../components/HorizontalLine";
 import { getCategoryDetailStyles } from "../../styles/mainStyles";
 import {deleteCategory, updateCategory} from "../../database/categoryQueries";
+import {validateAddCategoryForm} from "../../lib/validators";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditCategory">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
@@ -30,6 +31,11 @@ export default function EditCategoryScreen({ route }: RouteProps) {
 
   // Handlers
   async function saveButtonOnPress() {
+    const validationMessage = validateAddCategoryForm(categoryName);
+
+    if (typeof validationMessage === "string")
+      return Alert.alert("Error", validationMessage);
+
     try {
       await updateCategory(db, {
         name: categoryName.trim(),

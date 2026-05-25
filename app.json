@@ -17,6 +17,7 @@
       "customBuildFlags": ["-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"]
     },
     "android": {
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
@@ -25,7 +26,7 @@
       "useSQLCipher": false,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.expensetrackermobileapplication"
+      "package": "com.charlzk.expensetrackermobileapplication"
     },
     "web": {
       "favicon": "./assets/favicon.png"

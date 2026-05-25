@@ -3,6 +3,7 @@ import { PaperProvider, MD3Theme } from 'react-native-paper';
 
 import {themeKey, themeSchemes} from "../theme/themeSchemes";
 import {useSettingsStore} from "../hooks/useSettingsStore";
+import {StatusBar} from "expo-status-bar";
 
 type ThemeContextType = {
     currentThemeKey: themeKey;
@@ -21,6 +22,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     return (
         <ThemeContext.Provider value={{ currentThemeKey, setCurrentThemeKey, themes: themeSchemes }}>
             <PaperProvider theme={activeTheme}>
+                <StatusBar style={currentThemeKey === "darkSlate" ? "light" : "dark"} />
                 {children}
             </PaperProvider>
         </ThemeContext.Provider>

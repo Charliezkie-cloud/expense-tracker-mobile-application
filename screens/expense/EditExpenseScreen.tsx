@@ -11,8 +11,8 @@ import { convertDateToDateString, convertDecimalToWholeNumber, convertWholeNumbe
 import HorizontalLine from "../../components/HorizontalLine";
 import { getExpenseStyles } from "../../styles/mainStyles";
 import {deleteExpense, getExpenseCategory, updateExpense} from "../../database/expenseQueries";
-import {validateEditExpenseForm} from "../../lib/validators";
 import {Category} from "../../types/models.types";
+import {validateAddExpenseForm} from "../../lib/validators";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "EditExpense">;
@@ -43,7 +43,7 @@ export default function EditExpenseScreen({ route }: RouteProps) {
   }
 
   async function saveButtonOnPress() {
-    const validationMessage = validateEditExpenseForm(expenseQuantity, expensePrice);
+    const validationMessage = validateAddExpenseForm(expenseQuantity, expensePrice);
     if (typeof validationMessage === "string")
       return Alert.alert("Error", validationMessage);
 
