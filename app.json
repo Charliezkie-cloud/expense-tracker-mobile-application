@@ -14,9 +14,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "customBuildFlags": [
-        "-DSQLITE_ENABLE_DBSTAT_VTAB=1 -DSQLITE_ENABLE_SNAPSHOT=1"
-      ]
+      "bundleIdentifier": "com.charlzk.expensetracker"
     },
     "android": {
       "versionCode": 1,
@@ -24,11 +22,9 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "enableFTS": false,
-      "useSQLCipher": false,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.charlzk.expensetrackermobileapplication"
+      "package": "com.charlzk.expensetracker"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -49,7 +45,17 @@
           "style": "light"
         }
       ],
-      "expo-sqlite"
+      [
+        "expo-sqlite",
+        {
+          "enableFTS": true,
+          "useSQLCipher": true,
+          "ios": {
+            "customBuildFlags": ["-DSQLITE_ENABLE_DBSTAT_VTAB=1"]
+          }
+        }
+      ],
+      "expo-font"
     ],
     "extra": {
       "eas": {
