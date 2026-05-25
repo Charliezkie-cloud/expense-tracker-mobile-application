@@ -14,10 +14,9 @@ export function validateAddCategoryForm(categoryName: string): string | boolean 
  * Validator for add expense form ;D
  * @param quantity The quantity of the expense
  * @param price The price of the expense
- * @param name The name of the expense (optional)
  * @returns The message of invalid or false for valid
  */
-export function validateAddExpenseForm(quantity: number, price: string, name: string): string | boolean {
+export function validateAddExpenseForm(quantity: number, price: string): string | boolean {
   if (quantity < 1)
     return "Quantity is required.";
   if (isNaN(quantity))
