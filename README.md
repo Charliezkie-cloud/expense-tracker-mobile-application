@@ -1,3 +1,8 @@
+<p align="center">
+  <img width="512" height="512" alt="icon" src="https://github.com/user-attachments/assets/a3f69265-ca34-4066-ad90-fcc5c379321f" />
+</p>
+
+
 # Expense Tracker Mobile Application
 
 An fully offline basic expense tracker mobile application that allows user to track their expenses by category, set their budgets and add expenses.
