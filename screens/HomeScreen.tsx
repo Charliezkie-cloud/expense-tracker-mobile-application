@@ -27,10 +27,6 @@ export default function HomeScreen() {
 
     // States
     const [totalExpenses, setTotalExpenses] = useState(0.00);
-    const [pieData, setPieData] = useState([
-        { value: 0, color: "#007AFF", text: 'Total Spend' },
-        { value: 0, color: "#FF9500", text: 'Total Budget' },
-    ]);
     const [totalExpensePercentage, setTotalExpensePercentage] = useState(0.00);
     const [budgetProgress, setBudgetProgress] = useState<{ budget_percentage: number, category_name: string }[] | null>(null);
     const [recentCategories, setRecentCategories]  = useState<Category[]>([]);

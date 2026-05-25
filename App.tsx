@@ -1,5 +1,4 @@
 import { NavigationContainer } from '@react-navigation/native';
-import { StatusBar } from 'expo-status-bar';
 import {SQLiteProvider} from "expo-sqlite";
 import {useEffect} from "react";
 
