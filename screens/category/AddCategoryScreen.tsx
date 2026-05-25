@@ -6,7 +6,7 @@ import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { useSQLiteContext } from "expo-sqlite";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { validateAddCategoryForm } from "../../utils/validators";
+import { validateAddCategoryForm } from "../../lib/validators";
 import { getCategoryDetailStyles } from "../../styles/mainStyles";
 import { createCategory } from "../../database/categoryQueries";
 

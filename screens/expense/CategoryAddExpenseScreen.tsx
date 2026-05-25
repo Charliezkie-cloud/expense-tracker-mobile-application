@@ -3,14 +3,14 @@ import { Button, Text, TextInput as TextField, useTheme } from "react-native-pap
 import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
 import { useRef, useState } from "react";
 import InputSpinner from "react-native-input-spinner";
+import {useSQLiteContext} from "expo-sqlite";
+import {useNavigation} from "@react-navigation/native";
 
 import { RootParamStackList } from "../../types/navigation.types";
 import { getExpenseStyles } from "../../styles/mainStyles";
-import {validateAddExpenseForm} from "../../utils/validators";
+import {validateAddExpenseForm} from "../../lib/validators";
 import {createExpense} from "../../database/expenseQueries";
-import {useSQLiteContext} from "expo-sqlite";
-import {useNavigation} from "@react-navigation/native";
-import {convertDecimalToWholeNumber} from "../../utils/converters";
+import {convertDecimalToWholeNumber} from "../../lib/converters";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategoryAddExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategoryAddExpense">;
@@ -35,7 +35,7 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
 
     // Handlers
     async function saveButtonOnPress() {
-        const validationMessage = validateAddExpenseForm(expenseQuantity, expensePrice, expenseName);
+        const validationMessage = validateAddExpenseForm(expenseQuantity, expensePrice);
 
         if (typeof validationMessage === "string")
             return Alert.alert("Error", validationMessage);

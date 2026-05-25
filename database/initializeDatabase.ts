@@ -1,5 +1,5 @@
 import { logger } from "react-native-logs";
-import { SQLiteDatabase} from "expo-sqlite";
+import { SQLiteDatabase } from "expo-sqlite";
 
 const log = logger.createLogger();
 

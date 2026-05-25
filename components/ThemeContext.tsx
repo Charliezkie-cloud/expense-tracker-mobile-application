@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
-
 import { PaperProvider, MD3Theme } from 'react-native-paper';
+
 import {themeKey, themeSchemes} from "../theme/themeSchemes";
 import {useSettingsStore} from "../hooks/useSettingsStore";
 

@@ -6,7 +6,7 @@ import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useSQLiteContext} from "expo-sqlite";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
-import { convertDateToDateString,  convertNumberToCurrencyString, convertNumberToPercentageString, convertWholeNumberToDecimal } from "../utils/converters";
+import { convertDateToDateString,  convertNumberToCurrencyString, convertNumberToPercentageString, convertWholeNumberToDecimal } from "../lib/converters";
 import { getHomeStyles } from "../styles/mainStyles";
 import {useSettingsStore} from "../hooks/useSettingsStore";
 import {getRecentExpenses, getTheSumOfAllExpenses} from "../database/expenseQueries";

@@ -2,13 +2,13 @@ import {Alert, View} from "react-native";
 import { Button, Modal, Portal, Text, TextInput, useTheme } from "react-native-paper";
 import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
-
-import { RootParamStackList } from "../../types/navigation.types";
-import { convertDateToDateString } from "../../utils/converters";
-import HorizontalLine from "../../components/HorizontalLine";
-import { getCategoryDetailStyles } from "../../styles/mainStyles";
 import {useSQLiteContext} from "expo-sqlite";
 import {useNavigation} from "@react-navigation/native";
+
+import { RootParamStackList } from "../../types/navigation.types";
+import { convertDateToDateString } from "../../lib/converters";
+import HorizontalLine from "../../components/HorizontalLine";
+import { getCategoryDetailStyles } from "../../styles/mainStyles";
 import {deleteCategory, updateCategory} from "../../database/categoryQueries";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditCategory">;

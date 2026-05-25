@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import {useSQLiteContext} from "expo-sqlite";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { convertDateToDateString } from "../../utils/converters";
+import { convertDateToDateString } from "../../lib/converters";
 import { getCategoriesStyles } from "../../styles/mainStyles";
 import { Category } from "../../types/models.types";
 import { getAllCategories } from "../../database/categoryQueries";

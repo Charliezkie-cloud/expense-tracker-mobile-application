@@ -9,8 +9,8 @@ import HorizontalLine from "../../components/HorizontalLine";
 import { getCategoryDetailStyles } from "../../styles/mainStyles";
 import {isBudgetExists, setBudget, deleteBudget, getBudget} from "../../database/budgetQueries";
 import { useSQLiteContext } from "expo-sqlite";
-import {validateAddBudgetForm} from "../../utils/validators";
-import {convertDecimalToWholeNumber, convertWholeNumberToDecimal} from "../../utils/converters";
+import {validateAddBudgetForm} from "../../lib/validators";
+import {convertDecimalToWholeNumber, convertWholeNumberToDecimal} from "../../lib/converters";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategorySetBudget">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategorySetBudget">;

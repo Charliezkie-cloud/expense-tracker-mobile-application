@@ -8,7 +8,7 @@ import { Button,  Modal, Portal, Text, useTheme, List } from "react-native-paper
 import {useSQLiteContext} from "expo-sqlite";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../utils/converters";
+import { convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../lib/converters";
 import { useSettingsStore } from "../../hooks/useSettingsStore";
 import { getCategoryDetailStyles } from "../../styles/mainStyles";
 import {getBudget, isBudgetExists} from "../../database/budgetQueries";
