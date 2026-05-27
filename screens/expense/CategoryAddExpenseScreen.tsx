@@ -1,5 +1,5 @@
 import {Alert, TextInput, View} from "react-native";
-import { Button, Text, TextInput as TextField, useTheme } from "react-native-paper";
+import {Button, Text, TextInput as TextField, useTheme} from "react-native-paper";
 import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
 import { useRef, useState } from "react";
 import InputSpinner from "react-native-input-spinner";
@@ -8,9 +8,9 @@ import {useNavigation} from "@react-navigation/native";
 
 import { RootParamStackList } from "../../types/navigation.types";
 import { getExpenseStyles } from "../../styles/mainStyles";
-import {validateAddExpenseForm} from "../../lib/validators";
+import {validateAddExpenseForm} from "../../libs/validators";
 import {createExpense} from "../../database/expenseQueries";
-import {convertDecimalToWholeNumber} from "../../lib/converters";
+import {convertDecimalToWholeNumber} from "../../libs/converters";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategoryAddExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategoryAddExpense">;

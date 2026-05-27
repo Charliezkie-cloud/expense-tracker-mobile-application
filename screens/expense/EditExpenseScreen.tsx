@@ -7,12 +7,12 @@ import {useSQLiteContext} from "expo-sqlite";
 import {useNavigation} from "@react-navigation/native";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { convertDateToDateString, convertDecimalToWholeNumber, convertWholeNumberToDecimal } from "../../lib/converters";
+import { convertDateToDateString, convertDecimalToWholeNumber, convertWholeNumberToDecimal } from "../../libs/converters";
 import HorizontalLine from "../../components/HorizontalLine";
 import { getExpenseStyles } from "../../styles/mainStyles";
 import {deleteExpense, getExpenseCategory, updateExpense} from "../../database/expenseQueries";
 import {Category} from "../../types/models.types";
-import {validateAddExpenseForm} from "../../lib/validators";
+import {validateAddExpenseForm} from "../../libs/validators";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "EditExpense">;

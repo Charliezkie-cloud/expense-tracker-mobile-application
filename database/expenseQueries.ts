@@ -3,6 +3,8 @@ import {logger} from "react-native-logs";
 
 import {CreateExpenseDto, UpdateExpenseDto} from "../types/DTOs/expenseDTOs.types";
 import {Category, Expense} from "../types/models.types";
+import {convertDateToDateString} from "../libs/converters";
+import {generateRandomName} from "../libs/generators";
 
 const log = logger.createLogger();
 
@@ -12,19 +14,37 @@ const log = logger.createLogger();
  * @param data The data of create expense
  */
 export async function createExpense(db: SQLiteDatabase, data: CreateExpenseDto) {
+    const date = new Date();
+    const dateISOString = date.toISOString();
+    const randomName = generateRandomName();
+
     try {
         if (data.name.trim().length < 1) {
             await db.runAsync(`
-                INSERT INTO "expenses" ("category_id", "quantity", "price")
-                VALUES (?, ?, ?)
-            `, data.category_id, data.quantity, data.price);
+                        INSERT INTO "expenses" ("category_id", "name", "quantity", "price", "created_at", "updated_at")
+                        VALUES (?, ?, ?, ?, ?, ?)
+                `,
+                data.category_id,
+                randomName,
+                data.quantity,
+                data.price,
+                dateISOString,
+                dateISOString
+            );
             return;
         }
 
         await db.runAsync(`
-            INSERT INTO "expenses" ("category_id", "name", "quantity", "price")
-            VALUES (?, ?, ?, ?)
-        `, data.category_id, data.name, data.quantity, data.price);
+                    INSERT INTO "expenses" ("category_id", "name", "quantity", "price", "created_at", "updated_at")
+                    VALUES (?, ?, ?, ?, ?, ?)
+            `,
+            data.category_id,
+            data.name,
+            data.quantity,
+            data.price,
+            dateISOString,
+            dateISOString
+        );
     } catch (error) {
         log.error({
             error: "createExpense(): Something went wrong while creating an expense.",
@@ -107,7 +127,7 @@ export async function getExpenseCategory(db: SQLiteDatabase, expenseId: number) 
     try {
         return await db.getFirstAsync<Category>(`
             SELECT c.* FROM "expenses" e
-            INNER JOIN "categories" c ON c.id = e.category_id
+                                INNER JOIN "categories" c ON c.id = e.category_id
             WHERE e.id = ?
         `, expenseId);
     } catch (error) {
@@ -147,27 +167,45 @@ export async function getRecentExpenses(db: SQLiteDatabase, orderDirection: "ASC
  * @param data The data of the update expense
  */
 export async function updateExpense(db: SQLiteDatabase, data: UpdateExpenseDto) {
+    const date = new Date();
+    const dateISOString = date.toISOString();
+    const randomName = generateRandomName();
+
     try {
         if (data.name.trim().length < 1) {
             await db.runAsync(`
-                UPDATE "expenses"
-                SET
-                    name = CURRENT_TIMESTAMP,
-                    quantity = ?,
-                    price = ?
-                WHERE id = ?
-            `, data.quantity, data.price, data.id);
+                        UPDATE "expenses"
+                        SET
+                            name = ?,
+                            quantity = ?,
+                            price = ?,
+                            updated_at = ?
+                        WHERE id = ?
+                `,
+                randomName,
+                data.quantity,
+                data.price,
+                dateISOString,
+                data.id
+            );
             return;
         }
 
         await db.runAsync(`
-            UPDATE "expenses"
-            SET
-                name = ?,
-                quantity = ?,
-                price = ?
-            WHERE id = ?
-        `, data.name, data.quantity, data.price, data.id);
+                    UPDATE "expenses"
+                    SET
+                        name = ?,
+                        quantity = ?,
+                        price = ?,
+                        updated_at = ?
+                    WHERE id = ?
+            `,
+            data.name,
+            data.quantity,
+            data.price,
+            dateISOString,
+            data.id
+        );
     } catch (error) {
         log.error({
             error: "updateExpense(): Something went wrong while updating the expense.",

@@ -1,5 +1,5 @@
 import {Alert, FlatList, View} from "react-native";
-import { Button, List, Modal, Portal, Text, useTheme } from "react-native-paper";
+import {Button, FAB, List, Modal, Portal, Text, useTheme} from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ArrowUpDown, ChevronRight, Plus, Layers } from "lucide-react-native";
@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import {useSQLiteContext} from "expo-sqlite";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { convertDateToDateString } from "../../lib/converters";
+import { convertDateToDateString } from "../../libs/converters";
 import { getCategoriesStyles } from "../../styles/mainStyles";
 import { Category } from "../../types/models.types";
 import { getAllCategories } from "../../database/categoryQueries";
@@ -180,15 +180,7 @@ export default function CategoriesScreen() {
 
       {/* Bottom Actions Container */}
       <View style={styles.buttonsContainer}>
-        <Button
-          mode="contained"
-          style={styles.newCategoryButton}
-          labelStyle={{ fontSize: 16, fontWeight: "600" }}
-          icon={(props) => <Plus color={props.color} size={20} />}
-          onPress={addCategoryButtonOnPress}
-        >
-          New Category
-        </Button>
+        <FAB mode="flat" icon="plus" onPress={addCategoryButtonOnPress} variant="primary" />
       </View>
     </View>
   )

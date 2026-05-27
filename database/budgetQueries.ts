@@ -93,7 +93,7 @@ export async function getCategoriesBudgetProgress(db: SQLiteDatabase) {
             INNER JOIN "expenses" e ON e.category_id = c.id
             GROUP BY c.id, b.budget
             ORDER BY budget_percentage DESC
-            LIMIT 3
+            LIMIT 5
         `);
     } catch (error) {
         log.error({

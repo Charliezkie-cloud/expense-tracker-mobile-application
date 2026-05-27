@@ -12,10 +12,16 @@ const log = logger.createLogger();
  * @param data The data
  */
 export async function createCategory(db: SQLiteDatabase, data: CreateCategoryDto) {
+    const dateNow = new Date().toISOString();
+
     try {
-        await db.runAsync(
-            `INSERT INTO "categories" ("name") VALUES(?)`,
-            data.name
+        await db.runAsync(`
+            INSERT INTO "categories" ("name", "created_at", "updated_at")
+            VALUES (?, ?, ?)
+        `,
+            data.name,
+            dateNow,
+            dateNow
         );
     } catch (error) {
         log.error({
@@ -79,8 +85,19 @@ export async function getRecentCategories(db: SQLiteDatabase, orderDirection: "A
  * @param data The new category data
  */
 export async function updateCategory(db: SQLiteDatabase, data: UpdateCategoryDto) {
+    const dateNow = new Date().toISOString();
+
     try {
-        await db.runAsync(`UPDATE "categories" SET name = ? WHERE id = ?;`, data.name, data.id);
+        await db.runAsync(`
+            UPDATE "categories"
+            SET name = ?,
+                updated_at = ?
+            WHERE id = ?;
+        `,
+            data.name,
+            dateNow,
+            data.id
+        );
     } catch (error) {
         log.error({
             error: "updateCategory(): Something went wrong while updating a row.",

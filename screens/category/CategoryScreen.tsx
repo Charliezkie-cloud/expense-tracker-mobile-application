@@ -4,11 +4,11 @@ import {ArrowUpDown, BanknoteArrowUp, ChevronRight, Pencil, Plus, Wallet} from "
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import {useCallback, useEffect, useState} from "react";
-import { Button,  Modal, Portal, Text, useTheme, List } from "react-native-paper";
+import {Button, Modal, Portal, Text, useTheme, List, FAB} from "react-native-paper";
 import {useSQLiteContext} from "expo-sqlite";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { convertDateToDateString, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../lib/converters";
+import { convertDateToDateString, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../libs/converters";
 import { useSettingsStore } from "../../hooks/useSettingsStore";
 import { getCategoryDetailStyles } from "../../styles/mainStyles";
 import {getBudget, isBudgetExists} from "../../database/budgetQueries";
@@ -300,15 +300,7 @@ export default function CategoryScreen({ route }: RouteProps) {
 
         {/* Structural bottom interactions */}
         <View style={styles.actionFooter}>
-          <Button
-              mode="contained"
-              style={styles.primaryActionButton}
-              labelStyle={{ fontSize: 16, fontWeight: "600" }}
-              icon={(props) => <Plus color={props.color} size={20} />}
-              onPress={addExpenseButtonOnPress}
-          >
-            New Expense
-          </Button>
+          <FAB mode="flat" icon="plus" onPress={addExpenseButtonOnPress} variant="primary" />
         </View>
       </View>
   );

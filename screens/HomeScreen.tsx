@@ -5,8 +5,9 @@ import {ChevronRight, Layers, TrendingUp, Wallet} from "lucide-react-native";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useSQLiteContext} from "expo-sqlite";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {logger} from "react-native-logs";
 
-import { convertDateToDateString,  convertNumberToCurrencyString, convertNumberToPercentageString, convertWholeNumberToDecimal } from "../lib/converters";
+import { convertDateToDateString,  convertNumberToCurrencyString, convertNumberToPercentageString, convertWholeNumberToDecimal } from "../libs/converters";
 import { getHomeStyles } from "../styles/mainStyles";
 import {useSettingsStore} from "../hooks/useSettingsStore";
 import {getRecentExpenses, getTheSumOfAllExpenses} from "../database/expenseQueries";
@@ -16,6 +17,8 @@ import {getRecentCategories} from "../database/categoryQueries";
 import {Category, Expense} from "../types/models.types";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
+
+const log = logger.createLogger();
 
 export default function HomeScreen() {
     // Hooks
@@ -27,6 +30,7 @@ export default function HomeScreen() {
 
     // States
     const [totalExpenses, setTotalExpenses] = useState(0.00);
+    const [totalBudgets, setTotalBudgets] = useState(0.00);
     const [totalExpensePercentage, setTotalExpensePercentage] = useState(0.00);
     const [budgetProgress, setBudgetProgress] = useState<{ budget_percentage: number, category_name: string }[] | null>(null);
     const [recentCategories, setRecentCategories]  = useState<Category[]>([]);
@@ -59,6 +63,7 @@ export default function HomeScreen() {
 
                     if (res) {
                         const convertedBudgets = convertWholeNumberToDecimal(res.total);
+                        setTotalBudgets(convertedBudgets);
 
                         if (convertedBudgets > 0) {
                             const percentage = totalExpenses / convertedBudgets;
@@ -129,12 +134,22 @@ export default function HomeScreen() {
                 {/*Hero Card: Total Spent*/}
                 <View style={styles.heroCard}>
                     <View style={styles.heroGlassOverlay}/>
-                    <Text variant="labelMedium" style={styles.heroLabel}>
-                        TOTAL SPEND
-                    </Text>
-                    <Text variant="displayMedium" style={styles.heroAmount}>
-                        {convertNumberToCurrencyString(totalExpenses, settings.currencyCode)}
-                    </Text>
+                    <View>
+                        <Text variant="labelMedium" style={styles.heroLabel}>
+                            TOTAL SPEND
+                        </Text>
+                        <Text variant="displayMedium" style={styles.heroAmount}>
+                            {convertNumberToCurrencyString(totalExpenses, settings.currencyCode)}
+                        </Text>
+                    </View>
+                    <View>
+                        <Text variant="labelSmall" style={styles.heroLabel}>
+                            TOTAL BUDGET
+                        </Text>
+                        <Text variant="displaySmall" style={styles.heroAmount}>
+                            {convertNumberToCurrencyString(totalBudgets, settings.currencyCode)}
+                        </Text>
+                    </View>
                     <View style={styles.pillBadge}>
                         <TrendingUp size={14} color={theme.colors.primary} style={{marginRight: 4}}/>
                         <Text variant="bodySmall" style={styles.pillText}>
@@ -150,7 +165,7 @@ export default function HomeScreen() {
                     {budgetProgress && budgetProgress.length > 0 ? (
                         <View style={styles.glassCard}>
                             {budgetProgress.map((item, index) => (
-                                <View key={`budget-progress-item-${index}`} style={styles.progressItemRow}>
+                                <View key={`budget-progress-item-${index}`} style={budgetProgress.length - index !== 1 ? styles.progressItemRow : { }}>
                                     <View style={styles.progressHeaderRow}>
                                         <Text variant="bodyMedium" style={styles.itemTitleText}>{item.category_name}</Text>
                                         <Text variant="bodySmall" style={styles.mutedText}>

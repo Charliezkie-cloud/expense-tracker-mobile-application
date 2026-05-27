@@ -22,7 +22,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     return (
         <ThemeContext.Provider value={{ currentThemeKey, setCurrentThemeKey, themes: themeSchemes }}>
             <PaperProvider theme={activeTheme}>
-                <StatusBar style={currentThemeKey === "darkSlate" ? "light" : "dark"} />
+                <StatusBar style={currentThemeKey.includes("dark") ? "light" : "dark"} />
                 {children}
             </PaperProvider>
         </ThemeContext.Provider>

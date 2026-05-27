@@ -46,12 +46,14 @@ export const getHomeStyles = (theme: MD3Theme) => StyleSheet.create({
     fontWeight: "700",
     letterSpacing: 1.2,
     marginBottom: 6,
+    textAlign: "center"
   },
   heroAmount: {
     color: theme.colors.onSurface,
     fontWeight: "800",
     letterSpacing: -0.5,
     marginBottom: 14,
+    textAlign: "center"
   },
   pillBadge: {
     flexDirection: "row",
@@ -170,6 +172,7 @@ export const getCategoriesStyles = (theme: MD3Theme) => StyleSheet.create({
   sortButton: {
     marginBottom: 12,
     alignSelf: "flex-start",
+    width: "100%"
   },
   sortButtonLabel: {
     fontWeight: "600",
@@ -277,7 +280,7 @@ export const getCategoriesStyles = (theme: MD3Theme) => StyleSheet.create({
   buttonsContainer: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginTop: 16,
+    marginTop: "auto",
   },
   newCategoryButton: {
     borderRadius: theme.roundness * 1.5,
@@ -357,6 +360,7 @@ export const getCategoryDetailStyles = (theme: MD3Theme) => StyleSheet.create({
   sortButton: {
     alignSelf: "flex-start",
     marginBottom: 8,
+    width: "100%"
   },
   sortButtonLabel: {
     fontWeight: "600",
@@ -412,7 +416,7 @@ export const getCategoryDetailStyles = (theme: MD3Theme) => StyleSheet.create({
   actionFooter: {
     flexDirection: "row",
     justifyContent: "flex-end",
-    marginTop: 12,
+    marginTop: "auto",
   },
   primaryActionButton: {
     borderRadius: theme.roundness * 1.5,
@@ -434,6 +438,15 @@ export const getCategoryDetailStyles = (theme: MD3Theme) => StyleSheet.create({
   },
   textInput: {
     backgroundColor: theme.colors.surface,
+  },
+  suggestionsContainer: {
+    gap: 8
+  },
+  suggestionsList: {
+    height: 300
+  },
+  suggestionsListItem: {
+    marginBottom: 8
   },
   buttonGroup: {
     gap: 10,

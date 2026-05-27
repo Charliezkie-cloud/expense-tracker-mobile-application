@@ -1,16 +1,18 @@
-import {Alert, View} from "react-native";
-import { Button, Modal, Portal, Text, TextInput, useTheme } from "react-native-paper";
+import {Alert, FlatList, View} from "react-native";
+import {Button, Chip, Modal, Portal, Text, TextInput, useTheme} from "react-native-paper";
 import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
 import {useSQLiteContext} from "expo-sqlite";
 import {useNavigation} from "@react-navigation/native";
+import { HelpCircle } from 'lucide-react-native';
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { convertDateToDateString } from "../../lib/converters";
+import { convertDateToDateString } from "../../libs/converters";
 import HorizontalLine from "../../components/HorizontalLine";
 import { getCategoryDetailStyles } from "../../styles/mainStyles";
 import {deleteCategory, updateCategory} from "../../database/categoryQueries";
-import {validateAddCategoryForm} from "../../lib/validators";
+import {validateAddCategoryForm} from "../../libs/validators";
+import {CATEGORY_CHIPS} from "./AddCategoryScreen";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditCategory">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
@@ -28,6 +30,7 @@ export default function EditCategoryScreen({ route }: RouteProps) {
   // States
   const [categoryName, setCategoryName] = useState("");
   const [detailsModal, setDetailsModal] = useState(false);
+  const [categoryChips, setCategoryChips] = useState(CATEGORY_CHIPS);
 
   // Handlers
   async function saveButtonOnPress() {
@@ -63,6 +66,26 @@ export default function EditCategoryScreen({ route }: RouteProps) {
     }
   }
 
+  function categoryNameOnChangeText(e: string) {
+    setCategoryName(e);
+
+    const lowerCaseInput = e.toLowerCase();
+
+    if (lowerCaseInput === "")
+      return setCategoryChips(CATEGORY_CHIPS);
+
+    setCategoryChips([
+      ...CATEGORY_CHIPS.filter((item) =>
+          item.id.includes(lowerCaseInput) || item.label.toLowerCase().includes(lowerCaseInput)
+      ),
+      { id: "others", label: "Others", icon: HelpCircle, color: "#94A3B8" }
+    ]);
+  }
+
+  function selectedSuggestion(item: string) {
+    setCategoryName(item);
+  }
+
   // Use effects
   useEffect(() => {
     setCategoryName(category.name);
@@ -79,7 +102,26 @@ export default function EditCategoryScreen({ route }: RouteProps) {
           style={styles.textInput}
           placeholder="e.g, Grocery"
           value={categoryName}
-          onChangeText={(e) => setCategoryName(e)}
+          onChangeText={categoryNameOnChangeText}
+        />
+      </View>
+
+      <View style={styles.suggestionsContainer}>
+        <Text variant="bodyMedium">Suggestions</Text>
+        <FlatList
+            style={styles.suggestionsList}
+            data={categoryChips}
+            renderItem={({ item }) => (
+                <Chip
+                    style={styles.suggestionsListItem}
+                    icon={({ size }) => (
+                        <item.icon size={size} color={item.color} />
+                    )}
+                    onPress={() => selectedSuggestion(item.label)}
+                >
+                  {item.label}
+                </Chip>
+            )}
         />
       </View>
 

@@ -12,17 +12,9 @@ export async function initializeDatabase(db: SQLiteDatabase) {
             (
                 "id" INTEGER PRIMARY KEY AUTOINCREMENT,
                 "name" TEXT NOT NULL,
-                "created_at" TEXT DEFAULT CURRENT_TIMESTAMP,
-                "updated_at" TEXT DEFAULT CURRENT_TIMESTAMP
+                "created_at" TEXT NOT NULL,
+                "updated_at" TEXT NOT NULL
             );
-
-            CREATE TRIGGER IF NOT EXISTS "update_categories_timestamp"
-            BEFORE UPDATE ON "categories"
-            BEGIN
-                UPDATE "categories"
-                SET "updated_at" = CURRENT_TIMESTAMP
-                WHERE id = OLD.id;
-            END;
 
             CREATE TABLE IF NOT EXISTS "budgets"
             (
@@ -38,23 +30,15 @@ export async function initializeDatabase(db: SQLiteDatabase) {
             (
                 "id" INTEGER PRIMARY KEY AUTOINCREMENT,
                 "category_id" INTEGER NOT NULL,
-                "name" TEXT DEFAULT CURRENT_TIMESTAMP,
+                "name" TEXT NOT NULL,
                 "quantity" INTEGER NOT NULL,
                 "price" INTEGER NOT NULL,
-                "created_at" TEXT DEFAULT CURRENT_TIMESTAMP,
-                "updated_at" TEXT DEFAULT CURRENT_TIMESTAMP,
+                "created_at" TEXT NOT NULL,
+                "updated_at" TEXT NOT NULL,
                 CONSTRAINT "fk_expense_category"
                 FOREIGN KEY ("category_id") REFERENCES categories ("id")
                 ON DELETE CASCADE
             );
-
-            CREATE TRIGGER IF NOT EXISTS "update_expenses_timestamp"
-            BEFORE UPDATE ON "expenses"
-            BEGIN
-                UPDATE "expenses"
-                SET "updated_at" = CURRENT_TIMESTAMP
-                WHERE id = OLD.id;
-            END;
         `);
 
         log.info({ success: "The sqlite database has been succesfully initialized!" });
