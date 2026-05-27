@@ -40,8 +40,8 @@ export async function createCategory(db: SQLiteDatabase, data: CreateCategoryDto
  */
 export async function getAllCategories(
     db: SQLiteDatabase,
-    orderBy: "created_at" | "updated_at" = "created_at",
-    orderDirection: "ASC" | "DESC" = "ASC"
+    orderBy: "created_at" | "updated_at" = "updated_at",
+    orderDirection: "ASC" | "DESC" = "DESC"
 ) {
     try {
         return await db.getAllAsync<Category>(`

@@ -37,8 +37,8 @@ export default function CategoryScreen({ route }: RouteProps) {
   const [isBudgetExistsState, setIsBudgetExistsState] = useState(false);
   const [sortingModal, setSortingModal] = useState(false);
 
-  const [sortBySelectedItem, setSortBySelectedItem] = useState<"price" | "quantity" | "created_at" | "updated_at">("created_at");
-  const [sortOrderSelectedItem, setSortOrderSelectedItem] = useState<"ASC" | "DESC">("ASC");
+  const [sortBySelectedItem, setSortBySelectedItem] = useState<"price" | "quantity" | "created_at" | "updated_at">("updated_at");
+  const [sortOrderSelectedItem, setSortOrderSelectedItem] = useState<"ASC" | "DESC">("DESC");
 
   // Handlers
   function addExpenseButtonOnPress() {

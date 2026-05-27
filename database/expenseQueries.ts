@@ -3,7 +3,6 @@ import {logger} from "react-native-logs";
 
 import {CreateExpenseDto, UpdateExpenseDto} from "../types/DTOs/expenseDTOs.types";
 import {Category, Expense} from "../types/models.types";
-import {convertDateToDateString} from "../libs/converters";
 import {generateRandomName} from "../libs/generators";
 
 const log = logger.createLogger();
@@ -64,8 +63,8 @@ export async function createExpense(db: SQLiteDatabase, data: CreateExpenseDto) 
 export async function getAllExpensesOfCategory(
     db: SQLiteDatabase,
     categoryId: number,
-    orderBy: "quantity" | "price" | "created_at" | "updated_at" = "created_at",
-    orderDirection: "ASC" | "DESC" = "ASC"
+    orderBy: "quantity" | "price" | "created_at" | "updated_at" = "updated_at",
+    orderDirection: "ASC" | "DESC" = "DESC"
 ) {
     try {
         return await db.getAllAsync<Expense>(`

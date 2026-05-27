@@ -1,13 +1,13 @@
 import {Alert, FlatList, View} from "react-native";
 import {Button, Chip, Text, TextInput, useTheme} from "react-native-paper";
 import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 import {useNavigation} from "@react-navigation/native";
 import {
     Activity,
     BookOpen, Briefcase,
     Bus,
-    Coffee, GraduationCap, HelpCircle, Home, PiggyBank, ShieldCheck,
+    Coffee, GraduationCap, Home, PiggyBank, ShieldCheck,
     ShoppingBag,
     ShoppingBasket,
     Sparkles, TrendingUp,
@@ -21,35 +21,10 @@ import { getCategoryDetailStyles } from "../../styles/mainStyles";
 import {isBudgetExists, setBudget, deleteBudget, getBudget} from "../../database/budgetQueries";
 import { useSQLiteContext } from "expo-sqlite";
 import {validateAddBudgetForm} from "../../libs/validators";
-import {
-    convertDecimalToWholeNumber,
-    convertNumberToCurrencyString,
-    convertWholeNumberToDecimal
-} from "../../libs/converters";
+import { convertDecimalToWholeNumber, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../libs/converters";
 import {useSettingsStore} from "../../hooks/useSettingsStore";
-import {CATEGORY_CHIPS} from "./AddCategoryScreen";
-
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategorySetBudget">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategorySetBudget">;
-
-// const BUDGET_CHIPS = [
-//     { label: "₱200", value: 200, icon: Coffee, color: "#8B5A2B" },
-//     { label: "₱300", value: 300, icon: BookOpen, color: "#3B82F6" },
-//     { label: "₱500", value: 500, icon: ShoppingBag, color: "#EC4899" },
-//     { label: "₱800", value: 800, icon: Sparkles, color: "#A855F7" },
-//     { label: "₱1,000", value: 1000, icon: Utensils, color: "#F97316" },
-//     { label: "₱1,500", value: 1500, icon: Bus, color: "#06B6D4" },
-//     { label: "₱2,000", value: 2000, icon: Tv, color: "#6366F1" },
-//     { label: "₱2,500", value: 2500, icon: ShoppingBasket, color: "#14B8A6" },
-//     { label: "₱3,500", value: 3500, icon: Activity, color: "#EF4444" },
-//     { label: "₱5,000", value: 5000, icon: Zap, color: "#EAB308" },
-//     { label: "₱6,500", value: 6500, icon: ShieldCheck, color: "#059669" },
-//     { label: "₱7,500", value: 7500, icon: PiggyBank, color: "#ED64A6" },
-//     { label: "₱10,000", value: 10000, icon: Home, color: "#475569" },
-//     { label: "₱15,000", value: 15000, icon: GraduationCap, color: "#1E3A8A" },
-//     { label: "₱20,000", value: 20000, icon: TrendingUp, color: "#10B981" },
-//     { label: "₱30,000", value: 30000, icon: Briefcase, color: "#7C3AED" }
-// ];
 
 export default function CategorySetBudgetScreen({ route }: RouteProps) {
     // Route
@@ -127,7 +102,7 @@ export default function CategorySetBudgetScreen({ route }: RouteProps) {
             return setBudgetChips(BUDGET_CHIPS);
 
         setBudgetChips(BUDGET_CHIPS.filter((item) =>
-            item.label.toLowerCase().includes(lowerCaseInput)));
+            item.value.toString().includes(lowerCaseInput)));
     }
 
     function selectedSuggestion(item: number) {

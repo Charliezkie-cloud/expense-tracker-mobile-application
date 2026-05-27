@@ -27,8 +27,8 @@ export default function CategoriesScreen() {
   // States
   const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
   const [sortingModal, setSortingModal] = useState(false);
-  const [sortBySelectedItem, setSortBySelectedItem] = useState<"created_at" | "updated_at">("created_at");
-  const [sortOrderSelectedItem, setSortOrderSelectedItem] = useState<"ASC" | "DESC">("ASC");
+  const [sortBySelectedItem, setSortBySelectedItem] = useState<"created_at" | "updated_at">("updated_at");
+  const [sortOrderSelectedItem, setSortOrderSelectedItem] = useState<"ASC" | "DESC">("DESC");
 
   // Handlers
   function addCategoryButtonOnPress() {
