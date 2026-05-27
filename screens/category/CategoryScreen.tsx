@@ -1,6 +1,6 @@
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import {Alert, FlatList, View} from "react-native";
-import {ArrowUpDown, BanknoteArrowUp, ChevronRight, Pencil, Plus, Wallet} from "lucide-react-native";
+import {ArrowUpDown, BanknoteArrowUp, ChevronRight, Pencil, Wallet} from "lucide-react-native";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import {useCallback, useEffect, useState} from "react";

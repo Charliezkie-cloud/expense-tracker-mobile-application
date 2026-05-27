@@ -2,7 +2,7 @@ import {Alert, FlatList, View} from "react-native";
 import {Button, FAB, List, Modal, Portal, Text, useTheme} from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { ArrowUpDown, ChevronRight, Plus, Layers } from "lucide-react-native";
+import { ArrowUpDown, ChevronRight, Layers } from "lucide-react-native";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
 import {useSQLiteContext} from "expo-sqlite";
