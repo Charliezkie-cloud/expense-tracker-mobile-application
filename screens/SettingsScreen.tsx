@@ -16,7 +16,7 @@ import {useAppTheme} from "../components/ThemeContext";
 
 const APPLICATION_DB: string = process.env.EXPO_PUBLIC_APP_DATABASE ?? "";
 const APPLICATION_VERSION: string = process.env.EXPO_PUBLIC_APP_VERSION ?? "";
-const APPLICATION_REPOSITORY_URL: string = process.env.EXPO_PUBLIC_APP_REPOSITORY ?? "";
+const APPLICATION_REPOSITORY_URL: string = process.env.EXPO_PUBLIC_APP_REPOSITORY_URL ?? "";
 
 const APPLICATION_AUTHOR: string = process.env.EXPO_PUBLIC_AUTHOR ?? "";
 const APPLICATION_AUTHOR_PORTFOLIO: string = process.env.EXPO_PUBLIC_AUTHOR_PORTFOLIO ?? "";
