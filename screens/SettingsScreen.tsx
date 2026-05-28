@@ -16,6 +16,7 @@ import {useAppTheme} from "../components/ThemeContext";
 
 const APPLICATION_DB: string = process.env.EXPO_PUBLIC_APP_DATABASE ?? "";
 const APPLICATION_VERSION: string = process.env.EXPO_PUBLIC_APP_VERSION ?? "";
+const APPLICATION_REPOSITORY_URL: string = process.env.EXPO_PUBLIC_APP_REPOSITORY ?? "";
 
 const APPLICATION_AUTHOR: string = process.env.EXPO_PUBLIC_AUTHOR ?? "";
 const APPLICATION_AUTHOR_PORTFOLIO: string = process.env.EXPO_PUBLIC_AUTHOR_PORTFOLIO ?? "";
@@ -222,6 +223,7 @@ const currencies: { name: string, value: CurrencyCode }[] = [
   { name: "ZMW (Zambian Kwacha)", value: "ZMW" },
   { name: "ZWG (Zimbabwe Gold)", value: "ZWG" }
 ];
+const supportLink = new URL("issues", APPLICATION_REPOSITORY_URL);
 const log = logger.createLogger();
 
 export default function SettingsScreen() {
@@ -280,8 +282,13 @@ export default function SettingsScreen() {
   }
 
   // Helpers
-  function openLink(url: string) {
-    Linking.openURL(url);
+  function openLink(url: string | URL) {
+    if (typeof url === "string") {
+      Linking.openURL(url);
+      return;
+    }
+
+    Linking.openURL(url.toString());
   }
 
   /** A VERY DANGEROUS HELPER */
@@ -378,7 +385,7 @@ export default function SettingsScreen() {
         <Button
           mode="contained-tonal"
           style={styles.actionButton}
-          onPress={() => openLink("https://github.com/Charliezkie-cloud/expense-tracker-mobile-application/issues/new")}
+          onPress={() => openLink(supportLink)}
         >
           Report an Issue
         </Button>
