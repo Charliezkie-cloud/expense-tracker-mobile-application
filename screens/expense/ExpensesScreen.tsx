@@ -248,17 +248,17 @@ export default function ExpensesScreen() {
                         )}
                     />
                 </View>
-            ) : (
+            ) : (<></>)}
+
+            {loading ? (
+                <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary} />
+            ) : expenses.length < 1 && (
                 <View style={styles.emptyContainer}>
                     <Text variant="bodyLarge" style={styles.emptyText}>
                         Create your first expense to get started.
                     </Text>
                 </View>
             )}
-
-            {loading ? (
-                <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary} />
-            ) : (<></>)}
 
             {/* Bottom Actions Container */}
             <View style={styles.buttonsContainer}>

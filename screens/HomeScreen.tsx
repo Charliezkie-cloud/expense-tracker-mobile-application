@@ -19,8 +19,6 @@ import {getCategoryIconAndColor} from "../libs/helpers";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
 
-const log = logger.createLogger();
-
 export default function HomeScreen() {
     // Hooks
     const navigation = useNavigation<NavProps>();
@@ -34,7 +32,9 @@ export default function HomeScreen() {
     const [totalBudgets, setTotalBudgets] = useState(0.00);
     const [totalExpensePercentage, setTotalExpensePercentage] = useState(0.00);
     const [budgetProgress, setBudgetProgress] = useState<{ budget_percentage: number, category_name: string }[] | null>(null);
+    const [categoriesLoading, setCategoriesLoading] = useState(true);
     const [recentCategories, setRecentCategories]  = useState<Category[]>([]);
+    const [expensesLoading, setExpensesLoading] = useState(false);
     const [recentExpenses, setRecentExpenses] = useState<({ [K in keyof Expense]: Expense[K] } & { category_name: string })[]>([]);
 
     // Use effects
@@ -102,20 +102,30 @@ export default function HomeScreen() {
     useFocusEffect(
         useCallback(() => {
             async function fetchRecentCategories() {
+                setRecentCategories([]);
+                setCategoriesLoading(true);
+
                 try {
                     const res = await getRecentCategories(db);
                     setRecentCategories(res);
                 } catch {
                     Alert.alert("Error", "Something went wrong while fetching the recent categories.");
+                } finally {
+                    setCategoriesLoading(false);
                 }
             }
 
             async function fetchRecentExpenses() {
+                setRecentExpenses([]);
+                setExpensesLoading(true);
+
                 try {
                     const res = await getRecentExpenses(db);
                     setRecentExpenses(res);
                 } catch {
                     Alert.alert("Error", "Something went wrong while fetching the recent expenses.");
+                } finally {
+                    setExpensesLoading(false);
                 }
             }
 
@@ -296,7 +306,9 @@ export default function HomeScreen() {
                         </View>
                     ) : null}
 
-                    {recentCategories.length < 1 && (
+                    {categoriesLoading ? (
+                        <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary} />
+                    ) : recentCategories.length < 1 && (
                         <Button
                             mode="contained-tonal"
                             elevation={0}
@@ -358,7 +370,9 @@ export default function HomeScreen() {
                         </View>
                     ) : null}
 
-                    {recentExpenses.length < 1 && (
+                    {expensesLoading ? (
+                        <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary} />
+                    ) : recentExpenses.length < 1 && (
                         <Button
                             mode="contained-tonal"
                             elevation={0}
@@ -369,6 +383,7 @@ export default function HomeScreen() {
                             Log your first expense
                         </Button>
                     )}
+
                 </View>
 
             </View>

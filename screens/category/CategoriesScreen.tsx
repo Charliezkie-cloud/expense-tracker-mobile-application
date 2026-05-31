@@ -214,17 +214,17 @@ export default function CategoriesScreen() {
                   }}
               />
             </View>
-        ) : (
+        ) : (<></>)}
+
+        {loading ? (
+            <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary} />
+        ) : filteredCategories.length < 1 && (
             <View style={styles.emptyContainer}>
               <Text variant="bodyLarge" style={styles.emptyText}>
                 Create your first category to get started.
               </Text>
             </View>
         )}
-
-        {loading ? (
-            <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary} />
-        ) : (<></>)}
 
         {/* Bottom Actions Container */}
         <View style={styles.buttonsContainer}>
