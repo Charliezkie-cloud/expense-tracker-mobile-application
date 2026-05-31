@@ -82,6 +82,40 @@ export async function getAllExpensesOfCategory(
 }
 
 /**
+ * Gets all the expenses
+ * @param db The SQLiteDatabase context
+ * @param orderBy The column to sort
+ * @param orderDirection The direction of the sort
+ * @param limit The limit of each page
+ * @param offset The offset of the page
+ */
+export async function getAllExpenses(
+    db: SQLiteDatabase,
+    orderBy: "quantity" | "price" | "created_at" | "updated_at" = "updated_at",
+    orderDirection: "ASC" | "DESC" = "DESC",
+    limit: number,
+    offset: number
+) {
+    try {
+        return await db.getAllAsync<{ [K in keyof Expense]: Expense[K]; } & { category_name: string; }>(`
+            SELECT
+                e.*,
+                c.name AS category_name
+            FROM "expenses" e
+            INNER JOIN "categories" c ON c.id = e.category_id
+            ORDER BY ${orderBy} ${orderDirection}
+            LIMIT ? OFFSET ?;
+        `, limit, offset);
+    } catch (error) {
+        log.error({
+            error: "getAllExpenses(): Something went wrong while fetching all the expenses.",
+            details: error instanceof Error ? error.message : String(error)
+        });
+        throw error;
+    }
+}
+
+/**
  * Get the sum of expenses in a category
  * @param db The SQLiteDatabase context
  * @param categoryId The id of the category

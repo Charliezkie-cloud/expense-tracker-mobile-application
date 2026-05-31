@@ -1,4 +1,4 @@
-import {Alert, ScrollView, View} from "react-native";
+import {Alert, Pressable, ScrollView, View} from "react-native";
 import {Button, List, ProgressBar, Text, useTheme} from "react-native-paper";
 import {useCallback, useState} from "react";
 import {ChevronRight, Layers, TrendingUp, Wallet} from "lucide-react-native";
@@ -130,37 +130,86 @@ export default function HomeScreen() {
             showsVerticalScrollIndicator={false}
         >
             <View style={styles.mainContainer}>
+                {/* Ambient liquid orbs background */}
+                <View style={styles.categoryLiquidShape1} />
+                <View style={styles.categoryLiquidShape2} />
+                <View style={styles.categoryLiquidShape3} />
+                <View style={styles.categoryGlassOverlay} />
 
-                {/*Hero Card: Total Spent*/}
+                {/* Glass Hero Card Content with Glass-Liquid Layers */}
                 <View style={styles.heroCard}>
+                    {/* Multi-layered dynamic fluid blur effect */}
+                    <View style={styles.heroLiquidShape1} />
+                    <View style={styles.heroLiquidShape2} />
                     <View style={styles.heroGlassOverlay}/>
-                    <View>
+
+                    {/* Top row showing currency symbol & status */}
+                    <View style={styles.heroHeaderRow}>
                         <Text variant="labelMedium" style={styles.heroLabel}>
+                            OVERVIEW
+                        </Text>
+                        <View style={styles.liveIndicatior}>
+                            <View style={styles.liveIndicatorPulse} />
+                            <Text variant="labelSmall" style={styles.liveText}>LIVE TIME</Text>
+                        </View>
+                    </View>
+
+                    {/* Spend Display Section (Full width, auto-scalable) */}
+                    <View style={styles.heroSpendSection}>
+                        <Text variant="labelMedium" style={styles.heroSubLabel}>
                             TOTAL SPEND
                         </Text>
-                        <Text variant="displayMedium" style={styles.heroAmount}>
+                        <Text
+                            variant="displayMedium"
+                            style={styles.heroAmount}
+                            numberOfLines={1}
+                            adjustsFontSizeToFit={true}
+                            minimumFontScale={0.55}
+                        >
                             {convertNumberToCurrencyString(totalExpenses, settings.currencyCode)}
                         </Text>
                     </View>
-                    <View>
-                        <Text variant="labelSmall" style={styles.heroLabel}>
-                            TOTAL BUDGET
-                        </Text>
-                        <Text variant="displaySmall" style={styles.heroAmount}>
-                            {convertNumberToCurrencyString(totalBudgets, settings.currencyCode)}
-                        </Text>
-                    </View>
-                    <View style={styles.pillBadge}>
-                        <TrendingUp size={14} color={theme.colors.primary} style={{marginRight: 4}}/>
-                        <Text variant="bodySmall" style={styles.pillText}>
-                            Used {convertNumberToPercentageString(totalExpensePercentage)} of budget
-                        </Text>
+
+                    {/* Horizontal Frosted Divider */}
+                    <View style={styles.heroHorizontalDivider} />
+
+                    {/* Footer Row: Total Budget (Left) and Used Badge (Right) */}
+                    <View style={styles.heroFooterRow}>
+                        <View style={styles.heroFooterBudgetBlock}>
+                            <Text variant="labelSmall" style={styles.heroSubLabelSmallStacked}>
+                                TOTAL BUDGET
+                            </Text>
+                            <Text
+                                variant="titleMedium"
+                                style={styles.heroBudgetAmountStacked}
+                                numberOfLines={1}
+                                adjustsFontSizeToFit={true}
+                                minimumFontScale={0.7}
+                            >
+                                {convertNumberToCurrencyString(totalBudgets, settings.currencyCode)}
+                            </Text>
+                        </View>
+
+                        {/* Used percentage pill badge */}
+                        <View style={styles.pillBadge}>
+                            <TrendingUp size={14} color={theme.colors.primary} style={{marginRight: 6}}/>
+                            <Text variant="bodySmall" style={styles.pillText}>
+                                {convertNumberToPercentageString(totalExpensePercentage)} Used
+                            </Text>
+                        </View>
                     </View>
                 </View>
 
                 {/* Section: Budget Progress Bar */}
                 <View style={styles.sectionContainer}>
-                    <Text variant="titleMedium" style={styles.sectionTitle}>Budget Progress</Text>
+                    <View style={styles.sectionHeader}>
+                        <Text variant="titleMedium" style={styles.sectionTitle}>Budget Progress</Text>
+                        {budgetProgress && budgetProgress.length > 0 && (
+                            <Text variant="labelSmall" style={styles.headerCounterText}>
+                                {budgetProgress.length} Categories
+                            </Text>
+                        )}
+                    </View>
 
                     {budgetProgress && budgetProgress.length > 0 ? (
                         <View style={styles.glassCard}>
@@ -172,11 +221,13 @@ export default function HomeScreen() {
                                             {Math.min(Math.round(item.budget_percentage * 100), 100)}%
                                         </Text>
                                     </View>
-                                    <ProgressBar
-                                        progress={Math.min(item.budget_percentage, 1)}
-                                        color={item.budget_percentage > 0.9 ? theme.colors.error : theme.colors.primary}
-                                        style={styles.progressBarLine}
-                                    />
+                                    <View style={styles.progressBarWrapper}>
+                                        <ProgressBar
+                                            progress={Math.min(item.budget_percentage, 1)}
+                                            color={item.budget_percentage > 0.9 ? theme.colors.error : theme.colors.primary}
+                                            style={styles.progressBarLine}
+                                        />
+                                    </View>
                                 </View>
                             ))}
                         </View>
@@ -185,6 +236,7 @@ export default function HomeScreen() {
                     {budgetProgress && budgetProgress.length < 1 && (
                         <Button
                             mode="contained-tonal"
+                            elevation={0}
                             style={styles.iosActionButton}
                             labelStyle={styles.iosActionLabel}
                             onPress={() => navigation.navigate("Tabs", { screen: "Categories" })}
@@ -196,25 +248,38 @@ export default function HomeScreen() {
 
                 {/* Section: Recent Categories */}
                 <View style={styles.sectionContainer}>
-                    <Text variant="titleMedium" style={styles.sectionTitle}>Recent Categories</Text>
+                    <View style={styles.sectionHeader}>
+                        <Text variant="titleMedium" style={styles.sectionTitle}>Recent Categories</Text>
+                        {recentCategories && recentCategories.length > 0 && (
+                            <Text variant="labelSmall" style={styles.headerCounterText}>
+                                View All
+                            </Text>
+                        )}
+                    </View>
 
                     {recentCategories && recentCategories.length > 0 ? (
                         <View style={styles.glassCardList}>
                             {recentCategories.map((item, index) => (
                                 <View key={`recent-category-${index}`}>
                                     <List.Item
-                                        title={item.name}
-                                        description={convertDateToDateString(new Date(item.created_at))}
-                                        titleStyle={styles.itemTitleText}
-                                        descriptionStyle={styles.itemDescriptionText}
+                                        title={
+                                            <Text variant="bodyLarge" style={styles.itemTitleText}>
+                                                {item.name}
+                                            </Text>
+                                        }
+                                        description={
+                                            <Text variant="bodySmall" style={styles.itemDescriptionText}>
+                                                {convertDateToDateString(new Date(item.created_at))}
+                                            </Text>
+                                        }
                                         left={() => (
-                                            <View style={styles.iconWrapper}>
-                                                <Layers size={20} color={theme.colors.primary} />
+                                            <View style={styles.iconWrapperCategory}>
+                                                <Layers size={18} color={theme.colors.primary} />
                                             </View>
                                         )}
                                         right={() => (
                                             <View style={styles.chevronWrapper}>
-                                                <ChevronRight color={theme.colors.onSurfaceVariant} size={20} />
+                                                <ChevronRight color={theme.colors.onSurfaceVariant} size={18} />
                                             </View>
                                         )}
                                         onPress={() => navigation.navigate("Category", item)}
@@ -229,6 +294,7 @@ export default function HomeScreen() {
                     {recentCategories.length < 1 && (
                         <Button
                             mode="contained-tonal"
+                            elevation={0}
                             style={styles.iosActionButton}
                             labelStyle={styles.iosActionLabel}
                             onPress={() => navigation.navigate("AddCategory")}
@@ -240,25 +306,38 @@ export default function HomeScreen() {
 
                 {/* Section: Recent Expenses */}
                 <View style={styles.sectionContainer}>
-                    <Text variant="titleMedium" style={styles.sectionTitle}>Recent Expenses</Text>
+                    <View style={styles.sectionHeader}>
+                        <Text variant="titleMedium" style={styles.sectionTitle}>Recent Expenses</Text>
+                        {recentExpenses && recentExpenses.length > 0 && (
+                            <Text variant="labelSmall" style={styles.headerCounterText}>
+                                View All
+                            </Text>
+                        )}
+                    </View>
 
                     {recentExpenses && recentExpenses.length > 0 ? (
                         <View style={styles.glassCardList}>
                             {recentExpenses.map((item, index) => (
                                 <View key={`recent-expenses-${index}`}>
                                     <List.Item
-                                        title={`${convertNumberToCurrencyString(convertWholeNumberToDecimal(item.price))} x ${item.quantity}`}
-                                        description={convertDateToDateString(new Date(item.created_at))}
-                                        titleStyle={styles.itemTitleText}
-                                        descriptionStyle={styles.itemDescriptionText}
+                                        title={
+                                            <Text variant="bodyLarge" style={styles.itemTitleText}>
+                                                {`${convertNumberToCurrencyString(convertWholeNumberToDecimal(item.price), settings.currencyCode)} x ${item.quantity}`}
+                                            </Text>
+                                        }
+                                        description={
+                                            <Text variant="bodySmall" style={styles.itemDescriptionText}>
+                                                {convertDateToDateString(new Date(item.created_at))}
+                                            </Text>
+                                        }
                                         left={() => (
-                                            <View style={[styles.iconWrapper, { backgroundColor: theme.colors.surfaceVariant }]}>
-                                                <Wallet size={20} color={theme.colors.primary} />
+                                            <View style={styles.iconWrapperExpense}>
+                                                <Wallet size={18} color={theme.colors.primary} />
                                             </View>
                                         )}
                                         right={() => (
                                             <View style={styles.chevronWrapper}>
-                                                <ChevronRight color={theme.colors.onSurfaceVariant} size={20} />
+                                                <ChevronRight color={theme.colors.onSurfaceVariant} size={18} />
                                             </View>
                                         )}
                                         onPress={() => navigation.navigate("EditExpense", item)}
@@ -273,6 +352,7 @@ export default function HomeScreen() {
                     {recentExpenses.length < 1 && (
                         <Button
                             mode="contained-tonal"
+                            elevation={0}
                             style={styles.iosActionButton}
                             labelStyle={styles.iosActionLabel}
                             onPress={() => navigation.navigate("Tabs", { screen: "Categories" })}

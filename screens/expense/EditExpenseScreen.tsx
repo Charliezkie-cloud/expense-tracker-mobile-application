@@ -1,5 +1,5 @@
-import {Alert, TextInput, View} from "react-native";
-import { Button, Modal, Portal, Text, TextInput as TextField, useTheme } from "react-native-paper";
+import {Alert, TextInput, View, Modal, StyleSheet, TouchableOpacity} from "react-native";
+import { Button, Text, TextInput as TextField, useTheme } from "react-native-paper";
 import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
 import { useEffect, useRef, useState } from "react";
 import InputSpinner from "react-native-input-spinner";
@@ -95,135 +95,160 @@ export default function EditExpenseScreen({ route }: RouteProps) {
   }, []);
 
   return (
-    <View style={styles.formContainer}>
+      <View style={styles.formContainer}>
+        {/* Ambient liquid orbs background */}
+        <View style={styles.categoryLiquidShape1} />
+        <View style={styles.categoryLiquidShape2} />
+        <View style={styles.categoryLiquidShape3} />
+        <View style={styles.categoryGlassOverlay} />
 
-      {/* Expense Name field */}
-      <View style={styles.inputGroup}>
-        <Text variant="bodyLarge" style={styles.inputLabel}>
-          Name <Text style={styles.requiredAsterisk}>*</Text>
-        </Text>
-        <TextField
-          mode="outlined"
-          style={styles.textInput}
-          placeholder="e.g., Grocery Item"
-          value={expenseName}
-          onChangeText={(e) => setExpenseName(e)}
-        />
-      </View>
+        {/* Volumetric Frosted Glass Input Card */}
+        <View style={styles.glassInputCard}>
+          {/* Expense Name field */}
+          <View style={styles.inputGroup}>
+            <Text variant="bodyLarge" style={styles.inputLabel}>
+              Name <Text style={styles.requiredAsterisk}>*</Text>
+            </Text>
+            <TextField
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="e.g., Grocery Item"
+                placeholderTextColor={theme.dark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.35)"}
+                textColor={theme.colors.onSurface}
+                activeOutlineColor={theme.colors.primary}
+                outlineColor={theme.dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.1)"}
+                value={expenseName}
+                onChangeText={(e) => setExpenseName(e)}
+            />
+          </View>
 
-      {/* Expense Quantity field */}
-      <View style={styles.inputGroup}>
-        <Text variant="bodyLarge" style={styles.inputLabel}>
-          Quantity <Text style={styles.requiredAsterisk}>*</Text>
-        </Text>
-        <View style={styles.spinnerContainer}>
-          <InputSpinner
-            min={1}
-            max={100}
-            fontSize={18}
-            skin="round"
-            colorMax={theme.colors.error}
-            colorMin={theme.colors.primary}
-            background={theme.colors.surface}
-            textColor={theme.colors.onSurface}
-            value={expenseQuantity}
-            onChange={(e: number) => setExpenseQuantity(e)}
-            onSubmit={() => priceTextInputRef.current?.focus()}
-            style={{ elevation: 0, shadowOpacity: 0, width: "100%" }}
-          />
-        </View>
-      </View>
-
-      {/* Expense Price field */}
-      <View style={styles.inputGroup}>
-        <Text variant="bodyLarge" style={styles.inputLabel}>
-          Price <Text style={styles.requiredAsterisk}>*</Text>
-        </Text>
-        <TextField
-          ref={priceTextInputRef}
-          mode="outlined"
-          style={styles.textInput}
-          placeholder="e.g., 150.00"
-          keyboardType="numeric"
-          value={expensePrice}
-          onChangeText={(e) => setExpensePrice(e)}
-        />
-      </View>
-
-      {/* Main Form Actions */}
-      <View style={styles.buttonGroup}>
-        <Button
-          mode="contained"
-          style={styles.formButton}
-          labelStyle={{ fontSize: 16, fontWeight: "600" }}
-          onPress={saveButtonOnPress}
-        >
-          Save Changes
-        </Button>
-
-        <Button
-          mode="contained-tonal"
-          style={styles.formButton}
-          labelStyle={{ fontSize: 16, fontWeight: "600" }}
-          onPress={toggleModalButtonOnPress}
-        >
-          View Details
-        </Button>
-      </View>
-
-      {/* Danger Zone Separation */}
-      <View style={styles.dangerSection}>
-        <HorizontalLine
-          label="Danger Zone"
-          color={theme.colors.error}
-          style={{ marginVertical: 14 }}
-        />
-        <Button
-          mode="outlined"
-          style={styles.dangerButton}
-          labelStyle={styles.dangerButtonLabel}
-          onPress={deleteButtonOnPress}
-        >
-          Delete Expense
-        </Button>
-      </View>
-
-      {/* Structured Info Portal Sheet */}
-      <Portal>
-        <Modal visible={detailsModal} style={styles.modalBackdrop}>
-          <View style={styles.modalContent}>
-            <Text variant="headlineSmall" style={styles.modalTitle}>Expense Details</Text>
-
-            <View style={{ gap: 8, marginVertical: 4 }}>
-              <View style={styles.detailsRow}>
-                <Text variant="bodyMedium" style={styles.detailsLabel}>Category</Text>
-                <Text variant="bodyMedium" style={styles.detailsValue}>{expenseCategory?.name}</Text>
-              </View>
-              <View style={styles.detailsRow}>
-                <Text variant="bodyMedium" style={styles.detailsLabel}>Created stamp</Text>
-                <Text variant="bodyMedium" style={styles.detailsValue}>
-                  {convertDateToDateString(new Date(expense.created_at))}
-                </Text>
-              </View>
-              <View style={styles.detailsRow}>
-                <Text variant="bodyMedium" style={styles.detailsLabel}>Last modified</Text>
-                <Text variant="bodyMedium" style={styles.detailsValue}>
-                  {convertDateToDateString(new Date(expense.updated_at))}
-                </Text>
-              </View>
+          {/* Expense Quantity field */}
+          <View style={styles.inputGroup}>
+            <Text variant="bodyLarge" style={styles.inputLabel}>
+              Quantity <Text style={styles.requiredAsterisk}>*</Text>
+            </Text>
+            <View style={styles.spinnerContainer}>
+              <InputSpinner
+                  min={1}
+                  max={100}
+                  fontSize={18}
+                  skin="round"
+                  colorMax={theme.colors.error}
+                  colorMin={theme.colors.primary}
+                  background="transparent"
+                  textColor={theme.colors.onSurface}
+                  value={expenseQuantity}
+                  onChange={(e: number) => setExpenseQuantity(e)}
+                  onSubmit={() => priceTextInputRef.current?.focus()}
+                  style={{ elevation: 0, shadowOpacity: 0, width: "100%" }}
+              />
             </View>
+          </View>
 
-            <Button
+          {/* Expense Price field */}
+          <View style={styles.inputGroup}>
+            <Text variant="bodyLarge" style={styles.inputLabel}>
+              Price <Text style={styles.requiredAsterisk}>*</Text>
+            </Text>
+            <TextField
+                ref={priceTextInputRef}
+                mode="outlined"
+                style={styles.textInput}
+                placeholder="e.g., 150.00"
+                placeholderTextColor={theme.dark ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.35)"}
+                textColor={theme.colors.onSurface}
+                activeOutlineColor={theme.colors.primary}
+                outlineColor={theme.dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.1)"}
+                keyboardType="numeric"
+                value={expensePrice}
+                onChangeText={(e) => setExpensePrice(e)}
+            />
+          </View>
+        </View>
+
+        {/* Main Form Actions */}
+        <View style={styles.buttonGroup}>
+          <Button
+              mode="contained"
+              labelStyle={[theme.fonts.titleMedium, { fontWeight: "700", letterSpacing: 0.3 }]}
+              onPress={saveButtonOnPress}
+          >
+            Save Changes
+          </Button>
+
+          <Button
               mode="contained-tonal"
-              style={styles.modalActionButton}
+              labelStyle={[theme.fonts.titleMedium, { fontWeight: "700", letterSpacing: 0.3 }]}
               onPress={toggleModalButtonOnPress}
-            >
-              Close
-            </Button>
+          >
+            View Details
+          </Button>
+        </View>
+
+        {/* Danger Zone Separation */}
+        <View style={styles.dangerSection}>
+          <HorizontalLine
+              label="Danger Zone"
+              color={theme.colors.error}
+              style={{ marginVertical: 14 }}
+          />
+          <Button
+              mode="outlined"
+              style={styles.dangerButton}
+              labelStyle={[theme.fonts.titleMedium, styles.dangerButtonLabel, { letterSpacing: 0.3 }]}
+              onPress={deleteButtonOnPress}
+          >
+            Delete Expense
+          </Button>
+        </View>
+
+        {/* Structured Info Portal Sheet */}
+        <Modal
+            visible={detailsModal}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={toggleModalButtonOnPress}
+        >
+          <View style={[styles.modalBackdrop, { flex: 1 }]}>
+            <TouchableOpacity
+                style={StyleSheet.absoluteFillObject}
+                activeOpacity={1}
+                onPress={toggleModalButtonOnPress}
+            />
+            <View style={styles.modalContent}>
+              <View style={styles.sheetHandle} />
+              <Text variant="headlineSmall" style={styles.modalTitle}>Expense Details</Text>
+
+              <View style={{ gap: 12, marginVertical: 8 }}>
+                <View style={styles.detailsRow}>
+                  <Text variant="titleSmall" style={styles.detailsLabel}>Category</Text>
+                  <Text variant="bodyLarge" style={styles.detailsValue}>{expenseCategory?.name || "None"}</Text>
+                </View>
+                <View style={styles.detailsRow}>
+                  <Text variant="titleSmall" style={styles.detailsLabel}>Created stamp</Text>
+                  <Text variant="bodyLarge" style={styles.detailsValue}>
+                    {convertDateToDateString(new Date(expense.created_at))}
+                  </Text>
+                </View>
+                <View style={styles.detailsRow}>
+                  <Text variant="titleSmall" style={styles.detailsLabel}>Last modified</Text>
+                  <Text variant="bodyLarge" style={styles.detailsValue}>
+                    {convertDateToDateString(new Date(expense.updated_at))}
+                  </Text>
+                </View>
+              </View>
+
+              <Button
+                  mode="contained-tonal"
+                  labelStyle={[theme.fonts.labelLarge, { fontWeight: "700", letterSpacing: 0.3 }]}
+                  onPress={toggleModalButtonOnPress}
+              >
+                Close
+              </Button>
+            </View>
           </View>
         </Modal>
-      </Portal>
 
-    </View>
+      </View>
   );
 }

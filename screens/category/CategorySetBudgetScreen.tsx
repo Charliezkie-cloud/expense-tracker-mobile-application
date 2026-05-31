@@ -1,5 +1,5 @@
-import {Alert, FlatList, View} from "react-native";
-import {Button, Chip, Text, TextInput, useTheme} from "react-native-paper";
+import {Alert, FlatList, View, TouchableOpacity} from "react-native";
+import {Button, Text, TextInput, useTheme} from "react-native-paper";
 import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
 import {useEffect, useState} from "react";
 import {useNavigation} from "@react-navigation/native";
@@ -23,6 +23,8 @@ import { useSQLiteContext } from "expo-sqlite";
 import {validateAddBudgetForm} from "../../libs/validators";
 import { convertDecimalToWholeNumber, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../libs/converters";
 import {useSettingsStore} from "../../hooks/useSettingsStore";
+import {getRgbaColor} from "../../libs/helpers";
+
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategorySetBudget">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategorySetBudget">;
 
@@ -105,8 +107,13 @@ export default function CategorySetBudgetScreen({ route }: RouteProps) {
             item.value.toString().includes(lowerCaseInput)));
     }
 
+    // Suggestions click handler to fill selected suggestion and auto filter
     function selectedSuggestion(item: number) {
-        setBudgetAmount(item.toString());
+        const itemStr = item.toString();
+        setBudgetAmount(itemStr);
+        // Clean chips suggestion matching state
+        setBudgetChips(BUDGET_CHIPS.filter((suggestion) =>
+            suggestion.value.toString().includes(itemStr)));
     }
 
     // Use effects
@@ -129,7 +136,7 @@ export default function CategorySetBudgetScreen({ route }: RouteProps) {
                 const res = await getBudget(db, category.id);
                 const convertedBudget = convertWholeNumberToDecimal(res?.budget ?? 0);
 
-                setBudgetAmount(convertedBudget.toString());
+                setBudgetAmount(convertedBudget > 0 ? convertedBudget.toString() : "");
             } catch {
                 Alert.alert("Error", "Something went wrong while fetching the current category budget.");
             }
@@ -140,43 +147,73 @@ export default function CategorySetBudgetScreen({ route }: RouteProps) {
 
     return (
         <View style={styles.formContainer}>
-            <View style={styles.inputGroup}>
-                <Text variant="bodyLarge" style={styles.inputLabel}>
-                    Amount <Text style={{ color: theme.colors.error }}>*</Text>
-                </Text>
-                <TextInput
-                    value={budgetAmount}
-                    mode="outlined"
-                    style={styles.textInput}
-                    onChangeText={budgetAmountOnChangeText}
-                    keyboardType="numeric"
-                    placeholder="e.g, 76.25"
-                />
+            {/* Ambient liquid orbs background */}
+            <View style={styles.categoryLiquidShape1} />
+            <View style={styles.categoryLiquidShape2} />
+            <View style={styles.categoryLiquidShape3} />
+            <View style={styles.categoryGlassOverlay} />
+
+            {/* Volumetric Frosted Glass Input Card */}
+            <View style={styles.glassInputCard}>
+                <View style={styles.inputGroup}>
+                    <Text variant="bodyLarge" style={styles.inputLabel}>
+                        Amount <Text style={{ color: theme.colors.error }}>*</Text>
+                    </Text>
+                    <TextInput
+                        value={budgetAmount}
+                        mode="outlined"
+                        style={styles.textInput}
+                        onChangeText={budgetAmountOnChangeText}
+                        keyboardType="numeric"
+                        placeholder="e.g., 76.25"
+                        textColor={theme.colors.onSurface}
+                        activeOutlineColor={theme.colors.primary}
+                        outlineColor={theme.dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.1)"}
+                    />
+                </View>
             </View>
 
+            {/* Volumetric Glass list of suggestions */}
             <View style={styles.suggestionsContainer}>
-                <Text variant="bodyMedium">Suggestions</Text>
-                <FlatList
-                    style={styles.suggestionsList}
-                    data={budgetChips}
-                    renderItem={({ item }) => (
-                        <Chip
-                            style={styles.suggestionsListItem}
-                            icon={({ size }) => (
-                                <item.icon size={size} color={item.color} />
-                            )}
-                            onPress={() => selectedSuggestion(item.value)}
-                        >
-                            {item.label}
-                        </Chip>
-                    )}
-                />
+                <View style={styles.suggestionsTitleRow}>
+                    <Text style={styles.suggestionsTitle}>Suggestions</Text>
+                    <Text style={{ fontSize: 11, fontWeight: "600", color: theme.colors.onSurfaceVariant, opacity: 0.6 }}>
+                        {budgetChips.length} loaded
+                    </Text>
+                </View>
+
+                <View style={styles.suggestionsListContainer}>
+                    <FlatList
+                        key={`suggestions-grid-${budgetChips.length}`}
+                        style={styles.suggestionsList}
+                        data={budgetChips}
+                        numColumns={2}
+                        showsVerticalScrollIndicator={false}
+                        renderItem={({ item }) => {
+                            const customBg = getRgbaColor(item.color, 0.08);
+                            const customBorder = getRgbaColor(item.color, 0.2);
+
+                            return (
+                                <TouchableOpacity
+                                    activeOpacity={0.7}
+                                    style={styles.suggestionsListItem}
+                                    onPress={() => selectedSuggestion(item.value)}
+                                >
+                                    <View style={[styles.chipItemInner, { backgroundColor: customBg, borderColor: customBorder }]}>
+                                        <item.icon size={16} color={item.color} />
+                                        <Text style={[styles.chipText, { color: theme.colors.onSurface }]}>{item.label}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            );
+                        }}
+                    />
+                </View>
             </View>
 
+            {/* Save Button with glowing/volumetric shadow */}
             <Button
                 mode="contained"
-                style={styles.formButton}
-                labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                labelStyle={{ fontSize: 16, fontWeight: "700", letterSpacing: 0.3 }}
                 onPress={saveButtonOnPress}
             >
                 Save Limits

@@ -17,4 +17,5 @@ export type TabParamStackList = {
   Home: undefined;
   Categories: undefined;
   Settings: undefined;
+  Expenses: undefined;
 };

@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Home, List, Settings } from "lucide-react-native";
+import {Home, List, Settings, Wallet2} from "lucide-react-native";
 import { useTheme } from "react-native-paper";
 
 import { RootParamStackList, TabParamStackList } from "../types/navigation.types";
@@ -13,6 +13,7 @@ import CategorySetBudgetScreen from "../screens/category/CategorySetBudgetScreen
 import EditCategoryScreen from "../screens/category/EditCategoryScreen";
 import CategoryAddExpenseScreen from "../screens/expense/CategoryAddExpenseScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import ExpensesScreen from "../screens/expense/ExpensesScreen";
 
 const Stack = createNativeStackNavigator<RootParamStackList>();
 const Tab = createBottomTabNavigator<TabParamStackList>();
@@ -66,6 +67,16 @@ function Tabs() {
                     title: "Categories",
                     tabBarIcon: (({ color, size }) => (
                         <List color={color} size={size - 2} />
+                    ))
+                }}
+            />
+            <Tab.Screen
+                name="Expenses"
+                component={ExpensesScreen}
+                options={{
+                    title: "Expenses",
+                    tabBarIcon: (({ color, size }) => (
+                        <Wallet2 color={color} size={size - 2} />
                     ))
                 }}
             />

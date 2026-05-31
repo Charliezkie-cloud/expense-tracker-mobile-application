@@ -1,10 +1,10 @@
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
-import {Alert, FlatList, View} from "react-native";
-import {ArrowUpDown, BanknoteArrowUp, ChevronRight, Pencil, Wallet} from "lucide-react-native";
+import {Alert, FlatList, View, TouchableOpacity, Modal, StyleSheet} from "react-native";
+import {BanknoteArrowUp, ChevronRight, Pencil, Wallet, SlidersHorizontal} from "lucide-react-native";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import {useCallback, useEffect, useState} from "react";
-import {Button, Modal, Portal, Text, useTheme, List, FAB} from "react-native-paper";
+import {Button, Text, useTheme, FAB} from "react-native-paper";
 import {useSQLiteContext} from "expo-sqlite";
 
 import { RootParamStackList } from "../../types/navigation.types";
@@ -14,6 +14,8 @@ import { getCategoryDetailStyles } from "../../styles/mainStyles";
 import {getBudget, isBudgetExists} from "../../database/budgetQueries";
 import {getAllExpensesOfCategory, getTheSumOfExpenses} from "../../database/expenseQueries";
 import {Expense} from "../../types/models.types";
+
+import {getCategoryIconAndColor, getRgbaColor} from "../../libs/helpers";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "Category">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Category">;
@@ -28,6 +30,9 @@ export default function CategoryScreen({ route }: RouteProps) {
   const settings = useSettingsStore((state) => state.settings);
   const theme = useTheme();
   const styles = getCategoryDetailStyles(theme);
+
+  // Dynamic colors matching the Category
+  const { Icon: CategoryIcon, color: categoryColor } = getCategoryIconAndColor(category.name);
 
   // States
   const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);
@@ -45,6 +50,7 @@ export default function CategoryScreen({ route }: RouteProps) {
     navigation.navigate("CategoryAddExpense", category);
   }
 
+  // Set NavProps target to fit correctly
   function editCategoryButtonOnPress() {
     navigation.navigate("EditCategory", category);
   }
@@ -98,7 +104,7 @@ export default function CategoryScreen({ route }: RouteProps) {
 
         checkIfBudgetExists();
         fetchBudget();
-      }, [])
+      }, [category.id])
   );
 
   useFocusEffect(
@@ -125,7 +131,7 @@ export default function CategoryScreen({ route }: RouteProps) {
 
         fetchTheSumOfExpenses();
         fetchCategoryExpenses();
-      }, [])
+      }, [category.id, sortBySelectedItem, sortOrderSelectedItem])
   );
 
   useEffect(() => {
@@ -134,16 +140,45 @@ export default function CategoryScreen({ route }: RouteProps) {
 
   return (
       <View style={styles.mainContainer}>
+        {/* Ambient liquid orbs background */}
+        <View style={styles.categoryLiquidShape1} />
+        <View style={styles.categoryLiquidShape2} />
+        <View style={styles.categoryLiquidShape3} />
+        <View style={styles.categoryGlassOverlay} />
 
-        {/* Total display area */}
-        <View style={styles.totalDisplayContainer}>
-          <Text variant="displayMedium" style={styles.totalAmountText}>
-            {convertNumberToCurrencyString(total, settings.currencyCode)}
-          </Text>
+        {/* Volumetric Glassmorphic Dashboard Card */}
+        <View style={styles.glassCard}>
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+              <View style={[styles.iconWrapper, {
+                backgroundColor: getRgbaColor(categoryColor, 0.1),
+                borderColor: getRgbaColor(categoryColor, 0.25),
+                borderWidth: 1,
+                marginLeft: 0
+              }]}>
+                <CategoryIcon size={18} color={categoryColor} />
+              </View>
+              <View>
+                <Text variant="titleMedium" style={{ fontWeight: "800", color: theme.colors.onSurface }}>
+                  {category.name}
+                </Text>
+                <Text variant="labelSmall" style={{ fontWeight: "600", textTransform: "uppercase", letterSpacing: 0.8, color: theme.colors.onSurfaceVariant, opacity: 0.7 }}>
+                  Categorized Spending
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Total Display */}
+          <View style={[styles.totalDisplayContainer, { paddingVertical: 12 }]}>
+            <Text variant="displaySmall" style={[styles.totalAmountText, { letterSpacing: -0.5, fontWeight: "900" }]}>
+              {convertNumberToCurrencyString(total, settings.currencyCode)}
+            </Text>
+          </View>
         </View>
 
         {/* Structured Budget Panel */}
-        {isBudgetExistsState && (
+        {isBudgetExistsState ? (
             <View style={styles.budgetCard}>
               <View style={styles.budgetTextRow}>
                 <Text variant="bodyMedium" style={styles.budgetTextLabel}>Allocated Budget</Text>
@@ -157,12 +192,21 @@ export default function CategoryScreen({ route }: RouteProps) {
                     variant="bodyLarge"
                     style={[
                       styles.budgetTextValue,
-                      { color: remainingBudget <= 0 ? theme.colors.error : "#16a34a" }
+                      { color: remainingBudget <= 0 ? theme.colors.error : "#10b981", fontWeight: "700" }
                     ]}
                 >
                   {convertNumberToCurrencyString(remainingBudget ?? 0.00, settings.currencyCode)}
                 </Text>
               </View>
+            </View>
+        ) : (
+            <View style={[styles.budgetCard, { borderStyle: "dashed", borderColor: theme.colors.outlineVariant, alignItems: "center", paddingVertical: 16 }]}>
+              <Text variant="bodyMedium" style={[styles.budgetTextLabel, { fontStyle: "italic", marginBottom: 4 }]}>
+                No budget limits set.
+              </Text>
+              <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, opacity: 0.65, fontWeight: "500" }}>
+                Keep tracking organized by defining a monthly budget cap.
+              </Text>
             </View>
         )}
 
@@ -172,8 +216,8 @@ export default function CategoryScreen({ route }: RouteProps) {
               mode="contained"
               onPress={editCategoryButtonOnPress}
               style={styles.splitButton}
-              labelStyle={styles.splitButtonLabel}
-              icon={(props) => <Pencil color={props.color} size={16} />}
+              labelStyle={[styles.splitButtonLabel, { fontWeight: "700" }]}
+              icon={(props) => <Pencil color={props.color} size={15} />}
           >
             Edit Category
           </Button>
@@ -181,28 +225,48 @@ export default function CategoryScreen({ route }: RouteProps) {
               mode="contained-tonal"
               onPress={setBudgetButtonOnPress}
               style={styles.splitButton}
-              labelStyle={styles.splitButtonLabel}
-              icon={(props) => <BanknoteArrowUp color={props.color} size={16} />}
+              labelStyle={[styles.splitButtonLabel, { fontWeight: "700" }]}
+              icon={(props) => <BanknoteArrowUp color={props.color} size={15} />}
           >
             Set Budget
           </Button>
         </View>
 
         {/* Sorting Activation triggers */}
-        <Button
-            mode="text"
-            style={styles.sortButton}
-            labelStyle={styles.sortButtonLabel}
-            icon={(props) => <ArrowUpDown color={props.color} size={props.size} />}
-            onPress={toggleSortingModal}
-        >
-          Sort Expenses
-        </Button>
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 4, paddingHorizontal: 4 }}>
+          <View style={{ flex: 1 }}>
+            <Text variant="labelSmall" style={{ fontWeight: "800", color: theme.colors.onSurfaceVariant, textTransform: "uppercase", letterSpacing: 1.1 }}>
+              Expenses List
+            </Text>
+          </View>
+          <Button
+              mode="text"
+              compact
+              style={[styles.sortButton, { alignSelf: "flex-end", width: "auto", marginBottom: 0 }]}
+              labelStyle={[styles.sortButtonLabel, { fontWeight: "700" }]}
+              icon={(props) => <SlidersHorizontal color={props.color} size={13} />}
+              onPress={toggleSortingModal}
+          >
+            {sortBySelectedItem === "price" ? "Price" : sortBySelectedItem === "quantity" ? "Qty" : "Date"} • {sortOrderSelectedItem === "ASC" ? "Asc" : "Desc"}
+          </Button>
+        </View>
 
         {/* Expense Dynamic Ordering Modal */}
-        <Portal>
-          <Modal visible={sortingModal} style={styles.modalBackdrop}>
+        <Modal
+            visible={sortingModal}
+            transparent={true}
+            animationType="slide"
+            onRequestClose={toggleSortingModal}
+        >
+          <View style={[styles.modalBackdrop, { flex: 1 }]}>
+            <TouchableOpacity
+                style={StyleSheet.absoluteFillObject}
+                activeOpacity={1}
+                onPress={toggleSortingModal}
+            />
             <View style={styles.modalContent}>
+              {/* Bottom Sheet grab-handle pull representation */}
+              <View style={styles.sheetHandle} />
               <Text variant="headlineSmall" style={styles.modalTitle}>Expense Sorting</Text>
 
               <View style={styles.pickerContainer}>
@@ -212,12 +276,12 @@ export default function CategoryScreen({ route }: RouteProps) {
                       style={styles.picker}
                       dropdownIconColor={theme.colors.onSurfaceVariant}
                       selectedValue={sortBySelectedItem}
-                      onValueChange={(e) => setSortBySelectedItem(e)}
+                      onValueChange={(e) => setSortBySelectedItem(e as "price" | "quantity" | "created_at" | "updated_at")}
                   >
-                    <Picker.Item label="Price" value="price" />
-                    <Picker.Item label="Quantity" value="quantity" />
-                    <Picker.Item label="Creation Date & Time" value="created_at" />
-                    <Picker.Item label="Updation Date & Time" value="updated_at" />
+                    <Picker.Item label="Price" value="price" color={theme.colors.onSurface} style={{ backgroundColor: theme.dark ? "rgba(30,30,30,0.95)" : "rgba(255,255,255,0.95)" }} />
+                    <Picker.Item label="Quantity" value="quantity" color={theme.colors.onSurface} style={{ backgroundColor: theme.dark ? "rgba(30,30,30,0.95)" : "rgba(255,255,255,0.95)" }} />
+                    <Picker.Item label="Creation Date & Time" value="created_at" color={theme.colors.onSurface} style={{ backgroundColor: theme.dark ? "rgba(30,30,30,0.95)" : "rgba(255,255,255,0.95)" }} />
+                    <Picker.Item label="Updation Date & Time" value="updated_at" color={theme.colors.onSurface} style={{ backgroundColor: theme.dark ? "rgba(30,30,30,0.95)" : "rgba(255,255,255,0.95)" }} />
                   </Picker>
                 </View>
               </View>
@@ -229,10 +293,10 @@ export default function CategoryScreen({ route }: RouteProps) {
                       style={styles.picker}
                       dropdownIconColor={theme.colors.onSurfaceVariant}
                       selectedValue={sortOrderSelectedItem}
-                      onValueChange={(e) => setSortOrderSelectedItem(e)}
+                      onValueChange={(e) => setSortOrderSelectedItem(e as "ASC" | "DESC")}
                   >
-                    <Picker.Item label="Ascending" value="ASC" />
-                    <Picker.Item label="Descending" value="DESC" />
+                    <Picker.Item label="Ascending" value="ASC" color={theme.colors.onSurface} style={{ backgroundColor: theme.dark ? "rgba(30,30,30,0.95)" : "rgba(255,255,255,0.95)" }} />
+                    <Picker.Item label="Descending" value="DESC" color={theme.colors.onSurface} style={{ backgroundColor: theme.dark ? "rgba(30,30,30,0.95)" : "rgba(255,255,255,0.95)" }} />
                   </Picker>
                 </View>
               </View>
@@ -240,24 +304,22 @@ export default function CategoryScreen({ route }: RouteProps) {
               <View style={styles.modalButtonsContainer}>
                 <Button
                     mode="contained"
-                    style={styles.modalActionButton}
-                    labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                    labelStyle={{ fontWeight: "700" }}
                     onPress={applySortingButtonOnPress}
                 >
-                  Apply
+                  Apply Sort
                 </Button>
                 <Button
                     mode="text"
-                    style={styles.modalActionButton}
-                    labelStyle={{ fontSize: 16, fontWeight: "600" }}
+                    labelStyle={{ fontWeight: "600" }}
                     onPress={toggleSortingModal}
                 >
                   Close
                 </Button>
               </View>
             </View>
-          </Modal>
-        </Portal>
+          </View>
+        </Modal>
 
         {/* Categorized Layout Trackers */}
         {filteredExpenses && filteredExpenses.length > 0 ? (
@@ -266,41 +328,68 @@ export default function CategoryScreen({ route }: RouteProps) {
                   data={filteredExpenses}
                   ItemSeparatorComponent={() => <View style={styles.listSeparator} />}
                   keyExtractor={(item) => item.id.toString()}
+                  showsVerticalScrollIndicator={false}
                   renderItem={({ item }) => (
-                      <List.Item
+                      <TouchableOpacity
+                          activeOpacity={0.7}
                           onPress={() => expenseListItemOnPress(item)}
-                          title={`${convertNumberToCurrencyString(convertWholeNumberToDecimal(item.price), settings.currencyCode)} x ${item.quantity}`}
-                          description={
-                            isNaN(new Date(item.name).getTime()) ? item.name : convertDateToDateString(new Date(item.name))
-                          }
-                          titleStyle={styles.itemTitleText}
-                          descriptionStyle={styles.itemDescriptionText}
-                          left={() => (
-                              <View style={[styles.iconWrapper, { backgroundColor: theme.colors.surfaceVariant }]}>
-                                <Wallet size={20} color={theme.colors.primary} />
-                              </View>
-                          )}
-                          right={() => (
-                              <View style={styles.chevronWrapper}>
-                                <ChevronRight color={theme.colors.onSurfaceVariant} size={20} />
-                              </View>
-                          )}
                           style={styles.listItemStyle}
-                      />
+                      >
+                        <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 10, paddingHorizontal: 6 }}>
+                          <View style={[styles.iconWrapper, {
+                            backgroundColor: getRgbaColor(categoryColor, 0.08),
+                            borderColor: getRgbaColor(categoryColor, 0.15),
+                            borderWidth: 1,
+                            marginLeft: 4
+                          }]}>
+                            <Wallet size={16} color={categoryColor} />
+                          </View>
+
+                          <View style={{ flex: 1, marginLeft: 14 }}>
+                            <Text variant="bodyLarge" style={[styles.itemTitleText, { fontWeight: "700" }]}>
+                              {convertNumberToCurrencyString(convertWholeNumberToDecimal(item.price), settings.currencyCode)}
+                              {item.quantity > 1 && (
+                                  <Text variant="bodySmall" style={{ fontWeight: "500", color: theme.colors.onSurfaceVariant }}>
+                                    {` • Quantity: ${item.quantity}`}
+                                  </Text>
+                              )}
+                            </Text>
+                            <Text variant="bodySmall" style={[styles.itemDescriptionText, { opacity: 0.8 }]}>
+                              {isNaN(new Date(item.name).getTime()) ? item.name : convertDateToDateString(new Date(item.name))}
+                            </Text>
+                          </View>
+
+                          <View style={styles.chevronWrapper}>
+                            <ChevronRight color={theme.colors.onSurfaceVariant} size={15} />
+                          </View>
+                        </View>
+                      </TouchableOpacity>
                   )}
               />
             </View>
         ) : (
             <View style={styles.emptyContainer}>
-              <Text variant="bodyLarge" style={styles.emptyText}>
-                Ready? Add an expense to get started.
+              <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: theme.colors.surfaceVariant, justifyContent: "center", alignItems: "center", marginBottom: 12, opacity: 0.8 }}>
+                <Wallet size={20} color={theme.colors.onSurfaceVariant} />
+              </View>
+              <Text variant="bodyMedium" style={[styles.emptyText, { fontWeight: "600" }]}>
+                No expenses found
+              </Text>
+              <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant, opacity: 0.7, textAlign: "center", marginTop: 4, paddingHorizontal: 24 }}>
+                Ready? Add an expense using the plus button below to get started.
               </Text>
             </View>
         )}
 
         {/* Structural bottom interactions */}
         <View style={styles.actionFooter}>
-          <FAB mode="flat" icon="plus" onPress={addExpenseButtonOnPress} variant="primary" />
+          <FAB
+              mode="flat"
+              icon="plus"
+              onPress={addExpenseButtonOnPress}
+              variant="primary"
+              style={{ borderRadius: 16 }}
+          />
         </View>
       </View>
   );
