@@ -8,6 +8,7 @@ export type RootParamStackList = {
   AddCategory: undefined;
   EditCategory: Category;
   Category: Category;
+  AddExpense: undefined;
   CategoryAddExpense: Category;
   EditExpense: Expense;
   CategorySetBudget: Category;

@@ -1,22 +1,18 @@
 import {ActivityIndicator, Alert, FlatList, Modal, StyleSheet, TouchableOpacity, View} from "react-native";
 import {Button, FAB, Text, useTheme} from "react-native-paper";
-import {getExpensesScreenStyles} from "../../styles/mainStyles";
 import {ChevronRight, SlidersHorizontal, Wallet} from "lucide-react-native";
 import {Picker} from "@react-native-picker/picker";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {useCallback, useState} from "react";
+import {useSQLiteContext} from "expo-sqlite";
+
+import {getExpensesScreenStyles} from "../../styles/mainStyles";
 import {getCategoryIconAndColor, getRgbaColor} from "../../libs/helpers";
-import {
-    convertDateToDateString,
-    convertNumberToCurrencyString,
-    convertWholeNumberToDecimal
-} from "../../libs/converters";
-import {useCallback, useEffect, useState} from "react";
+import { convertDateToDateString, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../libs/converters";
 import {Expense} from "../../types/models.types";
 import {getAllExpenses} from "../../database/expenseQueries";
-import {useSQLiteContext} from "expo-sqlite";
 import {useSettingsStore} from "../../hooks/useSettingsStore";
-import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {getAllCategories} from "../../database/categoryQueries";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {RootParamStackList} from "../../types/navigation.types";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
@@ -280,7 +276,7 @@ export default function ExpensesScreen() {
 
             {/* Bottom Actions Container */}
             <View style={styles.buttonsContainer}>
-                <FAB mode="flat" icon="plus" onPress={() => console.log("Hello world")} variant="primary" style={{ borderRadius: 16 }} />
+                <FAB mode="flat" icon="plus" onPress={() => navigation.navigate("AddExpense")} variant="primary" style={{ borderRadius: 16 }} />
             </View>
         </View>
     );

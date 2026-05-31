@@ -327,7 +327,6 @@ export const getHomeStyles = (theme: MD3Theme) => StyleSheet.create({
   iosActionButton: {
     borderRadius: theme.roundness * 2,
     marginTop: 6,
-    paddingVertical: 4,
   },
   iosActionLabel: {
     fontWeight: "700",
@@ -1446,6 +1445,91 @@ export const getExpenseStyles = (theme: MD3Theme) => StyleSheet.create({
   detailsValue: {
     fontWeight: "600",
     color: theme.colors.onSurface,
+  },
+  suggestionsListContainer: {
+    flex: 1,
+    backgroundColor: theme.dark
+        ? "rgba(255, 255, 255, 0.07)"
+        : "rgba(255, 255, 255, 0.78)",
+    borderColor: theme.dark
+        ? "rgba(255, 255, 255, 0.12)"
+        : "rgba(255, 255, 255, 0.75)",
+    borderWidth: 1,
+    borderRadius: theme.roundness * 4,
+    padding: 18,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.05,
+    shadowRadius: 18,
+    overflow: "hidden",
+    elevation: 0,
+    gap: 10
+  },
+  suggestionsList: {
+    flex: 1,
+  },
+  suggestionsListItem: {
+    flex: 1,
+    margin: 5,
+    borderRadius: theme.roundness * 2.5,
+    overflow: "hidden",
+  },
+  listItemWrapper: {
+    borderRadius: theme.roundness * 3,
+    overflow: "hidden",
+  },
+  listItemInner: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 14,
+  },
+  itemTextContainer: {
+    flex: 1,
+    marginLeft: 14,
+    justifyContent: "center",
+  },
+  itemTitleText: {
+    fontWeight: "700",
+    color: theme.colors.onSurface,
+    letterSpacing: -0.1,
+  },
+  itemDescriptionText: {
+    color: theme.colors.onSurfaceVariant,
+    marginTop: 4,
+    fontWeight: "600",
+    opacity: 0.82,
+  },
+  iconWrapper: {
+    width: 42,
+    height: 42,
+    borderRadius: theme.roundness * 2.2,
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+  },
+  emptyContainer: {
+    paddingVertical: 56,
+    paddingHorizontal: 24,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 2,
+  },
+  emptyText: {
+    textAlign: "center",
+    color: theme.colors.onSurfaceVariant,
+    fontWeight: "600",
+  },
+  iosActionButton: {
+    borderRadius: theme.roundness * 2,
+    marginTop: 6,
+  },
+  iosActionLabel: {
+    fontWeight: "700",
   },
 });
 

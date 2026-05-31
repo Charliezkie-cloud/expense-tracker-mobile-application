@@ -14,6 +14,7 @@ import EditCategoryScreen from "../screens/category/EditCategoryScreen";
 import CategoryAddExpenseScreen from "../screens/expense/CategoryAddExpenseScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import ExpensesScreen from "../screens/expense/ExpensesScreen";
+import AddExpenseScreen from "../screens/expense/AddExpenseScreen";
 
 const Stack = createNativeStackNavigator<RootParamStackList>();
 const Tab = createBottomTabNavigator<TabParamStackList>();
@@ -139,6 +140,11 @@ export default function RootStack() {
                 options={(({ route }) => ({
                     headerTitle: `${route.params.name} Expenses`,
                 }))}
+            />
+            <Stack.Screen
+                name="AddExpense"
+                component={AddExpenseScreen}
+                options={{ headerTitle: `Add Expense` }}
             />
             <Stack.Screen
                 name="CategoryAddExpense"

@@ -107,7 +107,7 @@ export default function EditExpenseScreen({ route }: RouteProps) {
           {/* Expense Name field */}
           <View style={styles.inputGroup}>
             <Text variant="bodyLarge" style={styles.inputLabel}>
-              Name <Text style={styles.requiredAsterisk}>*</Text>
+              Name
             </Text>
             <TextField
                 mode="outlined"

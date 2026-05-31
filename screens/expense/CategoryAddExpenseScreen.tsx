@@ -8,7 +8,7 @@ import {useNavigation} from "@react-navigation/native";
 
 import { RootParamStackList } from "../../types/navigation.types";
 import { getExpenseStyles } from "../../styles/mainStyles";
-import {validateAddExpenseForm} from "../../libs/validators";
+import {validateAddCategoryExpenseForm} from "../../libs/validators";
 import {createExpense} from "../../database/expenseQueries";
 import {convertDecimalToWholeNumber} from "../../libs/converters";
 
@@ -35,7 +35,7 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
 
     // Handlers
     async function saveButtonOnPress() {
-        const validationMessage = validateAddExpenseForm(expenseQuantity, expensePrice);
+        const validationMessage = validateAddCategoryExpenseForm(expenseQuantity, expensePrice);
 
         if (typeof validationMessage === "string")
             return Alert.alert("Error", validationMessage);
@@ -70,7 +70,7 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
                 {/* Expense name input */}
                 <View style={styles.inputGroup}>
                     <Text style={styles.inputLabel}>
-                        Expense name <Text style={styles.requiredAsterisk}>*</Text>
+                        Expense name
                     </Text>
                     <TextField
                         mode="outlined"
