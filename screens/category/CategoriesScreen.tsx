@@ -1,10 +1,10 @@
-import {Alert, FlatList, TouchableOpacity, View, Modal, StyleSheet} from "react-native";
+import {Alert, FlatList, TouchableOpacity, View, Modal, StyleSheet, ActivityIndicator} from "react-native";
 import {Button, FAB, Text, useTheme} from "react-native-paper";
-import { useNavigation } from "@react-navigation/native";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChevronRight, SlidersHorizontal } from "lucide-react-native";
 import { Picker } from "@react-native-picker/picker";
-import { useEffect, useState } from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useSQLiteContext} from "expo-sqlite";
 
 import { RootParamStackList } from "../../types/navigation.types";
@@ -26,6 +26,7 @@ export default function CategoriesScreen() {
   const styles = getCategoriesStyles(theme);
 
   // States
+  const [loading, setLoading] = useState(true);
   const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
   const [sortingModal, setSortingModal] = useState(false);
   const [sortBySelectedItem, setSortBySelectedItem] = useState<"created_at" | "updated_at">("created_at");
@@ -41,32 +42,35 @@ export default function CategoriesScreen() {
   }
 
   async function applySortingButtonOnPress() {
-    try {
-      const res = await getAllCategories(db, sortBySelectedItem, sortOrderSelectedItem);
-      setFilteredCategories(res ?? []);
-      toggleSortingModal();
-    } catch (error) {
-      Alert.alert("Error", "Something went wrong while fetching the categories.");
-    }
+    fetchAllCategories();
+    setSortingModal(false);
   }
 
   function listItemButtonOnPress(category: Category) {
     navigation.navigate("Category", category);
   }
 
-  // Use effects
-  useEffect(() => {
-    async function fetchAllCategories() {
-      try {
-        const res = await getAllCategories(db, sortBySelectedItem, sortOrderSelectedItem);
-        setFilteredCategories(res ?? []);
-      } catch (error) {
-        Alert.alert("Error", "Something went wrong while fetching the categories.");
-      }
-    }
+  // Helpers
+  async function fetchAllCategories() {
+    setLoading(true);
 
-    fetchAllCategories();
-  }, []);
+    try {
+      const res = await getAllCategories(db, sortBySelectedItem, sortOrderSelectedItem);
+      setFilteredCategories(res ?? []);
+    } catch (error) {
+      Alert.alert("Error", "Something went wrong while fetching the categories.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  // Use effects
+  useFocusEffect(
+      useCallback(() => {
+        setFilteredCategories([]);
+        fetchAllCategories();
+      }, [])
+  );
 
   return (
       <View style={styles.mainContainer}>
@@ -217,6 +221,10 @@ export default function CategoriesScreen() {
               </Text>
             </View>
         )}
+
+        {loading ? (
+            <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary} />
+        ) : (<></>)}
 
         {/* Bottom Actions Container */}
         <View style={styles.buttonsContainer}>

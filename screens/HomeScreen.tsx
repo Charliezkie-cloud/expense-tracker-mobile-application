@@ -1,4 +1,4 @@
-import {Alert, Pressable, ScrollView, View} from "react-native";
+import {ActivityIndicator, Alert, Pressable, ScrollView, View} from "react-native";
 import {Button, List, ProgressBar, Text, useTheme} from "react-native-paper";
 import {useCallback, useState} from "react";
 import {ChevronRight, Layers, TrendingUp, Wallet} from "lucide-react-native";
@@ -15,6 +15,7 @@ import {getCategoriesBudgetProgress, getTheSumOfAllBudgets} from "../database/bu
 import {RootParamStackList} from "../types/navigation.types";
 import {getRecentCategories} from "../database/categoryQueries";
 import {Category, Expense} from "../types/models.types";
+import {getCategoryIconAndColor} from "../libs/helpers";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
 
@@ -34,7 +35,7 @@ export default function HomeScreen() {
     const [totalExpensePercentage, setTotalExpensePercentage] = useState(0.00);
     const [budgetProgress, setBudgetProgress] = useState<{ budget_percentage: number, category_name: string }[] | null>(null);
     const [recentCategories, setRecentCategories]  = useState<Category[]>([]);
-    const [recentExpenses, setRecentExpenses] = useState<Expense[]>([]);
+    const [recentExpenses, setRecentExpenses] = useState<({ [K in keyof Expense]: Expense[K] } & { category_name: string })[]>([]);
 
     // Use effects
     useFocusEffect(
@@ -251,43 +252,47 @@ export default function HomeScreen() {
                     <View style={styles.sectionHeader}>
                         <Text variant="titleMedium" style={styles.sectionTitle}>Recent Categories</Text>
                         {recentCategories && recentCategories.length > 0 && (
-                            <Text variant="labelSmall" style={styles.headerCounterText}>
+                            <Button onPress={() => navigation.navigate("Tabs", { screen: "Categories" })}>
                                 View All
-                            </Text>
+                            </Button>
                         )}
                     </View>
 
                     {recentCategories && recentCategories.length > 0 ? (
                         <View style={styles.glassCardList}>
-                            {recentCategories.map((item, index) => (
-                                <View key={`recent-category-${index}`}>
-                                    <List.Item
-                                        title={
-                                            <Text variant="bodyLarge" style={styles.itemTitleText}>
-                                                {item.name}
-                                            </Text>
-                                        }
-                                        description={
-                                            <Text variant="bodySmall" style={styles.itemDescriptionText}>
-                                                {convertDateToDateString(new Date(item.created_at))}
-                                            </Text>
-                                        }
-                                        left={() => (
-                                            <View style={styles.iconWrapperCategory}>
-                                                <Layers size={18} color={theme.colors.primary} />
-                                            </View>
-                                        )}
-                                        right={() => (
-                                            <View style={styles.chevronWrapper}>
-                                                <ChevronRight color={theme.colors.onSurfaceVariant} size={18} />
-                                            </View>
-                                        )}
-                                        onPress={() => navigation.navigate("Category", item)}
-                                        style={styles.listItemStyle}
-                                    />
-                                    {index < recentCategories.length - 1 && <View style={styles.listSeparator} />}
-                                </View>
-                            ))}
+                            {recentCategories.map((item, index) => {
+                                const { color, Icon } = getCategoryIconAndColor(item.name);
+
+                                return (
+                                    <View key={`recent-category-${index}`}>
+                                        <List.Item
+                                            title={
+                                                <Text variant="bodyLarge" style={styles.itemTitleText}>
+                                                    {item.name}
+                                                </Text>
+                                            }
+                                            description={
+                                                <Text variant="bodySmall" style={styles.itemDescriptionText}>
+                                                    Created {convertDateToDateString(new Date(item.created_at))}
+                                                </Text>
+                                            }
+                                            left={() => (
+                                                <View style={styles.iconWrapperCategory}>
+                                                    <Icon size={18} color={color} />
+                                                </View>
+                                            )}
+                                            right={() => (
+                                                <View style={styles.chevronWrapper}>
+                                                    <ChevronRight color={theme.colors.onSurfaceVariant} size={18} />
+                                                </View>
+                                            )}
+                                            onPress={() => navigation.navigate("Category", item)}
+                                            style={styles.listItemStyle}
+                                        />
+                                        {index < recentCategories.length - 1 && <View style={styles.listSeparator} />}
+                                    </View>
+                                );
+                            })}
                         </View>
                     ) : null}
 
@@ -309,43 +314,47 @@ export default function HomeScreen() {
                     <View style={styles.sectionHeader}>
                         <Text variant="titleMedium" style={styles.sectionTitle}>Recent Expenses</Text>
                         {recentExpenses && recentExpenses.length > 0 && (
-                            <Text variant="labelSmall" style={styles.headerCounterText}>
+                            <Button onPress={() => navigation.navigate("Tabs", { screen: "Expenses" })}>
                                 View All
-                            </Text>
+                            </Button>
                         )}
                     </View>
 
                     {recentExpenses && recentExpenses.length > 0 ? (
                         <View style={styles.glassCardList}>
-                            {recentExpenses.map((item, index) => (
-                                <View key={`recent-expenses-${index}`}>
-                                    <List.Item
-                                        title={
-                                            <Text variant="bodyLarge" style={styles.itemTitleText}>
-                                                {`${convertNumberToCurrencyString(convertWholeNumberToDecimal(item.price), settings.currencyCode)} x ${item.quantity}`}
-                                            </Text>
-                                        }
-                                        description={
-                                            <Text variant="bodySmall" style={styles.itemDescriptionText}>
-                                                {convertDateToDateString(new Date(item.created_at))}
-                                            </Text>
-                                        }
-                                        left={() => (
-                                            <View style={styles.iconWrapperExpense}>
-                                                <Wallet size={18} color={theme.colors.primary} />
-                                            </View>
-                                        )}
-                                        right={() => (
-                                            <View style={styles.chevronWrapper}>
-                                                <ChevronRight color={theme.colors.onSurfaceVariant} size={18} />
-                                            </View>
-                                        )}
-                                        onPress={() => navigation.navigate("EditExpense", item)}
-                                        style={styles.listItemStyle}
-                                    />
-                                    {index < recentExpenses.length - 1 && <View style={styles.listSeparator} />}
-                                </View>
-                            ))}
+                            {recentExpenses.map((item, index) => {
+                                const { color } = getCategoryIconAndColor(item.category_name);
+
+                                return (
+                                    <View key={`recent-expenses-${index}`}>
+                                        <List.Item
+                                            title={
+                                                <Text variant="bodyLarge" style={styles.itemTitleText}>
+                                                    {`${convertNumberToCurrencyString(convertWholeNumberToDecimal(item.price), settings.currencyCode)} x ${item.quantity}`}
+                                                </Text>
+                                            }
+                                            description={
+                                                <Text variant="bodySmall" style={styles.itemDescriptionText}>
+                                                    Created: {convertDateToDateString(new Date(item.created_at))}
+                                                </Text>
+                                            }
+                                            left={() => (
+                                                <View style={styles.iconWrapperExpense}>
+                                                    <Wallet size={18} color={color} />
+                                                </View>
+                                            )}
+                                            right={() => (
+                                                <View style={styles.chevronWrapper}>
+                                                    <ChevronRight color={theme.colors.onSurfaceVariant} size={18} />
+                                                </View>
+                                            )}
+                                            onPress={() => navigation.navigate("EditExpense", item)}
+                                            style={styles.listItemStyle}
+                                        />
+                                        {index < recentExpenses.length - 1 && <View style={styles.listSeparator} />}
+                                    </View>
+                                );
+                            })}
                         </View>
                     ) : null}
 
@@ -355,7 +364,7 @@ export default function HomeScreen() {
                             elevation={0}
                             style={styles.iosActionButton}
                             labelStyle={styles.iosActionLabel}
-                            onPress={() => navigation.navigate("Tabs", { screen: "Categories" })}
+                            onPress={() => navigation.navigate("Tabs", { screen: "Expenses" })}
                         >
                             Log your first expense
                         </Button>

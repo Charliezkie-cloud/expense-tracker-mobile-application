@@ -180,8 +180,12 @@ export async function getExpenseCategory(db: SQLiteDatabase, expenseId: number) 
  */
 export async function getRecentExpenses(db: SQLiteDatabase, orderDirection: "ASC" | "DESC" = "DESC", limit: number = 5) {
     try {
-        return await db.getAllAsync<Expense>(`
-            SELECT * FROM "expenses"
+        return await db.getAllAsync<{ [K in keyof Expense]: Expense[K] } & { category_name: string }>(`
+            SELECT
+                e.*,
+                c.name AS category_name
+            FROM "expenses" e
+            INNER JOIN "categories" c ON c.id = e.category_id
             ORDER BY "created_at" ${orderDirection}
             LIMIT ${limit}
         `);

@@ -9,16 +9,23 @@ import {
     convertNumberToCurrencyString,
     convertWholeNumberToDecimal
 } from "../../libs/converters";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {Expense} from "../../types/models.types";
 import {getAllExpenses} from "../../database/expenseQueries";
 import {useSQLiteContext} from "expo-sqlite";
 import {useSettingsStore} from "../../hooks/useSettingsStore";
+import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import {getAllCategories} from "../../database/categoryQueries";
+import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import {RootParamStackList} from "../../types/navigation.types";
+
+type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
 
 const PAGE_SIZE = 10;
 
 export default function ExpensesScreen() {
     // Hooks
+    const navigation = useNavigation<NavProps>();
     const db = useSQLiteContext();
     const settings = useSettingsStore((state) => state.settings);
     const theme = useTheme();
@@ -42,6 +49,10 @@ export default function ExpensesScreen() {
         setExpenses([]);
         fetchExpenses(0, true);
         setSortingModal(false);
+    }
+
+    function expenseListItemOnPress(item: Expense) {
+        navigation.navigate("EditExpense", item);
     }
 
     // Helpers
@@ -68,9 +79,12 @@ export default function ExpensesScreen() {
     }
 
     // Use effects
-    useEffect(() => {
-        fetchExpenses(0, true);
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            setExpenses([]);
+            fetchExpenses(0, true);
+        }, [])
+    );
 
     return (
         <View style={styles.mainContainer}>
@@ -185,12 +199,12 @@ export default function ExpensesScreen() {
                         keyExtractor={(item) => item.id.toString()}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item }) => {
-                            const { Icon, color: categoryColor } = getCategoryIconAndColor(item.category_name);
+                            const { color: categoryColor } = getCategoryIconAndColor(item.category_name);
 
                             return (
                                 <TouchableOpacity
                                     activeOpacity={0.7}
-                                    // onPress={() => expenseListItemOnPress(item)}
+                                    onPress={() => expenseListItemOnPress(item)}
                                     style={styles.listItemStyle}
                                 >
                                     <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 10, paddingHorizontal: 6 }}>
@@ -241,6 +255,10 @@ export default function ExpensesScreen() {
                     </Text>
                 </View>
             )}
+
+            {loading ? (
+                <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary} />
+            ) : (<></>)}
 
             {/* Bottom Actions Container */}
             <View style={styles.buttonsContainer}>
