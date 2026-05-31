@@ -16,6 +16,8 @@ import {getCategoryIconAndColor, getRgbaColor} from "../../libs/helpers";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "AddCategory">;
 
+const PAGE_SIZE = 10;
+
 export default function CategoriesScreen() {
   // Hooks
   const db = useSQLiteContext();
@@ -26,7 +28,9 @@ export default function CategoriesScreen() {
   const styles = getCategoriesStyles(theme);
 
   // States
-  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [filteredCategories, setFilteredCategories] = useState<Category[]>([]);
   const [sortingModal, setSortingModal] = useState(false);
   const [sortBySelectedItem, setSortBySelectedItem] = useState<"created_at" | "updated_at">("created_at");
@@ -42,7 +46,8 @@ export default function CategoriesScreen() {
   }
 
   async function applySortingButtonOnPress() {
-    fetchAllCategories();
+    setFilteredCategories([]);
+    fetchCategories(0, true);
     setSortingModal(false);
   }
 
@@ -51,12 +56,21 @@ export default function CategoriesScreen() {
   }
 
   // Helpers
-  async function fetchAllCategories() {
+  async function fetchCategories(targetPage: number = 0, cleanStart = false) {
+    if (loading || (!hasMore && !cleanStart)) return;
     setLoading(true);
 
     try {
-      const res = await getAllCategories(db, sortBySelectedItem, sortOrderSelectedItem);
-      setFilteredCategories(res ?? []);
+      const offset = targetPage * PAGE_SIZE;
+      const res = await getAllCategories(db, sortBySelectedItem, sortOrderSelectedItem, PAGE_SIZE, offset);
+
+      if (res.length < PAGE_SIZE)
+        setHasMore(false);
+      else
+        setHasMore(true);
+
+      setFilteredCategories(prev => [...prev, ...res]);
+      setPage(targetPage + 1);
     } catch (error) {
       Alert.alert("Error", "Something went wrong while fetching the categories.");
     } finally {
@@ -68,7 +82,7 @@ export default function CategoriesScreen() {
   useFocusEffect(
       useCallback(() => {
         setFilteredCategories([]);
-        fetchAllCategories();
+        fetchCategories(0, true);
       }, [])
   );
 
@@ -212,6 +226,11 @@ export default function CategoriesScreen() {
                         </TouchableOpacity>
                     );
                   }}
+                  ListFooterComponent={() => (
+                      loading ? <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary} /> : null
+                  )}
+                  onEndReached={() => fetchCategories(page)}
+                  onEndReachedThreshold={0.2}
               />
             </View>
         ) : (<></>)}

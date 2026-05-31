@@ -32,7 +32,7 @@ export default function HomeScreen() {
     const [totalBudgets, setTotalBudgets] = useState(0.00);
     const [totalExpensePercentage, setTotalExpensePercentage] = useState(0.00);
     const [budgetProgress, setBudgetProgress] = useState<{ budget_percentage: number, category_name: string }[] | null>(null);
-    const [categoriesLoading, setCategoriesLoading] = useState(true);
+    const [categoriesLoading, setCategoriesLoading] = useState(false);
     const [recentCategories, setRecentCategories]  = useState<Category[]>([]);
     const [expensesLoading, setExpensesLoading] = useState(false);
     const [recentExpenses, setRecentExpenses] = useState<({ [K in keyof Expense]: Expense[K] } & { category_name: string })[]>([]);

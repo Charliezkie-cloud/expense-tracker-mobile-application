@@ -37,6 +37,7 @@ export default function ExpensesScreen() {
     const [hasMore, setHasMore] = useState(true);
     const [expenses, setExpenses] = useState<({ [K in keyof Expense]: Expense[K]; } & { category_name: string })[]>([]);
     const [sortBySelectedItem, setSortBySelectedItem] = useState<"quantity" | "price" | "created_at" | "updated_at">("created_at");
+    const [sortBySelectedItemDisplay, setSortBySelectedItemDisplay] = useState("Created");
     const [sortOrderSelectedItem, setSortOrderSelectedItem] = useState<"ASC" | "DESC">("DESC");
     const [sortingModal, setSortingModal] = useState(false);
 
@@ -100,7 +101,7 @@ export default function ExpensesScreen() {
                     <Text variant="labelMedium" style={styles.sortStatusLabel}>Sort:</Text>
                     <View style={styles.sortBadge}>
                         <Text variant="labelSmall" style={styles.sortBadgeText}>
-                            {sortBySelectedItem === "created_at" ? "Created" : "Updated"} • {sortOrderSelectedItem === "ASC" ? "Asc" : "Desc"}
+                            {sortBySelectedItemDisplay} • {sortOrderSelectedItem === "ASC" ? "Asc" : "Desc"}
                         </Text>
                     </View>
                 </View>
@@ -145,7 +146,24 @@ export default function ExpensesScreen() {
                                     style={styles.picker}
                                     dropdownIconColor={theme.colors.onSurfaceVariant}
                                     selectedValue={sortBySelectedItem}
-                                    onValueChange={(e) => setSortBySelectedItem(e as "created_at" | "updated_at")}
+                                    onValueChange={(e) => {
+                                        setSortBySelectedItem(e);
+
+                                        switch (e) {
+                                            case "created_at":
+                                                setSortBySelectedItemDisplay("Created");
+                                                break;
+                                            case "updated_at":
+                                                setSortBySelectedItemDisplay("Updated");
+                                                break;
+                                            case "price":
+                                                setSortBySelectedItemDisplay("Price");
+                                                break;
+                                            case "quantity":
+                                                setSortBySelectedItemDisplay("Quantity");
+                                                break;
+                                        }
+                                    }}
                                 >
                                     <Picker.Item label="Quantity" value="quantity" color={theme.colors.onSurface} style={{ backgroundColor: theme.dark ? "rgba(30,30,30,0.95)" : "rgba(255,255,255,0.95)" }} />
                                     <Picker.Item label="Price" value="price" color={theme.colors.onSurface} style={{ backgroundColor: theme.dark ? "rgba(30,30,30,0.95)" : "rgba(255,255,255,0.95)" }} />

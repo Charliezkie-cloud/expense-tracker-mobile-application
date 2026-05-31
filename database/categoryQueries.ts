@@ -37,17 +37,22 @@ export async function createCategory(db: SQLiteDatabase, data: CreateCategoryDto
  * @param db The SQLiteDatabase context
  * @param orderBy The column to order by
  * @param orderDirection The direction of the order
+ * @param limit The limit of each page
+ * @param offset The offset of the page
  */
 export async function getAllCategories(
     db: SQLiteDatabase,
     orderBy: "created_at" | "updated_at" = "updated_at",
-    orderDirection: "ASC" | "DESC" = "DESC"
+    orderDirection: "ASC" | "DESC" = "DESC",
+    limit: number,
+    offset: number
 ) {
     try {
         return await db.getAllAsync<Category>(`
             SELECT * FROM "categories"
             ORDER BY ${orderBy} ${orderDirection}
-        `);
+            LIMIT ? OFFSET ?;
+        `, limit, offset);
     } catch (error) {
         log.error({
             error: "getAllCategories(): Something went wrong while fetching a row.",
