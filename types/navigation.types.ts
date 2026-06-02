@@ -1,6 +1,6 @@
 import { NavigatorScreenParams } from "@react-navigation/native";
 
-import { Category, Expense } from "./models.types";
+import { Category, Expense, ScannedExpense } from "./models.types";
 
 export type RootParamStackList = {
   Tabs: NavigatorScreenParams<TabParamStackList>;
@@ -8,7 +8,7 @@ export type RootParamStackList = {
   AddCategory: undefined;
   EditCategory: Category;
   Category: Category;
-  AddExpense: { name: string, quantity: number, price: number }[] | undefined;
+  AddExpense: ScannedExpense[] | undefined;
   CategoryAddExpense: Category;
   EditExpense: Expense;
   CategorySetBudget: Category;
@@ -17,7 +17,7 @@ export type RootParamStackList = {
 export type TabParamStackList = {
   Home: undefined;
   Categories: undefined;
-  CameraScreen: undefined;
+  Camera: undefined;
   Settings: undefined;
   Expenses: undefined;
 };

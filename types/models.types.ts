@@ -20,3 +20,9 @@ export type Expense = {
   created_at: string;
   updated_at: string;
 };
+
+export type ScannedExpense = {
+  name: string;
+  quantity: number;
+  price: number;
+};

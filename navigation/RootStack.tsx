@@ -74,7 +74,7 @@ function Tabs() {
         }}
       />
       <Tab.Screen
-        name="CameraScreen"
+        name="Camera"
         component={CameraScreen}
         options={{
           headerShown: false,

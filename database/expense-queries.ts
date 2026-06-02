@@ -54,6 +54,32 @@ export async function createExpense(db: SQLiteDatabase, data: CreateExpenseDto) 
 }
 
 /**
+ * Create a new expense item
+ * @param db The SQLiteDatabase Context
+ * @param data The data of create expense (BUT IN ARRAY) ;D
+ */
+export async function createExpenses(db: SQLiteDatabase, data: CreateExpenseDto[]) {
+  const date = new Date();
+  const dateISOString = date.toISOString();
+
+  const placeholders = data.map(() => "(?, ?, ?, ?, ?, ?)").join(", ");
+  const query = `INSERT INTO "expenses" ("category_id", "name", "quantity", "price", "created_at", "updated_at") VALUES ${placeholders}`;
+  const values = data.flatMap(e => [e.category_id, e.name, e.quantity, e.price, dateISOString, dateISOString]);
+
+  try {
+    await db.withTransactionAsync(async () => {
+      await db.runAsync(query, values);
+    });
+  } catch (error) {
+    log.error({
+      error: "createExpenses(): Something went wrong while creating an expenses.",
+      details: error instanceof Error ? error.message : String(error)
+    });
+    throw error;
+  }
+}
+
+/**
  * Get all expenses of a category
  * @param db The SQLiteDatabase context
  * @param categoryId The id of the category

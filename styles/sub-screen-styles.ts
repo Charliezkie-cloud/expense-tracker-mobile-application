@@ -661,4 +661,39 @@ export const getExpenseDetailStyles = (theme: MD3Theme) => StyleSheet.create({
   iosActionLabel: {
     fontWeight: "700",
   },
+  listContainer: {
+    flex: 1,
+    backgroundColor: theme.dark
+      ? "rgba(23, 25, 37, 0.65)"
+      : "rgba(255, 255, 255, 0.55)",
+    borderRadius: theme.roundness * 4,
+    borderWidth: 1,
+    borderColor: theme.dark
+      ? "rgba(255, 255, 255, 0.08)"
+      : "rgba(255, 255, 255, 0.6)",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 16 },
+    shadowOpacity: 0.1,
+    shadowRadius: 24,
+    overflow: "hidden",
+    zIndex: 2,
+    padding: 4,
+  },
+  listSeparator: {
+    height: 1,
+    backgroundColor: theme.dark ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.03)",
+    marginHorizontal: 12,
+  },
+  listItemStyle: {
+    paddingVertical: 8,
+    paddingHorizontal: 8,
+  },
+  chevronWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: theme.dark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.02)",
+  },
 });

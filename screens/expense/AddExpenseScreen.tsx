@@ -5,16 +5,21 @@ import { useCallback, useRef, useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Wallet } from "lucide-react-native";
 
 import { getExpenseDetailStyles } from "../../styles/sub-screen-styles";
 import { getCategoryIconAndColor, getRgbaColor } from "../../libs/helpers.lib";
-import { convertDateToDateString, convertDecimalToWholeNumber } from "../../libs/converters.lib";
-import { Category } from "../../types/models.types";
+import {
+  convertDateToDateString,
+  convertDecimalToWholeNumber,
+  convertNumberToCurrencyString
+} from "../../libs/converters.lib";
+import { Category, ScannedExpense } from "../../types/models.types";
 import { getAllCategories } from "../../database/category-queries";
 import { RootParamStackList } from "../../types/navigation.types";
 import { validateAddExpenseForm } from "../../libs/validators.lib";
-import { createExpense } from "../../database/expense-queries";
-
+import { createExpense, createExpenses } from "../../database/expense-queries";
+import { useSettingsStore } from "../../hooks/useSettingsStore";
 type RouteProps = NativeStackScreenProps<RootParamStackList, "AddExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "AddExpense">;
 
@@ -25,6 +30,7 @@ export default function AddExpenseScreen({ route }: RouteProps) {
   const scannerData = route.params;
 
   // Hooks
+  const settings = useSettingsStore((state) => state.settings);
   const navigation = useNavigation<NavProps>();
   const db = useSQLiteContext();
   const theme = useTheme();
@@ -42,7 +48,7 @@ export default function AddExpenseScreen({ route }: RouteProps) {
   const [selectedCategoryId, setSelectedCategoryId] = useState(-1);
 
   // Handlers
-  async function saveButtonOnPress() {
+  async function saveOneButtonOnPress() {
     const validationMessage = validateAddExpenseForm(expenseQuantity, expensePrice, expenseCategory);
 
     if (typeof validationMessage === "string")
@@ -62,6 +68,36 @@ export default function AddExpenseScreen({ route }: RouteProps) {
         price: convertedPrice
       });
 
+      navigation.goBack();
+    } catch {
+      Alert.alert("Error", "Something went wrong while creating an expense.");
+    }
+  }
+
+  async function saveMultipleButtonOnPress() {
+    if (!Array.isArray(scannerData))
+      return;
+
+    for (const item of scannerData) {
+      const data: ScannedExpense = item;
+      const validationMessage = validateAddExpenseForm(data.quantity, data.price.toString(), expenseCategory);
+
+      if (typeof validationMessage === "string")
+        return Alert.alert("Error", validationMessage);
+    }
+
+    if (!expenseCategory)
+      return;
+
+    const parsedData = scannerData.map((e: ScannedExpense & { category_id: number }) => ({
+      ...e,
+      name: e.name.trim(),
+      price: convertDecimalToWholeNumber(e.price),
+      category_id: expenseCategory.id
+    }));
+
+    try {
+      await createExpenses(db, parsedData);
       navigation.goBack();
     } catch {
       Alert.alert("Error", "Something went wrong while creating an expense.");
@@ -112,6 +148,148 @@ export default function AddExpenseScreen({ route }: RouteProps) {
       fetchCategories(0, true);
     }, [])
   );
+
+  // Scanner data
+  if (scannerData)
+    return (
+      <View style={styles.formContainer}>
+        {/* Ambient liquid orbs background */}
+        <View style={styles.categoryLiquidShape1} />
+        <View style={styles.categoryLiquidShape2} />
+        <View style={styles.categoryLiquidShape3} />
+        <View style={styles.categoryGlassOverlay} />
+
+        {/* Volumetric Frosted Glass Input Card */}
+        <View style={styles.listContainer}>
+          <Text style={styles.inputLabel}>
+            Expenses
+          </Text>
+
+          <FlatList
+            data={scannerData}
+            ItemSeparatorComponent={() => <View style={styles.listSeparator} />}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => {
+              return (
+                <TouchableOpacity
+                  activeOpacity={0.7}
+                  style={styles.listItemStyle}
+                >
+                  <View style={{ flexDirection: "row", alignItems: "center", paddingVertical: 10, paddingHorizontal: 6 }}>
+                    <View style={[styles.iconWrapper, {
+                      backgroundColor: getRgbaColor(theme.colors.onPrimaryContainer, 0.08),
+                      borderColor: getRgbaColor(theme.colors.onPrimaryContainer, 0.15),
+                      borderWidth: 1,
+                      marginLeft: 4
+                    }]}>
+                      <Wallet size={16} color={theme.colors.primary} />
+                    </View>
+
+                    <View style={{ flex: 1, marginLeft: 14 }}>
+                      <Text variant="bodyLarge" style={[styles.itemTitleText, { fontWeight: "700" }]}>
+                        {convertNumberToCurrencyString(item.price, settings.currencyCode)}
+                        {item.quantity > 1 && (
+                          <Text variant="bodySmall" style={{ fontWeight: "500", color: theme.colors.onSurfaceVariant }}>
+                            {` • Quantity: ${item.quantity}`}
+                          </Text>
+                        )}
+                      </Text>
+                      <Text variant="bodyMedium" style={[styles.itemDescriptionText, { opacity: 0.8 }]}>
+                        {item.name}
+                      </Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              );
+            }}
+            // onEndReached={() => fetchExpenses(page)}
+            onEndReachedThreshold={0.2}
+            ListFooterComponent={() => (
+              loading ? <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary}/> : null
+            )}
+          />
+        </View>
+
+        {/*Category List*/}
+        <View style={styles.suggestionsListContainer}>
+          <Text style={styles.inputLabel}>
+            Category <Text style={styles.requiredAsterisk}>*</Text>
+          </Text>
+
+          {categories && categories.length > 0 ? (
+            <FlatList
+              key={`category-grid-${categories.length}`}
+              style={styles.suggestionsList}
+              data={categories}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => {
+                const { Icon, color } = getCategoryIconAndColor(item.name);
+                const customBg = getRgbaColor(color, 0.08);
+                const customBorder = getRgbaColor(color, 0.2);
+
+                return (
+                  <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={() => listItemButtonOnPress(item)}
+                    style={[
+                      styles.listItemWrapper,
+                      {
+                        backgroundColor: selectedCategoryId === item.id ?
+                          theme.colors.primaryContainer :
+                          "transparent"
+                      }
+                    ]}
+                  >
+                    <View style={styles.listItemInner}>
+                      <View style={[styles.iconWrapper, { backgroundColor: customBg, borderColor: customBorder }]}>
+                        <Icon size={18} color={color} />
+                      </View>
+
+                      <View style={styles.itemTextContainer}>
+                        <Text variant="bodyLarge" style={styles.itemTitleText}>{item.name}</Text>
+                        <Text variant="bodySmall" style={styles.itemDescriptionText}>
+                          Created: {convertDateToDateString(new Date(item.created_at))}
+                        </Text>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                );
+              }}
+              ListFooterComponent={() => (
+                loading ? <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary} /> : null
+              )}
+              onEndReached={() => fetchCategories(page)}
+              onEndReachedThreshold={0.2}
+            />
+          ) : (<></>)}
+
+          {loading ? (
+            <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary} />
+          ) : categories.length < 1 && (
+            <View style={styles.emptyContainer}>
+              <Button
+                mode="contained-tonal"
+                elevation={0}
+                style={styles.iosActionButton}
+                labelStyle={styles.iosActionLabel}
+                onPress={() => navigation.navigate("AddCategory")}
+              >
+                Create your first category
+              </Button>
+            </View>
+          )}
+        </View>
+
+        {/* Save Button with glowing/volumetric shadow */}
+        <Button
+          mode="contained"
+          labelStyle={[theme.fonts.titleMedium, { fontWeight: "700", letterSpacing: 0.3 }]}
+          onPress={saveMultipleButtonOnPress}
+        >
+          Save Expenses
+        </Button>
+      </View>
+    );
 
   return (
     <View style={styles.formContainer}>
@@ -259,7 +437,7 @@ export default function AddExpenseScreen({ route }: RouteProps) {
       <Button
         mode="contained"
         labelStyle={[theme.fonts.titleMedium, { fontWeight: "700", letterSpacing: 0.3 }]}
-        onPress={saveButtonOnPress}
+        onPress={saveOneButtonOnPress}
       >
         Save Expense
       </Button>

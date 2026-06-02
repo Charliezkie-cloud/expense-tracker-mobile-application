@@ -16,7 +16,7 @@ export default function TabCenterButton() {
 
   // Handlers
   function onPress() {
-    navigation.navigate("Tabs", { screen: "CameraScreen" });
+    navigation.navigate("Tabs", { screen: "Camera" });
   }
 
   return (
