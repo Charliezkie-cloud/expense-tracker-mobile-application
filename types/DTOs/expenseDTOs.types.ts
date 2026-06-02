@@ -1,13 +1,13 @@
 export type CreateExpenseDto = {
-    category_id: number;
-    name: string;
-    quantity: number;
-    price: number;
+  category_id: number;
+  name: string;
+  quantity: number;
+  price: number;
 };
 
 export type UpdateExpenseDto = {
-    id: number;
-    name: string;
-    quantity: number;
-    price: number;
+  id: number;
+  name: string;
+  quantity: number;
+  price: number;
 };

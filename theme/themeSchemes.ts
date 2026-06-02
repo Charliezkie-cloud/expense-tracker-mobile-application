@@ -1,22 +1,22 @@
 import { MD3LightTheme, MD3DarkTheme, MD3Theme } from "react-native-paper";
 
 export type ThemeMode =
-    | "defaultBlue"
+  | "defaultBlue"
 
-    // Light themes
-    | "emeraldGreen"
-    | "sunsetOrange"
-    | "royalPurple"
-    | "rosePetal"
-    | "oceanBreeze"
+  // Light themes
+  | "emeraldGreen"
+  | "sunsetOrange"
+  | "royalPurple"
+  | "rosePetal"
+  | "oceanBreeze"
 
-    // Dark themes
-    | "darkSlate"
-    | "darkMidnightNeon"
-    | "darkCyberpunkGold"
-    | "darkCrimsonVamp"
-    | "darkDeepOcean"
-    | "darkForestShadow";
+  // Dark themes
+  | "darkSlate"
+  | "darkMidnightNeon"
+  | "darkCyberpunkGold"
+  | "darkCrimsonVamp"
+  | "darkDeepOcean"
+  | "darkForestShadow";
 
 export const themeSchemes: Record<ThemeMode, MD3Theme> = {
   defaultBlue: {

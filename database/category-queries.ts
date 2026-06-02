@@ -12,24 +12,24 @@ const log = logger.createLogger();
  * @param data The data
  */
 export async function createCategory(db: SQLiteDatabase, data: CreateCategoryDto) {
-    const dateNow = new Date().toISOString();
+  const dateNow = new Date().toISOString();
 
-    try {
-        await db.runAsync(`
-            INSERT INTO "categories" ("name", "created_at", "updated_at")
-            VALUES (?, ?, ?)
-        `,
-            data.name,
-            dateNow,
-            dateNow
-        );
-    } catch (error) {
-        log.error({
-            error: "createCategory(): Something went wrong while creating a row.",
-            details: error instanceof Error ? error.message : String(error)
-        });
-        throw error;
-    }
+  try {
+    await db.runAsync(`
+                INSERT INTO "categories" ("name", "created_at", "updated_at")
+                VALUES (?, ?, ?)
+      `,
+      data.name,
+      dateNow,
+      dateNow
+    );
+  } catch (error) {
+    log.error({
+      error: "createCategory(): Something went wrong while creating a row.",
+      details: error instanceof Error ? error.message : String(error)
+    });
+    throw error;
+  }
 }
 
 /**
@@ -41,25 +41,25 @@ export async function createCategory(db: SQLiteDatabase, data: CreateCategoryDto
  * @param offset The offset of the page
  */
 export async function getAllCategories(
-    db: SQLiteDatabase,
-    orderBy: "created_at" | "updated_at" = "updated_at",
-    orderDirection: "ASC" | "DESC" = "DESC",
-    limit: number,
-    offset: number
+  db: SQLiteDatabase,
+  orderBy: "created_at" | "updated_at" = "updated_at",
+  orderDirection: "ASC" | "DESC" = "DESC",
+  limit: number,
+  offset: number
 ) {
-    try {
-        return await db.getAllAsync<Category>(`
-            SELECT * FROM "categories"
-            ORDER BY ${orderBy} ${orderDirection}
+  try {
+    return await db.getAllAsync<Category>(`
+        SELECT * FROM "categories"
+        ORDER BY ${orderBy} ${orderDirection}
             LIMIT ? OFFSET ?;
-        `, limit, offset);
-    } catch (error) {
-        log.error({
-            error: "getAllCategories(): Something went wrong while fetching a row.",
-            details: error instanceof Error ? error.message : String(error)
-        });
-        throw error;
-    }
+    `, limit, offset);
+  } catch (error) {
+    log.error({
+      error: "getAllCategories(): Something went wrong while fetching a row.",
+      details: error instanceof Error ? error.message : String(error)
+    });
+    throw error;
+  }
 }
 
 /**
@@ -69,19 +69,19 @@ export async function getAllCategories(
  * @param limit The limit of the recent categories
  */
 export async function getRecentCategories(db: SQLiteDatabase, orderDirection: "ASC" | "DESC" = "DESC", limit: number = 5) {
-    try {
-        return await db.getAllAsync<Category>(`
-            SELECT * FROM "categories"
-            ORDER BY "created_at" ${orderDirection}
+  try {
+    return await db.getAllAsync<Category>(`
+        SELECT * FROM "categories"
+        ORDER BY "created_at" ${orderDirection}
             LIMIT ?
-        `, [limit]);
-    } catch (error) {
-        log.error({
-            error: "getRecentCategories(): Something went wrong while fetching the recent categories.",
-            details: error instanceof Error ? error.message : String(error)
-        });
-        throw error;
-    }
+    `, [limit]);
+  } catch (error) {
+    log.error({
+      error: "getRecentCategories(): Something went wrong while fetching the recent categories.",
+      details: error instanceof Error ? error.message : String(error)
+    });
+    throw error;
+  }
 }
 
 /**
@@ -90,26 +90,26 @@ export async function getRecentCategories(db: SQLiteDatabase, orderDirection: "A
  * @param data The new category data
  */
 export async function updateCategory(db: SQLiteDatabase, data: UpdateCategoryDto) {
-    const dateNow = new Date().toISOString();
+  const dateNow = new Date().toISOString();
 
-    try {
-        await db.runAsync(`
-            UPDATE "categories"
-            SET name = ?,
-                updated_at = ?
-            WHERE id = ?;
-        `,
-            data.name,
-            dateNow,
-            data.id
-        );
-    } catch (error) {
-        log.error({
-            error: "updateCategory(): Something went wrong while updating a row.",
-            details: error instanceof Error ? error.message : String(error)
-        });
-        throw error;
-    }
+  try {
+    await db.runAsync(`
+                UPDATE "categories"
+                SET name = ?,
+                    updated_at = ?
+                WHERE id = ?;
+      `,
+      data.name,
+      dateNow,
+      data.id
+    );
+  } catch (error) {
+    log.error({
+      error: "updateCategory(): Something went wrong while updating a row.",
+      details: error instanceof Error ? error.message : String(error)
+    });
+    throw error;
+  }
 }
 
 /**
@@ -118,13 +118,13 @@ export async function updateCategory(db: SQLiteDatabase, data: UpdateCategoryDto
  * @param categoryId The id of the category
  */
 export async function deleteCategory(db: SQLiteDatabase, categoryId: number) {
-    try {
-        await db.runAsync(`DELETE FROM "categories" WHERE id = ?`, categoryId);
-    } catch (error) {
-        log.error({
-            error: "deleteCategory(): Something went wrong while deleting a row.",
-            details: error instanceof Error ? error.message : String(error)
-        });
-        throw error;
-    }
+  try {
+    await db.runAsync(`DELETE FROM "categories" WHERE id = ?`, categoryId);
+  } catch (error) {
+    log.error({
+      error: "deleteCategory(): Something went wrong while deleting a row.",
+      details: error instanceof Error ? error.message : String(error)
+    });
+    throw error;
+  }
 }

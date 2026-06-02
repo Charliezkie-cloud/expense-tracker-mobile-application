@@ -58,12 +58,12 @@ export const getHomeStyles = (theme: MD3Theme) => StyleSheet.create({
     padding: 24,
     borderRadius: theme.roundness * 4,
     backgroundColor: theme.dark
-        ? "rgba(23, 25, 37, 0.65)"
-        : "rgba(255, 255, 255, 0.55)",
+      ? "rgba(23, 25, 37, 0.65)"
+      : "rgba(255, 255, 255, 0.55)",
     borderWidth: 1,
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.08)"
-        : "rgba(255, 255, 255, 0.6)",
+      ? "rgba(255, 255, 255, 0.08)"
+      : "rgba(255, 255, 255, 0.6)",
     overflow: "hidden",
     marginTop: 10,
     justifyContent: "space-between",
@@ -228,14 +228,14 @@ export const getHomeStyles = (theme: MD3Theme) => StyleSheet.create({
   },
   glassCard: {
     backgroundColor: theme.dark
-        ? "rgba(23, 25, 37, 0.65)"
-        : "rgba(255, 255, 255, 0.55)",
+      ? "rgba(23, 25, 37, 0.65)"
+      : "rgba(255, 255, 255, 0.55)",
     borderRadius: theme.roundness * 4,
     padding: 18,
     borderWidth: 1,
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.08)"
-        : "rgba(255, 255, 255, 0.6)",
+      ? "rgba(255, 255, 255, 0.08)"
+      : "rgba(255, 255, 255, 0.6)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 16 },
     shadowOpacity: 0.1,
@@ -244,13 +244,13 @@ export const getHomeStyles = (theme: MD3Theme) => StyleSheet.create({
   },
   glassCardList: {
     backgroundColor: theme.dark
-        ? "rgba(23, 25, 37, 0.65)"
-        : "rgba(255, 255, 255, 0.55)",
+      ? "rgba(23, 25, 37, 0.65)"
+      : "rgba(255, 255, 255, 0.55)",
     borderRadius: theme.roundness * 4,
     borderWidth: 1,
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.08)"
-        : "rgba(255, 255, 255, 0.6)",
+      ? "rgba(255, 255, 255, 0.08)"
+      : "rgba(255, 255, 255, 0.6)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 16 },
     shadowOpacity: 0.1,
@@ -386,16 +386,16 @@ export const getCategoriesStyles = (theme: MD3Theme) => StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: theme.dark
-        ? "rgba(30, 32, 48, 0.7)"
-        : "rgba(255, 255, 255, 0.7)",
+      ? "rgba(30, 32, 48, 0.7)"
+      : "rgba(255, 255, 255, 0.7)",
     borderRadius: theme.roundness * 3,
     paddingVertical: 12,
     paddingHorizontal: 16,
     marginBottom: 16,
     borderWidth: 1,
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.08)"
-        : "rgba(255, 255, 255, 0.5)",
+      ? "rgba(255, 255, 255, 0.08)"
+      : "rgba(255, 255, 255, 0.5)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.05,
@@ -415,8 +415,8 @@ export const getCategoriesStyles = (theme: MD3Theme) => StyleSheet.create({
   },
   sortBadge: {
     backgroundColor: theme.dark
-        ? "rgba(103, 80, 164, 0.15)"
-        : "rgba(103, 80, 164, 0.08)",
+      ? "rgba(103, 80, 164, 0.15)"
+      : "rgba(103, 80, 164, 0.08)",
     paddingVertical: 3,
     paddingHorizontal: 10,
     borderRadius: 8,
@@ -448,14 +448,14 @@ export const getCategoriesStyles = (theme: MD3Theme) => StyleSheet.create({
     paddingBottom: 36,
     paddingHorizontal: 24,
     backgroundColor: theme.dark
-        ? "rgba(18, 20, 32, 1)"
-        : "rgba(255, 255, 255, 1)",
+      ? "rgba(18, 20, 32, 1)"
+      : "rgba(255, 255, 255, 1)",
     borderTopLeftRadius: 36,
     borderTopRightRadius: 36,
     borderWidth: 1,
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.1)"
-        : "rgba(255, 255, 255, 0.7)",
+      ? "rgba(255, 255, 255, 0.1)"
+      : "rgba(255, 255, 255, 0.7)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -12 },
     shadowOpacity: 0.18,
@@ -492,8 +492,8 @@ export const getCategoriesStyles = (theme: MD3Theme) => StyleSheet.create({
     overflow: "hidden",
     borderWidth: 1,
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.08)"
-        : "rgba(0, 0, 0, 0.06)",
+      ? "rgba(255, 255, 255, 0.08)"
+      : "rgba(0, 0, 0, 0.06)",
   },
   picker: {
     color: theme.colors.onSurface,
@@ -509,13 +509,13 @@ export const getCategoriesStyles = (theme: MD3Theme) => StyleSheet.create({
   listContainer: {
     flex: 1,
     backgroundColor: theme.dark
-        ? "rgba(23, 25, 37, 0.65)"
-        : "rgba(255, 255, 255, 0.55)",
+      ? "rgba(23, 25, 37, 0.65)"
+      : "rgba(255, 255, 255, 0.55)",
     borderRadius: theme.roundness * 4,
     borderWidth: 1,
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.08)"
-        : "rgba(255, 255, 255, 0.6)",
+      ? "rgba(255, 255, 255, 0.08)"
+      : "rgba(255, 255, 255, 0.6)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 16 },
     shadowOpacity: 0.1,
@@ -653,16 +653,16 @@ export const getExpensesStyles = (theme: MD3Theme) => StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: theme.dark
-        ? "rgba(30, 32, 48, 0.7)"
-        : "rgba(255, 255, 255, 0.7)",
+      ? "rgba(30, 32, 48, 0.7)"
+      : "rgba(255, 255, 255, 0.7)",
     borderRadius: theme.roundness * 3,
     paddingVertical: 12,
     paddingHorizontal: 16,
     marginBottom: 16,
     borderWidth: 1,
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.08)"
-        : "rgba(255, 255, 255, 0.5)",
+      ? "rgba(255, 255, 255, 0.08)"
+      : "rgba(255, 255, 255, 0.5)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.05,
@@ -682,8 +682,8 @@ export const getExpensesStyles = (theme: MD3Theme) => StyleSheet.create({
   },
   sortBadge: {
     backgroundColor: theme.dark
-        ? "rgba(103, 80, 164, 0.15)"
-        : "rgba(103, 80, 164, 0.08)",
+      ? "rgba(103, 80, 164, 0.15)"
+      : "rgba(103, 80, 164, 0.08)",
     paddingVertical: 3,
     paddingHorizontal: 10,
     borderRadius: 8,
@@ -715,14 +715,14 @@ export const getExpensesStyles = (theme: MD3Theme) => StyleSheet.create({
     paddingBottom: 36,
     paddingHorizontal: 24,
     backgroundColor: theme.dark
-        ? "rgba(18, 20, 32, 1)"
-        : "rgba(255, 255, 255, 1)",
+      ? "rgba(18, 20, 32, 1)"
+      : "rgba(255, 255, 255, 1)",
     borderTopLeftRadius: 36,
     borderTopRightRadius: 36,
     borderWidth: 1,
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.1)"
-        : "rgba(255, 255, 255, 0.7)",
+      ? "rgba(255, 255, 255, 0.1)"
+      : "rgba(255, 255, 255, 0.7)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: -12 },
     shadowOpacity: 0.18,
@@ -759,8 +759,8 @@ export const getExpensesStyles = (theme: MD3Theme) => StyleSheet.create({
     overflow: "hidden",
     borderWidth: 1,
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.08)"
-        : "rgba(0, 0, 0, 0.06)",
+      ? "rgba(255, 255, 255, 0.08)"
+      : "rgba(0, 0, 0, 0.06)",
   },
   picker: {
     color: theme.colors.onSurface,
@@ -776,13 +776,13 @@ export const getExpensesStyles = (theme: MD3Theme) => StyleSheet.create({
   listContainer: {
     flex: 1,
     backgroundColor: theme.dark
-        ? "rgba(23, 25, 37, 0.65)"
-        : "rgba(255, 255, 255, 0.55)",
+      ? "rgba(23, 25, 37, 0.65)"
+      : "rgba(255, 255, 255, 0.55)",
     borderRadius: theme.roundness * 4,
     borderWidth: 1,
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.08)"
-        : "rgba(255, 255, 255, 0.6)",
+      ? "rgba(255, 255, 255, 0.08)"
+      : "rgba(255, 255, 255, 0.6)",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 16 },
     shadowOpacity: 0.1,
@@ -932,14 +932,14 @@ export const getSettingsStyles = (theme: MD3Theme) => StyleSheet.create({
   },
   pickerWrapper: {
     backgroundColor: theme.dark
-        ? "rgba(0, 0, 0, 0.22)"
-        : "rgba(255, 255, 255, 0.45)",
+      ? "rgba(0, 0, 0, 0.22)"
+      : "rgba(255, 255, 255, 0.45)",
     borderRadius: theme.roundness * 2.5,
     overflow: "hidden",
     borderWidth: 1,
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.12)"
-        : "rgba(0, 0, 0, 0.1)",
+      ? "rgba(255, 255, 255, 0.12)"
+      : "rgba(0, 0, 0, 0.1)",
   },
   picker: {
     color: theme.colors.onSurface,
@@ -952,11 +952,11 @@ export const getSettingsStyles = (theme: MD3Theme) => StyleSheet.create({
   },
   infoCard: {
     backgroundColor: theme.dark
-        ? "rgba(255, 255, 255, 0.11)"
-        : "rgba(255, 255, 255, 0.78)",
+      ? "rgba(255, 255, 255, 0.11)"
+      : "rgba(255, 255, 255, 0.78)",
     borderColor: theme.dark
-        ? "rgba(255, 255, 255, 0.15)"
-        : "rgba(255, 255, 255, 0.75)",
+      ? "rgba(255, 255, 255, 0.15)"
+      : "rgba(255, 255, 255, 0.75)",
     borderWidth: 1,
     padding: 20,
     borderRadius: theme.roundness * 3.5,

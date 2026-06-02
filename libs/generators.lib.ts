@@ -5,19 +5,19 @@ import { CONSTELLATION_NAMES } from "../application/data";
  * @param maxWords The maximum words
  */
 export function generateRandomName(maxWords: number = 2) {
-    let generatedName: string[] = [];
+  let generatedName: string[] = [];
 
-    for (let i = 0; i < maxWords; i++) {
-        const generatedNumber = getRandomIntInclusive(0, CONSTELLATION_NAMES.length - 1);
-        const randomName = CONSTELLATION_NAMES[generatedNumber];
+  for (let i = 0; i < maxWords; i++) {
+    const generatedNumber = getRandomIntInclusive(0, CONSTELLATION_NAMES.length - 1);
+    const randomName = CONSTELLATION_NAMES[generatedNumber];
 
-        if (!generatedName.includes(randomName))
-            generatedName.push(randomName);
-        else
-            i--;
-    }
+    if (!generatedName.includes(randomName))
+      generatedName.push(randomName);
+    else
+      i--;
+  }
 
-    return generatedName.join(" ");
+  return generatedName.join(" ");
 }
 
 /**
@@ -26,7 +26,7 @@ export function generateRandomName(maxWords: number = 2) {
  * @param max The maximum number
  */
 function getRandomIntInclusive(min: number, max: number) {
-    const minCeiled = Math.ceil(min);
-    const maxFloored = Math.floor(max);
-    return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
+  const minCeiled = Math.ceil(min);
+  const maxFloored = Math.floor(max);
+  return Math.floor(Math.random() * (maxFloored - minCeiled + 1) + minCeiled);
 }

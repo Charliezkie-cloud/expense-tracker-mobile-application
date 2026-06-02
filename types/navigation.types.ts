@@ -4,11 +4,11 @@ import { Category, Expense } from "./models.types";
 
 export type RootParamStackList = {
   Tabs: NavigatorScreenParams<TabParamStackList>;
-  
+
   AddCategory: undefined;
   EditCategory: Category;
   Category: Category;
-  AddExpense: undefined;
+  AddExpense: { name: string, quantity: number, price: number }[] | undefined;
   CategoryAddExpense: Category;
   EditExpense: Expense;
   CategorySetBudget: Category;

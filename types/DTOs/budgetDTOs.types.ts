@@ -1,4 +1,4 @@
 export type SetBudgetDto = {
-    category_id: number;
-    budget: number;
+  category_id: number;
+  budget: number;
 };

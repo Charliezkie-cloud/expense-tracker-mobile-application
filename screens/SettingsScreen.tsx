@@ -256,28 +256,28 @@ export default function SettingsScreen() {
 
   function clearCacheOnPress() {
     Alert.alert(
-        "Clear cache confirmation",
-        "Are you sure you want to clear your local data? This action will remove all categories, expenses, and budgets permanently.",
-        [
-          {
-            text: "Yes",
-            onPress: async () => {
-              try {
-                await AsyncStorage.clear();
-                await deleteDatabase();
+      "Clear cache confirmation",
+      "Are you sure you want to clear your local data? This action will remove all categories, expenses, and budgets permanently.",
+      [
+        {
+          text: "Yes",
+          onPress: async () => {
+            try {
+              await AsyncStorage.clear();
+              await deleteDatabase();
 
-                Alert.alert("Success", "Cache cleared successfully.");
-              } catch (e) {
-                log.error({
-                  error: "Something went wrong while clearing the cache.",
-                  errorInfo: e
-                });
-                Alert.alert("Error", "Failed to clear cache.");
-              }
+              Alert.alert("Success", "Cache cleared successfully.");
+            } catch (e) {
+              log.error({
+                error: "Something went wrong while clearing the cache.",
+                errorInfo: e
+              });
+              Alert.alert("Error", "Failed to clear cache.");
             }
-          },
-          { text: "No", style: "cancel" }
-        ]
+          }
+        },
+        { text: "No", style: "cancel" }
+      ]
     );
   }
 
@@ -314,128 +314,128 @@ export default function SettingsScreen() {
   }, [settings]);
 
   return (
-      <View style={styles.mainContainer}>
-        {/* Ambient liquid orbs background */}
-        <View style={styles.categoryLiquidShape1} />
-        <View style={styles.categoryLiquidShape2} />
-        <View style={styles.categoryLiquidShape3} />
-        <View style={styles.categoryGlassOverlay} />
+    <View style={styles.mainContainer}>
+      {/* Ambient liquid orbs background */}
+      <View style={styles.categoryLiquidShape1} />
+      <View style={styles.categoryLiquidShape2} />
+      <View style={styles.categoryLiquidShape3} />
+      <View style={styles.categoryGlassOverlay} />
 
-        {/* Theme Config Section */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionLabel}>Theme</Text>
-          <View style={styles.pickerWrapper}>
-            <Picker
-                style={styles.picker}
-                dropdownIconColor={theme.colors.onSurfaceVariant}
-                selectedValue={selectedTheme}
-                onValueChange={(itemValue) => themePickerOnValueChange(itemValue)}
-            >
-              {themes.map((item, index) => (
-                  <Picker.Item
-                      key={`theme-picker-item-${index}`}
-                      label={item.name}
-                      value={item.value}
-                      color={theme.colors.onSurface}
-                      style={{ backgroundColor: theme.dark ? "rgba(30, 30, 30, 0.95)" : "rgba(255, 255, 255, 0.95)" }}
-                  />
-              ))}
-            </Picker>
-          </View>
-        </View>
-
-        {/* Currency Config Section */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionLabel}>Currency</Text>
-          <View style={styles.pickerWrapper}>
-            <Picker
-                style={styles.picker}
-                dropdownIconColor={theme.colors.onSurfaceVariant}
-                selectedValue={currencySelectedItem}
-                onValueChange={(itemValue) => currencyPickerOnValueChange(itemValue as CurrencyCode)}
-            >
-              {currencies.map((item, index) => item.value === currencySelectedItem ? (
-                  <Picker.Item
-                      key={`currency-picker-item-${index}`}
-                      label={item.name}
-                      value={item.value}
-                      color={theme.colors.onSurface}
-                      style={{ backgroundColor: theme.dark ? "rgba(30, 30, 30, 0.95)" : "rgba(255, 255, 255, 0.95)" }}
-                  />
-              ) : (
-                  <Picker.Item
-                      key={`currency-picker-item-${index}`}
-                      label={item.name}
-                      value={item.value}
-                  />
-              ))}
-            </Picker>
-          </View>
-        </View>
-
-        {/* Cache Config Section */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionLabel}>Cache</Text>
-          <Button
-              mode="contained-tonal"
-              buttonColor={theme.colors.errorContainer}
-              textColor={theme.colors.onErrorContainer}
-              labelStyle={[theme.fonts.titleMedium, { fontWeight: "700", letterSpacing: 0.3 }]}
-              onPress={clearCacheOnPress}
+      {/* Theme Config Section */}
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionLabel}>Theme</Text>
+        <View style={styles.pickerWrapper}>
+          <Picker
+            style={styles.picker}
+            dropdownIconColor={theme.colors.onSurfaceVariant}
+            selectedValue={selectedTheme}
+            onValueChange={(itemValue) => themePickerOnValueChange(itemValue)}
           >
-            Clear Cache
-          </Button>
+            {themes.map((item, index) => (
+              <Picker.Item
+                key={`theme-picker-item-${index}`}
+                label={item.name}
+                value={item.value}
+                color={theme.colors.onSurface}
+                style={{ backgroundColor: theme.dark ? "rgba(30, 30, 30, 0.95)" : "rgba(255, 255, 255, 0.95)" }}
+              />
+            ))}
+          </Picker>
         </View>
-
-        {/* Support section */}
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionLabel}>Support</Text>
-          <Button
-              mode="contained-tonal"
-              textColor={theme.colors.primary}
-              labelStyle={[theme.fonts.titleMedium, { fontWeight: "700", letterSpacing: 0.3 }]}
-              onPress={() => openLink(supportLink)}
-          >
-            Report an Issue
-          </Button>
-        </View>
-
-        {/* Modernized Project Card Component */}
-        <View style={styles.infoCard}>
-          <Text variant="titleLarge" style={styles.infoTitle}>Project Information</Text>
-
-          <View style={styles.textGroup}>
-            <Text variant="bodyLarge" style={styles.infoText}>Version: {APPLICATION_VERSION}</Text>
-            <Text variant="bodyLarge" style={styles.infoText}>Developed by {APPLICATION_AUTHOR}</Text>
-          </View>
-
-          {/* Brand Link Matrix Grid */}
-          <View>
-            <View style={styles.socialsRow}>
-              {socials.map((item) => (
-                  <TouchableOpacity
-                      key={item.title}
-                      style={styles.socialTouchTarget}
-                      onPress={() => openLink(item.url)}
-                  >
-                    <FontAwesome6
-                        name={item.icon}
-                        size={26}
-                        color={theme.colors.primary}
-                    />
-                  </TouchableOpacity>
-              ))}
-            </View>
-            <Button
-                mode="contained"
-                labelStyle={[theme.fonts.titleMedium, { fontWeight: "700", letterSpacing: 0.3, color: theme.colors.onPrimary }]}
-                onPress={() => openLink(APPLICATION_AUTHOR_PORTFOLIO)}
-            >
-              View Developer Portfolio
-            </Button>
-          </View>
-        </View>
-
       </View>
+
+      {/* Currency Config Section */}
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionLabel}>Currency</Text>
+        <View style={styles.pickerWrapper}>
+          <Picker
+            style={styles.picker}
+            dropdownIconColor={theme.colors.onSurfaceVariant}
+            selectedValue={currencySelectedItem}
+            onValueChange={(itemValue) => currencyPickerOnValueChange(itemValue as CurrencyCode)}
+          >
+            {currencies.map((item, index) => item.value === currencySelectedItem ? (
+              <Picker.Item
+                key={`currency-picker-item-${index}`}
+                label={item.name}
+                value={item.value}
+                color={theme.colors.onSurface}
+                style={{ backgroundColor: theme.dark ? "rgba(30, 30, 30, 0.95)" : "rgba(255, 255, 255, 0.95)" }}
+              />
+            ) : (
+              <Picker.Item
+                key={`currency-picker-item-${index}`}
+                label={item.name}
+                value={item.value}
+              />
+            ))}
+          </Picker>
+        </View>
+      </View>
+
+      {/* Cache Config Section */}
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionLabel}>Cache</Text>
+        <Button
+          mode="contained-tonal"
+          buttonColor={theme.colors.errorContainer}
+          textColor={theme.colors.onErrorContainer}
+          labelStyle={[theme.fonts.titleMedium, { fontWeight: "700", letterSpacing: 0.3 }]}
+          onPress={clearCacheOnPress}
+        >
+          Clear Cache
+        </Button>
+      </View>
+
+      {/* Support section */}
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionLabel}>Support</Text>
+        <Button
+          mode="contained-tonal"
+          textColor={theme.colors.primary}
+          labelStyle={[theme.fonts.titleMedium, { fontWeight: "700", letterSpacing: 0.3 }]}
+          onPress={() => openLink(supportLink)}
+        >
+          Report an Issue
+        </Button>
+      </View>
+
+      {/* Modernized Project Card Component */}
+      <View style={styles.infoCard}>
+        <Text variant="titleLarge" style={styles.infoTitle}>Project Information</Text>
+
+        <View style={styles.textGroup}>
+          <Text variant="bodyLarge" style={styles.infoText}>Version: {APPLICATION_VERSION}</Text>
+          <Text variant="bodyLarge" style={styles.infoText}>Developed by {APPLICATION_AUTHOR}</Text>
+        </View>
+
+        {/* Brand Link Matrix Grid */}
+        <View>
+          <View style={styles.socialsRow}>
+            {socials.map((item) => (
+              <TouchableOpacity
+                key={item.title}
+                style={styles.socialTouchTarget}
+                onPress={() => openLink(item.url)}
+              >
+                <FontAwesome6
+                  name={item.icon}
+                  size={26}
+                  color={theme.colors.primary}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Button
+            mode="contained"
+            labelStyle={[theme.fonts.titleMedium, { fontWeight: "700", letterSpacing: 0.3, color: theme.colors.onPrimary }]}
+            onPress={() => openLink(APPLICATION_AUTHOR_PORTFOLIO)}
+          >
+            View Developer Portfolio
+          </Button>
+        </View>
+      </View>
+
+    </View>
   );
 }

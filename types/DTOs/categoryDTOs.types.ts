@@ -1,8 +1,8 @@
 export type CreateCategoryDto = {
-    name: string;
+  name: string;
 };
 
 export type UpdateCategoryDto = {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
 };
