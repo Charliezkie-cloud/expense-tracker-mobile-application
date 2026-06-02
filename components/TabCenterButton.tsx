@@ -1,8 +1,8 @@
-import {useNavigation} from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {StyleSheet, TouchableOpacity, View} from "react-native";
-import {MD3Theme, useTheme} from "react-native-paper";
-import {ScanText} from "lucide-react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { MD3Theme, useTheme } from "react-native-paper";
+import { ScanText } from "lucide-react-native";
 
 import {RootParamStackList} from "../types/navigation.types";
 

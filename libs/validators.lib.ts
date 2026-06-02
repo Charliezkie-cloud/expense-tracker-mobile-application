@@ -1,4 +1,4 @@
-import {Category} from "../types/models.types";
+import { Category } from "../types/models.types";
 
 /**
  * Validator for add category form ;D

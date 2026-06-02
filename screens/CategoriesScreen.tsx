@@ -1,18 +1,18 @@
-import {Alert, FlatList, TouchableOpacity, View, Modal, StyleSheet, ActivityIndicator} from "react-native";
-import {Button, FAB, Text, useTheme} from "react-native-paper";
-import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import { Alert, FlatList, TouchableOpacity, View, Modal, StyleSheet, ActivityIndicator } from "react-native";
+import { Button, FAB, Text, useTheme } from "react-native-paper";
+import {useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChevronRight, SlidersHorizontal } from "lucide-react-native";
 import { Picker } from "@react-native-picker/picker";
-import {useCallback, useEffect, useState} from "react";
-import {useSQLiteContext} from "expo-sqlite";
+import { useCallback, useEffect, useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
 
 import { RootParamStackList } from "../types/navigation.types";
 import { convertDateToDateString } from "../libs/converters.lib";
 import { getCategoriesStyles } from "../styles/screen-styles";
 import { Category } from "../types/models.types";
 import { getAllCategories } from "../database/category-queries";
-import {getCategoryIconAndColor, getRgbaColor} from "../libs/helpers.lib";
+import { getCategoryIconAndColor, getRgbaColor } from "../libs/helpers.lib";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "AddCategory">;
 

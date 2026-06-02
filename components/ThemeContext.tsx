@@ -1,9 +1,9 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import { createContext, useState, useContext, ReactNode, FC } from 'react';
 import { PaperProvider, MD3Theme } from 'react-native-paper';
 
-import {themeKey, themeSchemes} from "../theme/themeSchemes";
-import {useSettingsStore} from "../hooks/useSettingsStore";
-import {StatusBar} from "expo-status-bar";
+import { themeKey, themeSchemes } from "../theme/themeSchemes";
+import { useSettingsStore } from "../hooks/useSettingsStore";
+import { StatusBar } from "expo-status-bar";
 
 type ThemeContextType = {
     currentThemeKey: themeKey;
@@ -14,7 +14,7 @@ type ThemeProviderProps = { children: ReactNode; };
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+export const ThemeProvider: FC<ThemeProviderProps> = ({ children }) => {
     const { theme } = useSettingsStore((state) => state.settings);
     const [currentThemeKey, setCurrentThemeKey] = useState<themeKey>(theme);
     const activeTheme = themeSchemes[theme] || themeSchemes.defaultBlue;

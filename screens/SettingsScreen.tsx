@@ -5,14 +5,14 @@ import { useEffect, useState } from "react";
 import { logger } from "react-native-logs";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {deleteDatabaseAsync, useSQLiteContext} from "expo-sqlite";
+import { deleteDatabaseAsync, useSQLiteContext } from "expo-sqlite";
 import ExpoUpdates from "expo-updates/src/ExpoUpdates";
 
 import { useSettingsStore } from "../hooks/useSettingsStore";
 import { getSettingsStyles } from "../styles/screen-styles";
 import { ThemeMode } from "../theme/themeSchemes";
 import { CurrencyCode } from "../types/settings.types";
-import {useAppTheme} from "../components/ThemeContext";
+import { useAppTheme } from "../components/ThemeContext";
 
 const APPLICATION_DB: string = process.env.EXPO_PUBLIC_APP_DATABASE ?? "";
 const APPLICATION_VERSION: string = process.env.EXPO_PUBLIC_APP_VERSION ?? "";

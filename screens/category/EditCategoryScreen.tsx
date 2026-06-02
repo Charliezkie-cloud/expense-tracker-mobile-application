@@ -1,19 +1,19 @@
-import {Alert, FlatList, View, TouchableOpacity, Modal, StyleSheet} from "react-native";
-import {Button, Text, TextInput, useTheme} from "react-native-paper";
-import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
+import { Alert, FlatList, View, TouchableOpacity, Modal, StyleSheet } from "react-native";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useState } from "react";
-import {useSQLiteContext} from "expo-sqlite";
-import {useNavigation} from "@react-navigation/native";
+import { useSQLiteContext } from "expo-sqlite";
+import { useNavigation } from "@react-navigation/native";
 import { HelpCircle } from 'lucide-react-native';
 
+import HorizontalLine from "../../components/HorizontalLine";
 import { RootParamStackList } from "../../types/navigation.types";
 import { convertDateToDateString } from "../../libs/converters.lib";
-import HorizontalLine from "../../components/HorizontalLine";
 import { getCategoryDetailStyles } from "../../styles/sub-screen-styles";
-import {deleteCategory, updateCategory} from "../../database/category-queries";
-import {validateAddCategoryForm} from "../../libs/validators.lib";
-import {getRgbaColor} from "../../libs/helpers.lib";
-import {CATEGORY_NAMES} from "../../application/data";
+import { deleteCategory, updateCategory } from "../../database/category-queries";
+import { validateAddCategoryForm } from "../../libs/validators.lib";
+import { getRgbaColor } from "../../libs/helpers.lib";
+import { CATEGORY_NAMES } from "../../application/data";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditCategory">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;

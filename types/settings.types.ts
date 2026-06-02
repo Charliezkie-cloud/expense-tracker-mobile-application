@@ -1,4 +1,4 @@
-import {ThemeMode} from "../theme/themeSchemes";
+import { ThemeMode } from "../theme/themeSchemes";
 
 export type CurrencyCode =
     | "AED" | "AFN" | "ALL" | "AMD" | "ANG" | "AOA" | "ARS" | "AUD" | "AWG" | "AZN"

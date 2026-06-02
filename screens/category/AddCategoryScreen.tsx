@@ -1,17 +1,17 @@
-import {Alert, FlatList, View, TouchableOpacity} from "react-native";
+import { Alert, FlatList, View, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useState } from "react";
-import {Button, Text, TextInput, useTheme} from "react-native-paper";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
 import { useSQLiteContext } from "expo-sqlite";
-import {HelpCircle} from 'lucide-react-native';
+import { HelpCircle } from 'lucide-react-native';
 
 import { RootParamStackList } from "../../types/navigation.types";
 import { validateAddCategoryForm } from "../../libs/validators.lib";
 import { getCategoryDetailStyles } from "../../styles/sub-screen-styles";
 import { createCategory } from "../../database/category-queries";
-import {getRgbaColor} from "../../libs/helpers.lib";
-import {CATEGORY_NAMES} from "../../application/data";
+import { getRgbaColor } from "../../libs/helpers.lib";
+import { CATEGORY_NAMES } from "../../application/data";
 
 type NavProp = NativeStackNavigationProp<RootParamStackList, "AddCategory">;
 

@@ -1,8 +1,8 @@
 import { logger } from "react-native-logs";
 import { SQLiteDatabase } from "expo-sqlite";
 
-import {CreateCategoryDto, UpdateCategoryDto} from "../types/DTOs/categoryDTOs.types";
-import {Category} from "../types/models.types";
+import { CreateCategoryDto, UpdateCategoryDto } from "../types/DTOs/categoryDTOs.types";
+import { Category } from "../types/models.types";
 
 const log = logger.createLogger();
 

@@ -1,9 +1,9 @@
-import {SQLiteDatabase} from "expo-sqlite";
-import {logger} from "react-native-logs";
+import { SQLiteDatabase } from "expo-sqlite";
+import { logger } from "react-native-logs";
 
-import {CreateExpenseDto, UpdateExpenseDto} from "../types/DTOs/expenseDTOs.types";
-import {Category, Expense} from "../types/models.types";
-import {generateRandomName} from "../libs/generators.lib";
+import { CreateExpenseDto, UpdateExpenseDto } from "../types/DTOs/expenseDTOs.types";
+import { Category, Expense } from "../types/models.types";
+import { generateRandomName } from "../libs/generators.lib";
 
 const log = logger.createLogger();
 

@@ -1,19 +1,19 @@
-import {ActivityIndicator, Alert, FlatList, TextInput, TouchableOpacity, View} from "react-native";
-import {Button, Text, TextInput as TextField, useTheme} from "react-native-paper";
+import { ActivityIndicator, Alert, FlatList, TextInput, TouchableOpacity, View } from "react-native";
+import { Button, Text, TextInput as TextField, useTheme } from "react-native-paper";
 import InputSpinner from "react-native-input-spinner";
-import {useCallback, useRef, useState} from "react";
-import {useSQLiteContext} from "expo-sqlite";
-import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import { useCallback, useRef, useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-import {getExpenseDetailStyles} from "../../styles/sub-screen-styles";
-import {getCategoryIconAndColor, getRgbaColor} from "../../libs/helpers.lib";
-import {convertDateToDateString, convertDecimalToWholeNumber} from "../../libs/converters.lib";
-import {Category} from "../../types/models.types";
-import {getAllCategories} from "../../database/category-queries";
-import {RootParamStackList} from "../../types/navigation.types";
-import {validateAddExpenseForm} from "../../libs/validators.lib";
-import {createExpense} from "../../database/expense-queries";
+import { getExpenseDetailStyles } from "../../styles/sub-screen-styles";
+import { getCategoryIconAndColor, getRgbaColor } from "../../libs/helpers.lib";
+import { convertDateToDateString, convertDecimalToWholeNumber } from "../../libs/converters.lib";
+import { Category } from "../../types/models.types";
+import { getAllCategories } from "../../database/category-queries";
+import { RootParamStackList } from "../../types/navigation.types";
+import { validateAddExpenseForm } from "../../libs/validators.lib";
+import { createExpense } from "../../database/expense-queries";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "AddExpense">;
 

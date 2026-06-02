@@ -1,19 +1,19 @@
-import {ActivityIndicator, Alert, FlatList, Modal, StyleSheet, TouchableOpacity, View} from "react-native";
-import {Button, FAB, Text, useTheme} from "react-native-paper";
-import {ChevronRight, SlidersHorizontal, Wallet} from "lucide-react-native";
-import {Picker} from "@react-native-picker/picker";
-import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {useCallback, useState} from "react";
-import {useSQLiteContext} from "expo-sqlite";
+import { ActivityIndicator, Alert, FlatList, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Button, FAB, Text, useTheme } from "react-native-paper";
+import { ChevronRight, SlidersHorizontal, Wallet } from "lucide-react-native";
+import { Picker } from "@react-native-picker/picker";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useCallback, useState } from "react";
+import { useSQLiteContext } from "expo-sqlite";
 
-import {getExpensesStyles} from "../styles/screen-styles";
-import {getCategoryIconAndColor, getRgbaColor} from "../libs/helpers.lib";
+import { getExpensesStyles } from "../styles/screen-styles";
+import { getCategoryIconAndColor, getRgbaColor } from "../libs/helpers.lib";
 import { convertDateToDateString, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../libs/converters.lib";
-import {Expense} from "../types/models.types";
-import {getAllExpenses} from "../database/expense-queries";
-import {useSettingsStore} from "../hooks/useSettingsStore";
-import {RootParamStackList} from "../types/navigation.types";
+import { Expense } from "../types/models.types";
+import { getAllExpenses } from "../database/expense-queries";
+import { useSettingsStore } from "../hooks/useSettingsStore";
+import { RootParamStackList } from "../types/navigation.types";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
 

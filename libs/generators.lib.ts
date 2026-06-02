@@ -1,4 +1,4 @@
-import {CONSTELLATION_NAMES} from "../application/data";
+import { CONSTELLATION_NAMES } from "../application/data";
 
 /**
  * Generate random star constellations names for ya ;D

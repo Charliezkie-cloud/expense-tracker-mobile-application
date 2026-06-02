@@ -1,8 +1,8 @@
-import {Alert, FlatList, View, TouchableOpacity} from "react-native";
-import {Button, Text, TextInput, useTheme} from "react-native-paper";
-import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
-import {useEffect, useState} from "react";
-import {useNavigation} from "@react-navigation/native";
+import { Alert, FlatList, View, TouchableOpacity } from "react-native";
+import { Button, Text, TextInput, useTheme } from "react-native-paper";
+import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
+import { useEffect, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
     Activity,
     BookOpen, Briefcase,
@@ -15,15 +15,15 @@ import {
     Utensils, Zap
 } from "lucide-react-native";
 
-import { RootParamStackList } from "../../types/navigation.types";
 import HorizontalLine from "../../components/HorizontalLine";
+import { RootParamStackList } from "../../types/navigation.types";
 import { getCategoryDetailStyles } from "../../styles/sub-screen-styles";
-import {isBudgetExists, setBudget, deleteBudget, getBudget} from "../../database/budget-queries";
+import { isBudgetExists, setBudget, deleteBudget, getBudget } from "../../database/budget-queries";
 import { useSQLiteContext } from "expo-sqlite";
-import {validateAddBudgetForm} from "../../libs/validators.lib";
+import { validateAddBudgetForm } from "../../libs/validators.lib";
 import { convertDecimalToWholeNumber, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../libs/converters.lib";
-import {useSettingsStore} from "../../hooks/useSettingsStore";
-import {getRgbaColor} from "../../libs/helpers.lib";
+import { useSettingsStore } from "../../hooks/useSettingsStore";
+import { getRgbaColor } from "../../libs/helpers.lib";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategorySetBudget">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategorySetBudget">;

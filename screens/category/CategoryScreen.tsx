@@ -1,21 +1,20 @@
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
-import {Alert, FlatList, View, TouchableOpacity, Modal, StyleSheet} from "react-native";
-import {BanknoteArrowUp, ChevronRight, Pencil, Wallet, SlidersHorizontal} from "lucide-react-native";
-import {useFocusEffect, useNavigation} from "@react-navigation/native";
+import { Alert, FlatList, View, TouchableOpacity, Modal, StyleSheet } from "react-native";
+import { BanknoteArrowUp, ChevronRight, Pencil, Wallet, SlidersHorizontal } from "lucide-react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
-import {useCallback, useEffect, useState} from "react";
-import {Button, Text, useTheme, FAB} from "react-native-paper";
-import {useSQLiteContext} from "expo-sqlite";
+import { useCallback, useEffect, useState } from "react";
+import { Button, Text, useTheme, FAB } from "react-native-paper";
+import { useSQLiteContext } from "expo-sqlite";
 
 import { RootParamStackList } from "../../types/navigation.types";
 import { convertDateToDateString, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../libs/converters.lib";
 import { useSettingsStore } from "../../hooks/useSettingsStore";
 import { getCategoryDetailStyles } from "../../styles/sub-screen-styles";
-import {getBudget, isBudgetExists} from "../../database/budget-queries";
-import {getAllExpensesOfCategory, getTheSumOfExpenses} from "../../database/expense-queries";
-import {Expense} from "../../types/models.types";
-
-import {getCategoryIconAndColor, getRgbaColor} from "../../libs/helpers.lib";
+import { getBudget, isBudgetExists } from "../../database/budget-queries";
+import { getAllExpensesOfCategory, getTheSumOfExpenses } from "../../database/expense-queries";
+import { Expense } from "../../types/models.types";
+import { getCategoryIconAndColor, getRgbaColor } from "../../libs/helpers.lib";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "Category">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Category">;

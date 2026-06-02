@@ -1,20 +1,20 @@
-import {ActivityIndicator, Alert, ScrollView, StyleSheet, View} from "react-native";
-import {Button, List, MD3Theme, ProgressBar, Text, useTheme} from "react-native-paper";
-import {useCallback, useState} from "react";
-import {ChevronRight, TrendingUp, Wallet} from "lucide-react-native";
-import {useFocusEffect, useNavigation} from "@react-navigation/native";
-import {useSQLiteContext} from "expo-sqlite";
-import {NativeStackNavigationProp} from "@react-navigation/native-stack";
+import { ActivityIndicator, Alert, ScrollView, View } from "react-native";
+import { Button, List, ProgressBar, Text, useTheme } from "react-native-paper";
+import { useCallback, useState } from "react";
+import { ChevronRight, TrendingUp, Wallet } from "lucide-react-native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useSQLiteContext } from "expo-sqlite";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 import { convertDateToDateString,  convertNumberToCurrencyString, convertNumberToPercentageString, convertWholeNumberToDecimal } from "../libs/converters.lib";
-import {useSettingsStore} from "../hooks/useSettingsStore";
-import {getRecentExpenses, getTheSumOfAllExpenses} from "../database/expense-queries";
-import {getCategoriesBudgetProgress, getTheSumOfAllBudgets} from "../database/budget-queries";
-import {RootParamStackList} from "../types/navigation.types";
-import {getRecentCategories} from "../database/category-queries";
-import {Category, Expense} from "../types/models.types";
-import {getCategoryIconAndColor} from "../libs/helpers.lib";
-import {getHomeStyles} from "../styles/screen-styles";
+import { useSettingsStore } from "../hooks/useSettingsStore";
+import { getRecentExpenses, getTheSumOfAllExpenses } from "../database/expense-queries";
+import { getCategoriesBudgetProgress, getTheSumOfAllBudgets } from "../database/budget-queries";
+import { RootParamStackList } from "../types/navigation.types";
+import { getRecentCategories } from "../database/category-queries";
+import { Category, Expense } from "../types/models.types";
+import { getCategoryIconAndColor } from "../libs/helpers.lib";
+import { getHomeStyles } from "../styles/screen-styles";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
 

@@ -1,6 +1,6 @@
-import {Wallet} from "lucide-react-native";
+import { Wallet } from "lucide-react-native";
 
-import {CATEGORY_NAMES} from "../application/data";
+import { CATEGORY_NAMES } from "../application/data";
 
 /**
  * Gets the RGBA Color

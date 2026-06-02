@@ -1,16 +1,16 @@
-import {Alert, TextInput, View} from "react-native";
-import {Button, Text, TextInput as TextField, useTheme} from "react-native-paper";
-import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
+import { Alert, TextInput, View } from "react-native";
+import { Button, Text, TextInput as TextField, useTheme } from "react-native-paper";
+import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useRef, useState } from "react";
 import InputSpinner from "react-native-input-spinner";
-import {useSQLiteContext} from "expo-sqlite";
-import {useNavigation} from "@react-navigation/native";
+import { useSQLiteContext } from "expo-sqlite";
+import { useNavigation } from "@react-navigation/native";
 
 import { RootParamStackList } from "../../types/navigation.types";
 import { getExpenseDetailStyles } from "../../styles/sub-screen-styles";
-import {validateAddCategoryExpenseForm} from "../../libs/validators.lib";
-import {createExpense} from "../../database/expense-queries";
-import {convertDecimalToWholeNumber} from "../../libs/converters.lib";
+import { validateAddCategoryExpenseForm } from "../../libs/validators.lib";
+import { createExpense } from "../../database/expense-queries";
+import { convertDecimalToWholeNumber } from "../../libs/converters.lib";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategoryAddExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategoryAddExpense">;

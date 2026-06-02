@@ -1,18 +1,18 @@
-import {Alert, TextInput, View, Modal, StyleSheet, TouchableOpacity} from "react-native";
+import { Alert, TextInput, View, Modal, StyleSheet, TouchableOpacity } from "react-native";
 import { Button, Text, TextInput as TextField, useTheme } from "react-native-paper";
-import {NativeStackNavigationProp, NativeStackScreenProps} from "@react-navigation/native-stack";
+import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
 import { useEffect, useRef, useState } from "react";
 import InputSpinner from "react-native-input-spinner";
-import {useSQLiteContext} from "expo-sqlite";
-import {useNavigation} from "@react-navigation/native";
+import { useSQLiteContext } from "expo-sqlite";
+import { useNavigation } from "@react-navigation/native";
 
+import HorizontalLine from "../../components/HorizontalLine";
 import { RootParamStackList } from "../../types/navigation.types";
 import { convertDateToDateString, convertDecimalToWholeNumber, convertWholeNumberToDecimal } from "../../libs/converters.lib";
-import HorizontalLine from "../../components/HorizontalLine";
 import { getExpenseDetailStyles } from "../../styles/sub-screen-styles";
-import {deleteExpense, getExpenseCategory, updateExpense} from "../../database/expense-queries";
-import {Category} from "../../types/models.types";
-import {validateEditExpenseForm} from "../../libs/validators.lib";
+import { deleteExpense, getExpenseCategory, updateExpense } from "../../database/expense-queries";
+import { Category } from "../../types/models.types";
+import { validateEditExpenseForm } from "../../libs/validators.lib";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "EditExpense">;

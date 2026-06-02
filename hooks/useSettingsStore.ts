@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { CurrencyCode, Settings } from "../types/settings.types"
-import {ThemeMode} from "../theme/themeSchemes";
+import { ThemeMode } from "../theme/themeSchemes";
 
 type SettingsStore = {
     settings: Settings;

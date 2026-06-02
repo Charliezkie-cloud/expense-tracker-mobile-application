@@ -2,7 +2,7 @@ import { SQLiteDatabase } from "expo-sqlite";
 import { logger } from "react-native-logs";
 
 import { SetBudgetDto } from "../types/DTOs/budgetDTOs.types";
-import {Budget} from "../types/models.types";
+import { Budget } from "../types/models.types";
 
 const log = logger.createLogger();
 
