@@ -7,13 +7,13 @@ import {useNavigation} from "@react-navigation/native";
 import { HelpCircle } from 'lucide-react-native';
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { convertDateToDateString } from "../../libs/converters";
+import { convertDateToDateString } from "../../libs/converters.lib";
 import HorizontalLine from "../../components/HorizontalLine";
-import { getCategoryDetailStyles } from "../../styles/mainStyles";
-import {deleteCategory, updateCategory} from "../../database/categoryQueries";
-import {validateAddCategoryForm} from "../../libs/validators";
-import {getRgbaColor} from "../../libs/helpers";
-import {CATEGORY_CHIPS} from "../../application/data";
+import { getCategoryDetailStyles } from "../../styles/sub-screen-styles";
+import {deleteCategory, updateCategory} from "../../database/category-queries";
+import {validateAddCategoryForm} from "../../libs/validators.lib";
+import {getRgbaColor} from "../../libs/helpers.lib";
+import {CATEGORY_NAMES} from "../../application/data";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditCategory">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
@@ -31,7 +31,7 @@ export default function EditCategoryScreen({ route }: RouteProps) {
   // States
   const [categoryName, setCategoryName] = useState("");
   const [detailsModal, setDetailsModal] = useState(false);
-  const [categoryChips, setCategoryChips] = useState(CATEGORY_CHIPS);
+  const [categoryChips, setCategoryChips] = useState(CATEGORY_NAMES);
 
   // Handlers
   async function saveButtonOnPress() {
@@ -73,10 +73,10 @@ export default function EditCategoryScreen({ route }: RouteProps) {
     const lowerCaseInput = e.toLowerCase();
 
     if (lowerCaseInput === "")
-      return setCategoryChips(CATEGORY_CHIPS);
+      return setCategoryChips(CATEGORY_NAMES);
 
     setCategoryChips([
-      ...CATEGORY_CHIPS.filter((item) =>
+      ...CATEGORY_NAMES.filter((item) =>
           item.id.includes(lowerCaseInput) || item.label.toLowerCase().includes(lowerCaseInput)
       ),
       { id: "others", label: "Others", icon: HelpCircle, color: "#94A3B8" }

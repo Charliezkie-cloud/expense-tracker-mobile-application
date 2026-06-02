@@ -7,12 +7,12 @@ import { Picker } from "@react-native-picker/picker";
 import {useCallback, useEffect, useState} from "react";
 import {useSQLiteContext} from "expo-sqlite";
 
-import { RootParamStackList } from "../../types/navigation.types";
-import { convertDateToDateString } from "../../libs/converters";
-import { getCategoriesStyles } from "../../styles/mainStyles";
-import { Category } from "../../types/models.types";
-import { getAllCategories } from "../../database/categoryQueries";
-import {getCategoryIconAndColor, getRgbaColor} from "../../libs/helpers";
+import { RootParamStackList } from "../types/navigation.types";
+import { convertDateToDateString } from "../libs/converters.lib";
+import { getCategoriesStyles } from "../styles/screen-styles";
+import { Category } from "../types/models.types";
+import { getAllCategories } from "../database/category-queries";
+import {getCategoryIconAndColor, getRgbaColor} from "../libs/helpers.lib";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "AddCategory">;
 

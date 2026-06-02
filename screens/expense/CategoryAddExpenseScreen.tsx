@@ -7,10 +7,10 @@ import {useSQLiteContext} from "expo-sqlite";
 import {useNavigation} from "@react-navigation/native";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { getExpenseStyles } from "../../styles/mainStyles";
-import {validateAddCategoryExpenseForm} from "../../libs/validators";
-import {createExpense} from "../../database/expenseQueries";
-import {convertDecimalToWholeNumber} from "../../libs/converters";
+import { getExpenseDetailStyles } from "../../styles/sub-screen-styles";
+import {validateAddCategoryExpenseForm} from "../../libs/validators.lib";
+import {createExpense} from "../../database/expense-queries";
+import {convertDecimalToWholeNumber} from "../../libs/converters.lib";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategoryAddExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategoryAddExpense">;
@@ -23,7 +23,7 @@ export default function CategoryAddExpenseScreen({ route }: RouteProps) {
     const db = useSQLiteContext();
     const navigation = useNavigation<NavProps>();
     const theme = useTheme();
-    const styles = getExpenseStyles(theme);
+    const styles = getExpenseDetailStyles(theme);
 
     // States
     const [expenseName, setExpenseName] = useState("");

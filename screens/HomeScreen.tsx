@@ -1,21 +1,20 @@
-import {ActivityIndicator, Alert, Pressable, ScrollView, View} from "react-native";
-import {Button, List, ProgressBar, Text, useTheme} from "react-native-paper";
+import {ActivityIndicator, Alert, ScrollView, StyleSheet, View} from "react-native";
+import {Button, List, MD3Theme, ProgressBar, Text, useTheme} from "react-native-paper";
 import {useCallback, useState} from "react";
-import {ChevronRight, Layers, TrendingUp, Wallet} from "lucide-react-native";
+import {ChevronRight, TrendingUp, Wallet} from "lucide-react-native";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {useSQLiteContext} from "expo-sqlite";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
-import {logger} from "react-native-logs";
 
-import { convertDateToDateString,  convertNumberToCurrencyString, convertNumberToPercentageString, convertWholeNumberToDecimal } from "../libs/converters";
-import { getHomeStyles } from "../styles/mainStyles";
+import { convertDateToDateString,  convertNumberToCurrencyString, convertNumberToPercentageString, convertWholeNumberToDecimal } from "../libs/converters.lib";
 import {useSettingsStore} from "../hooks/useSettingsStore";
-import {getRecentExpenses, getTheSumOfAllExpenses} from "../database/expenseQueries";
-import {getCategoriesBudgetProgress, getTheSumOfAllBudgets} from "../database/budgetQueries";
+import {getRecentExpenses, getTheSumOfAllExpenses} from "../database/expense-queries";
+import {getCategoriesBudgetProgress, getTheSumOfAllBudgets} from "../database/budget-queries";
 import {RootParamStackList} from "../types/navigation.types";
-import {getRecentCategories} from "../database/categoryQueries";
+import {getRecentCategories} from "../database/category-queries";
 import {Category, Expense} from "../types/models.types";
-import {getCategoryIconAndColor} from "../libs/helpers";
+import {getCategoryIconAndColor} from "../libs/helpers.lib";
+import {getHomeStyles} from "../styles/screen-styles";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
 
@@ -159,7 +158,7 @@ export default function HomeScreen() {
                         <Text variant="labelMedium" style={styles.heroLabel}>
                             OVERVIEW
                         </Text>
-                        <View style={styles.liveIndicatior}>
+                        <View style={styles.liveIndicator}>
                             <View style={styles.liveIndicatorPulse} />
                             <Text variant="labelSmall" style={styles.liveText}>LIVE TIME</Text>
                         </View>

@@ -1,11 +1,11 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import {Home, List, Settings, Wallet2} from "lucide-react-native";
-import { useTheme } from "react-native-paper";
+import {Home, List, PlusIcon, Settings, Wallet2} from "lucide-react-native";
+import {useTheme} from "react-native-paper";
 
 import { RootParamStackList, TabParamStackList } from "../types/navigation.types";
 import HomeScreen from "../screens/HomeScreen";
-import CategoriesScreen from "../screens/category/CategoriesScreen";
+import CategoriesScreen from "../screens/CategoriesScreen";
 import AddCategoryScreen from "../screens/category/AddCategoryScreen";
 import CategoryScreen from "../screens/category/CategoryScreen";
 import EditExpenseScreen from "../screens/expense/EditExpenseScreen";
@@ -13,8 +13,10 @@ import CategorySetBudgetScreen from "../screens/category/CategorySetBudgetScreen
 import EditCategoryScreen from "../screens/category/EditCategoryScreen";
 import CategoryAddExpenseScreen from "../screens/expense/CategoryAddExpenseScreen";
 import SettingsScreen from "../screens/SettingsScreen";
-import ExpensesScreen from "../screens/expense/ExpensesScreen";
+import ExpensesScreen from "../screens/ExpensesScreen";
 import AddExpenseScreen from "../screens/expense/AddExpenseScreen";
+import TabCenterButton from "../components/TabCenterButton";
+import CameraScreen from "../screens/CameraScreen";
 
 const Stack = createNativeStackNavigator<RootParamStackList>();
 const Tab = createBottomTabNavigator<TabParamStackList>();
@@ -69,6 +71,17 @@ function Tabs() {
                     tabBarIcon: (({ color, size }) => (
                         <List color={color} size={size - 2} />
                     ))
+                }}
+            />
+            <Tab.Screen
+                name="CameraScreen"
+                component={CameraScreen}
+                options={{
+                    headerShown: false,
+                    tabBarIcon: (props) => (
+                        <PlusIcon size={props.size} color={props.color} />
+                    ),
+                    tabBarButton: () => <TabCenterButton/>
                 }}
             />
             <Tab.Screen

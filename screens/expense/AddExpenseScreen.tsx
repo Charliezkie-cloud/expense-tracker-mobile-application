@@ -6,14 +6,14 @@ import {useSQLiteContext} from "expo-sqlite";
 import {useFocusEffect, useNavigation} from "@react-navigation/native";
 import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 
-import {getExpenseStyles} from "../../styles/mainStyles";
-import {getCategoryIconAndColor, getRgbaColor} from "../../libs/helpers";
-import {convertDateToDateString, convertDecimalToWholeNumber} from "../../libs/converters";
+import {getExpenseDetailStyles} from "../../styles/sub-screen-styles";
+import {getCategoryIconAndColor, getRgbaColor} from "../../libs/helpers.lib";
+import {convertDateToDateString, convertDecimalToWholeNumber} from "../../libs/converters.lib";
 import {Category} from "../../types/models.types";
-import {getAllCategories} from "../../database/categoryQueries";
+import {getAllCategories} from "../../database/category-queries";
 import {RootParamStackList} from "../../types/navigation.types";
-import {validateAddExpenseForm} from "../../libs/validators";
-import {createExpense} from "../../database/expenseQueries";
+import {validateAddExpenseForm} from "../../libs/validators.lib";
+import {createExpense} from "../../database/expense-queries";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "AddExpense">;
 
@@ -24,7 +24,7 @@ export default function AddExpenseScreen() {
     const navigation = useNavigation<NavProps>();
     const db = useSQLiteContext();
     const theme = useTheme();
-    const styles = getExpenseStyles(theme);
+    const styles = getExpenseDetailStyles(theme);
 
     // States
     const [page, setPage] = useState(0);

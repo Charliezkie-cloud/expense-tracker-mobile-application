@@ -7,12 +7,12 @@ import {useSQLiteContext} from "expo-sqlite";
 import {useNavigation} from "@react-navigation/native";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { convertDateToDateString, convertDecimalToWholeNumber, convertWholeNumberToDecimal } from "../../libs/converters";
+import { convertDateToDateString, convertDecimalToWholeNumber, convertWholeNumberToDecimal } from "../../libs/converters.lib";
 import HorizontalLine from "../../components/HorizontalLine";
-import { getExpenseStyles } from "../../styles/mainStyles";
-import {deleteExpense, getExpenseCategory, updateExpense} from "../../database/expenseQueries";
+import { getExpenseDetailStyles } from "../../styles/sub-screen-styles";
+import {deleteExpense, getExpenseCategory, updateExpense} from "../../database/expense-queries";
 import {Category} from "../../types/models.types";
-import {validateAddExpenseForm} from "../../libs/validators";
+import {validateEditExpenseForm} from "../../libs/validators.lib";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "EditExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "EditExpense">;
@@ -25,7 +25,7 @@ export default function EditExpenseScreen({ route }: RouteProps) {
   const db = useSQLiteContext();
   const navigation = useNavigation<NavProps>();
   const theme = useTheme();
-  const styles = getExpenseStyles(theme);
+  const styles = getExpenseDetailStyles(theme);
 
   // States
   const [expenseCategory, setExpenseCategory] = useState<Category | null>(null);
@@ -43,7 +43,7 @@ export default function EditExpenseScreen({ route }: RouteProps) {
   }
 
   async function saveButtonOnPress() {
-    const validationMessage = validateAddExpenseForm(expenseQuantity, expensePrice);
+    const validationMessage = validateEditExpenseForm(expenseQuantity, expensePrice);
     if (typeof validationMessage === "string")
       return Alert.alert("Error", validationMessage);
 

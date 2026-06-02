@@ -17,6 +17,7 @@ export type RootParamStackList = {
 export type TabParamStackList = {
   Home: undefined;
   Categories: undefined;
+  CameraScreen: undefined;
   Settings: undefined;
   Expenses: undefined;
 };

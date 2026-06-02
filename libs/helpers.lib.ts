@@ -1,6 +1,6 @@
 import {Wallet} from "lucide-react-native";
 
-import {CATEGORY_CHIPS} from "../application/data";
+import {CATEGORY_NAMES} from "../application/data";
 
 /**
  * Gets the RGBA Color
@@ -30,7 +30,7 @@ export function getRgbaColor(hex: string, alpha: number) {
  */
 export function getCategoryIconAndColor(name: string) {
     const normName = name.toLowerCase();
-    const found = CATEGORY_CHIPS.find(chip => chip.label.toLowerCase().includes(normName) || normName.includes(chip.id) || normName.includes(chip.label.toLowerCase()));
+    const found = CATEGORY_NAMES.find(chip => chip.label.toLowerCase().includes(normName) || normName.includes(chip.id) || normName.includes(chip.label.toLowerCase()));
     if (found) {
         return { Icon: found.icon, color: found.color };
     }

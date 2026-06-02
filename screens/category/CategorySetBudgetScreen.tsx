@@ -17,13 +17,13 @@ import {
 
 import { RootParamStackList } from "../../types/navigation.types";
 import HorizontalLine from "../../components/HorizontalLine";
-import { getCategoryDetailStyles } from "../../styles/mainStyles";
-import {isBudgetExists, setBudget, deleteBudget, getBudget} from "../../database/budgetQueries";
+import { getCategoryDetailStyles } from "../../styles/sub-screen-styles";
+import {isBudgetExists, setBudget, deleteBudget, getBudget} from "../../database/budget-queries";
 import { useSQLiteContext } from "expo-sqlite";
-import {validateAddBudgetForm} from "../../libs/validators";
-import { convertDecimalToWholeNumber, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../libs/converters";
+import {validateAddBudgetForm} from "../../libs/validators.lib";
+import { convertDecimalToWholeNumber, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../libs/converters.lib";
 import {useSettingsStore} from "../../hooks/useSettingsStore";
-import {getRgbaColor} from "../../libs/helpers";
+import {getRgbaColor} from "../../libs/helpers.lib";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "CategorySetBudget">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "CategorySetBudget">;

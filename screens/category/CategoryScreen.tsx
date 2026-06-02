@@ -8,14 +8,14 @@ import {Button, Text, useTheme, FAB} from "react-native-paper";
 import {useSQLiteContext} from "expo-sqlite";
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { convertDateToDateString, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../libs/converters";
+import { convertDateToDateString, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../libs/converters.lib";
 import { useSettingsStore } from "../../hooks/useSettingsStore";
-import { getCategoryDetailStyles } from "../../styles/mainStyles";
-import {getBudget, isBudgetExists} from "../../database/budgetQueries";
-import {getAllExpensesOfCategory, getTheSumOfExpenses} from "../../database/expenseQueries";
+import { getCategoryDetailStyles } from "../../styles/sub-screen-styles";
+import {getBudget, isBudgetExists} from "../../database/budget-queries";
+import {getAllExpensesOfCategory, getTheSumOfExpenses} from "../../database/expense-queries";
 import {Expense} from "../../types/models.types";
 
-import {getCategoryIconAndColor, getRgbaColor} from "../../libs/helpers";
+import {getCategoryIconAndColor, getRgbaColor} from "../../libs/helpers.lib";
 
 type RouteProps = NativeStackScreenProps<RootParamStackList, "Category">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Category">;

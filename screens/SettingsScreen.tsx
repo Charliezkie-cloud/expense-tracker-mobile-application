@@ -9,7 +9,7 @@ import {deleteDatabaseAsync, useSQLiteContext} from "expo-sqlite";
 import ExpoUpdates from "expo-updates/src/ExpoUpdates";
 
 import { useSettingsStore } from "../hooks/useSettingsStore";
-import { getSettingsStyles } from "../styles/mainStyles";
+import { getSettingsStyles } from "../styles/screen-styles";
 import { ThemeMode } from "../theme/themeSchemes";
 import { CurrencyCode } from "../types/settings.types";
 import {useAppTheme} from "../components/ThemeContext";

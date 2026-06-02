@@ -7,13 +7,13 @@ import {NativeStackNavigationProp} from "@react-navigation/native-stack";
 import {useCallback, useState} from "react";
 import {useSQLiteContext} from "expo-sqlite";
 
-import {getExpensesScreenStyles} from "../../styles/mainStyles";
-import {getCategoryIconAndColor, getRgbaColor} from "../../libs/helpers";
-import { convertDateToDateString, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../../libs/converters";
-import {Expense} from "../../types/models.types";
-import {getAllExpenses} from "../../database/expenseQueries";
-import {useSettingsStore} from "../../hooks/useSettingsStore";
-import {RootParamStackList} from "../../types/navigation.types";
+import {getExpensesStyles} from "../styles/screen-styles";
+import {getCategoryIconAndColor, getRgbaColor} from "../libs/helpers.lib";
+import { convertDateToDateString, convertNumberToCurrencyString, convertWholeNumberToDecimal } from "../libs/converters.lib";
+import {Expense} from "../types/models.types";
+import {getAllExpenses} from "../database/expense-queries";
+import {useSettingsStore} from "../hooks/useSettingsStore";
+import {RootParamStackList} from "../types/navigation.types";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
 
@@ -25,7 +25,7 @@ export default function ExpensesScreen() {
     const db = useSQLiteContext();
     const settings = useSettingsStore((state) => state.settings);
     const theme = useTheme();
-    const styles = getExpensesScreenStyles(theme);
+    const styles = getExpensesStyles(theme);
 
     // States
     const [page, setPage] = useState(0);

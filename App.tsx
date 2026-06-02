@@ -4,7 +4,7 @@ import {useEffect} from "react";
 import ExpoNavigationBar from "expo-navigation-bar/src/ExpoNavigationBar";
 
 import RootStack from './navigation/RootStack';
-import { initializeDatabase } from "./database/initializeDatabase";
+import { initializeDatabase } from "./database/initialize-database";
 import {ThemeProvider} from "./components/ThemeContext";
 
 const APPLICATION_DATABASE: string = process.env.EXPO_PUBLIC_APP_DATABASE ?? "";

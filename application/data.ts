@@ -16,7 +16,7 @@ import {
     Zap
 } from "lucide-react-native";
 
-export const CATEGORY_CHIPS = [
+export const CATEGORY_NAMES = [
     { id: "food", label: "Groceries", icon: Utensils, color: "#EF4444" },
     { id: "dining", label: "Dining Out", icon: Pizza, color: "#F97316" },
     { id: "coffee", label: "Coffee & Snacks", icon: Coffee, color: "#B45309" },

@@ -7,11 +7,11 @@ import { useSQLiteContext } from "expo-sqlite";
 import {HelpCircle} from 'lucide-react-native';
 
 import { RootParamStackList } from "../../types/navigation.types";
-import { validateAddCategoryForm } from "../../libs/validators";
-import { getCategoryDetailStyles } from "../../styles/mainStyles";
-import { createCategory } from "../../database/categoryQueries";
-import {getRgbaColor} from "../../libs/helpers";
-import {CATEGORY_CHIPS} from "../../application/data";
+import { validateAddCategoryForm } from "../../libs/validators.lib";
+import { getCategoryDetailStyles } from "../../styles/sub-screen-styles";
+import { createCategory } from "../../database/category-queries";
+import {getRgbaColor} from "../../libs/helpers.lib";
+import {CATEGORY_NAMES} from "../../application/data";
 
 type NavProp = NativeStackNavigationProp<RootParamStackList, "AddCategory">;
 
@@ -24,7 +24,7 @@ export default function AddCategoryScreen() {
 
     // States
     const [categoryName, setCategoryName] = useState("");
-    const [categoryChips, setCategoryChips] = useState(CATEGORY_CHIPS);
+    const [categoryChips, setCategoryChips] = useState(CATEGORY_NAMES);
 
     // Handlers
     async function saveButtonOnPress() {
@@ -50,10 +50,10 @@ export default function AddCategoryScreen() {
         const lowerCaseInput = e.toLowerCase();
 
         if (lowerCaseInput === "")
-            return setCategoryChips(CATEGORY_CHIPS);
+            return setCategoryChips(CATEGORY_NAMES);
 
         setCategoryChips([
-            ...CATEGORY_CHIPS.filter((item) =>
+            ...CATEGORY_NAMES.filter((item) =>
                 item.id.includes(lowerCaseInput) || item.label.toLowerCase().includes(lowerCaseInput)
             ),
             { id: "others", label: "Others", icon: HelpCircle, color: "#94A3B8" }
