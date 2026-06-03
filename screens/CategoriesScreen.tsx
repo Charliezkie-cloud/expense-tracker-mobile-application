@@ -4,7 +4,7 @@ import {useFocusEffect, useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { ChevronRight, SlidersHorizontal } from "lucide-react-native";
 import { Picker } from "@react-native-picker/picker";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useSQLiteContext } from "expo-sqlite";
 
 import { RootParamStackList } from "../types/navigation.types";
