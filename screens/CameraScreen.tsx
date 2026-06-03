@@ -1,7 +1,7 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Alert, Animated, Easing, StyleSheet, TouchableOpacity, View } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { Button, Portal, Text, useTheme, Modal, List } from "react-native-paper";
+import { Button, Portal, Text, useTheme, Modal } from "react-native-paper";
 import { Images, Flashlight, FlashlightOff, LoaderIcon, SwitchCamera } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { logger } from "react-native-logs";
