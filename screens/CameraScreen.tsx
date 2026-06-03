@@ -66,7 +66,7 @@ export default function CameraScreen() {
     const { status } = await requestMediaLibraryPermissionsAsync();
 
     if (status !== "granted")
-      return Alert.alert("Error", "We need access to your photos to make this work!");
+      return Alert.alert("Permission Required", "Photo access is required to select a receipt image.");
 
     const result = await launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -105,7 +105,7 @@ export default function CameraScreen() {
       const result: { data: ScannedExpense[] } = await response.json();
 
       if (response.ok && result.data.length < 1)
-        return Alert.alert("Error", "We couldn't read the photo. Please take a clearer picture.");
+        return Alert.alert("Error", "Could not read the photo. Please make sure it's clear and try again.");
       if (response.ok)
         navigation.navigate("AddExpense", result.data);
     } catch (error) {
@@ -164,7 +164,7 @@ export default function CameraScreen() {
 
   if (!permission.granted) return (
     <View style={[ styles.container, { justifyContent: 'center', alignItems: 'center' } ]}>
-      <Text variant="bodyLarge" style={styles.message}>We need your permission to show the camera.</Text>
+      <Text variant="bodyLarge" style={styles.message}>Camera permission is required to scan your receipts.</Text>
       <Button onPress={reqPermission}>Grant Permission</Button>
     </View>
   );
