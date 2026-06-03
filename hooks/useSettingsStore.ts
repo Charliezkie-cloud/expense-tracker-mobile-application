@@ -9,12 +9,14 @@ type SettingsStore = {
   settings: Settings;
   setCurrency: (currencyCode: CurrencyCode) => void;
   setTheme: (theme: ThemeMode) => void;
+  setGeminiAIConsent: (value: boolean) => void;
   setToDefault: () => void;
 };
 
 const defaultSettings: Settings = {
   currencyCode: "PHP",
-  theme: "defaultBlue"
+  theme: "defaultBlue",
+  geminiAIConsent: false
 }
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -29,6 +31,11 @@ export const useSettingsStore = create<SettingsStore>()(
       setTheme(theme) {
         set((state) => ({
           settings: { ...state.settings, theme }
+        }));
+      },
+      setGeminiAIConsent(geminiAIConsent) {
+        set((state) => ({
+          settings: { ...state.settings, geminiAIConsent }
         }));
       },
       setToDefault() {

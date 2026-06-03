@@ -20,4 +20,5 @@ export type CurrencyCode =
 export type Settings = {
   currencyCode: CurrencyCode;
   theme: ThemeMode;
+  geminiAIConsent: boolean;
 };

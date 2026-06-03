@@ -603,7 +603,7 @@ export const getCategoriesStyles = (theme: MD3Theme) => StyleSheet.create({
 export const getCameraStyles = (theme: MD3Theme) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: theme.colors.background,
   },
   centerContent: {
     justifyContent: 'center',
@@ -612,7 +612,7 @@ export const getCameraStyles = (theme: MD3Theme) => StyleSheet.create({
   message: {
     textAlign: 'center',
     paddingBottom: 10,
-    color: 'white',
+    color: theme.colors.onBackground,
   },
   topContainer: {
     position: 'absolute',
@@ -657,6 +657,32 @@ export const getCameraStyles = (theme: MD3Theme) => StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  modalContainer: {
+    backgroundColor: theme.colors.background,
+    borderRadius: 24,
+    margin: 24,
+    paddingVertical: 28,
+    paddingHorizontal: 24,
+    gap: 16,
+  },
+  modalTitle: {
+    fontWeight: "800",
+    color: theme.colors.onSurface,
+    textAlign: "center",
+    letterSpacing: -0.3,
+    marginBottom: 4,
+  },
+  modalText: {
+    textAlign: "center",
+    color: theme.colors.onSurfaceVariant,
+    lineHeight: 20
+  },
+  modalDangerText: {
+    color: theme.colors.onErrorContainer,
+    textAlign: "center",
+    fontWeight: "600",
+    marginTop: 4
+  }
 });
 
 export const getExpensesStyles = (theme: MD3Theme) => StyleSheet.create({

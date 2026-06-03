@@ -1,18 +1,19 @@
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Alert, Animated, Easing, StyleSheet, TouchableOpacity, View } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { Button, Text, useTheme } from "react-native-paper";
+import { Button, Portal, Text, useTheme, Modal, List } from "react-native-paper";
 import { Images, Flashlight, FlashlightOff, LoaderIcon, SwitchCamera } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import { logger } from "react-native-logs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { launchImageLibraryAsync, requestMediaLibraryPermissionsAsync } from "expo-image-picker";
-import NetInfo from "@react-native-community/netinfo"
+import { fetch as fetchNet } from "@react-native-community/netinfo"
 
 import { RootParamStackList } from "../types/navigation.types";
 import { ScannedExpense } from "../types/models.types";
 import { getCameraStyles } from "../styles/screen-styles";
+import { useSettingsStore } from "../hooks/useSettingsStore";
 
 type NavProps = NativeStackNavigationProp<RootParamStackList, "Tabs">;
 
@@ -23,6 +24,8 @@ const log = logger.createLogger();
 
 export default function CameraScreen() {
   // Hooks
+  const settings = useSettingsStore((state) => state.settings);
+  const setGeminiAIConsent = useSettingsStore((state) => state.setGeminiAIConsent);
   const theme = useTheme();
   const styles = getCameraStyles(theme);
   const isFocused = useIsFocused();
@@ -34,6 +37,7 @@ export default function CameraScreen() {
   const [flash, setFlash] = useState(false);
   const [facing, setFacing] = useState<"back" | "front">("back");
   const [loading, setLoading] = useState(false);
+  const [aiConsentModal, setAIConsentModal] = useState(true);
 
   // Refs
   const cameraRef = useRef<CameraView | null>(null);
@@ -41,9 +45,10 @@ export default function CameraScreen() {
 
   // Handlers
   async function takePictureOnPress() {
+    if (!settings.geminiAIConsent) return toggleAIConsentModal();
     if (!cameraRef.current) return;
 
-    const response = await NetInfo.fetch();
+    const response = await fetchNet();
     if (!response.isConnected) return Alert.alert("Scan failed. Check your internet and try again.");
 
     const photo = await cameraRef.current.takePictureAsync();
@@ -53,7 +58,9 @@ export default function CameraScreen() {
   }
 
   async function pickImageOnPress() {
-    const response = await NetInfo.fetch();
+    if (!settings.geminiAIConsent) return toggleAIConsentModal();
+
+    const response = await fetchNet();
     if (!response.isConnected) return Alert.alert("Scan failed. Check your internet and try again.");
 
     const { status } = await requestMediaLibraryPermissionsAsync();
@@ -73,8 +80,14 @@ export default function CameraScreen() {
     uploadPicture(result.assets[0].uri);
   }
 
+  function aiConsentAgreeOnPress() {
+    setGeminiAIConsent(true);
+  }
+
   // Helpers
   async function uploadPicture(photoUri: string) {
+    if (!settings.geminiAIConsent) return toggleAIConsentModal();
+
     setLoading(true);
 
     if (!photoUri) return;
@@ -100,7 +113,7 @@ export default function CameraScreen() {
         error: "uploadPicture(): Something went wrong while scanning the picture, make sure to check your internet connection.",
         details: error instanceof Error ? error.message : String(error)
       });
-      Alert.alert("Error", "Scan failed. Check your internet and try again.");
+      Alert.alert("Error", "Server capacity reached. Please try again in a few seconds.");
     } finally {
       setLoading(false);
     }
@@ -115,6 +128,10 @@ export default function CameraScreen() {
       return setFacing("front");
 
     setFacing("back");
+  }
+
+  function toggleAIConsentModal() {
+    setAIConsentModal(prev => !prev);
   }
 
   const spin = spinValue.interpolate({
@@ -139,10 +156,14 @@ export default function CameraScreen() {
     ).start();
   }, [spinValue]);
 
+  useEffect(() => {
+    setAIConsentModal(!settings.geminiAIConsent);
+  }, [settings]);
+
   if (!permission) return <View />;
 
   if (!permission.granted) return (
-    <View style={styles.container}>
+    <View style={[ styles.container, { justifyContent: 'center', alignItems: 'center' } ]}>
       <Text variant="bodyLarge" style={styles.message}>We need your permission to show the camera.</Text>
       <Button onPress={reqPermission}>Grant Permission</Button>
     </View>
@@ -193,6 +214,55 @@ export default function CameraScreen() {
           <SwitchCamera size={24} color="black" />
         </TouchableOpacity>
       </View>
+
+      {/*Privacy notice modal*/}
+      <Portal>
+        <Modal
+          visible={aiConsentModal}
+          dismissable={false}
+          contentContainerStyle={styles.modalContainer}
+        >
+          <Text variant="headlineSmall" style={styles.modalTitle}>
+            AI Receipt Scanner Privacy Notice
+          </Text>
+
+          <Text variant="bodyMedium" style={styles.modalText}>
+            To automatically fill in your expense details, this feature uses Google's Gemini AI.
+          </Text>
+
+          <Text variant="bodyMedium" style={styles.modalText}>
+            Your receipt image is sent directly to Google to extract text.
+            Because this app utilizes a free API tier, Google may retain this data to train and improve their models.
+          </Text>
+
+          <Text variant="bodyMedium" style={[ styles.modalText, { fontStyle: "italic" }]}>
+            Note: Since this feature runs on the free version of the Gemini API,
+            you may occasionally experience slower response times or temporary scanning issues depending on server traffic.
+            I apologize for the inconvenience, as I am currently a broke developer doing my best to keep this app free for you! :(
+          </Text>
+
+          <Text variant="bodyMedium" style={styles.modalDangerText}>
+            Please avoid scanning receipts containing highly sensitive personal information.
+          </Text>
+
+          <View style={{ gap: 8, marginTop: 12 }}>
+            <Button
+              mode="contained"
+              labelStyle={{ fontWeight: "700" }}
+              onPress={aiConsentAgreeOnPress}
+            >
+              I Agree
+            </Button>
+            <Button
+              mode="text"
+              labelStyle={{ fontWeight: "600" }}
+              onPress={toggleAIConsentModal}
+            >
+              Cancel
+            </Button>
+          </View>
+        </Modal>
+      </Portal>
     </View>
   );
 }

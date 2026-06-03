@@ -127,7 +127,7 @@ export default function ExpensesScreen() {
           <TouchableOpacity
             style={StyleSheet.absoluteFillObject}
             activeOpacity={1}
-            // onPress={toggleSortingModal}
+            onPress={toggleSortingModal}
           />
           <View style={styles.modalContent}>
             {/* Bottom Sheet grab-handle pull representation */}

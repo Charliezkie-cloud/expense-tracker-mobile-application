@@ -17,7 +17,7 @@ export async function setBudget(db: SQLiteDatabase, data: SetBudgetDto) {
         INSERT INTO budgets ("category_id", "budget")
         VALUES (?, ?)
             ON CONFLICT ("category_id") DO UPDATE
-                                               SET "budget" = excluded.budget;
+            SET "budget" = excluded.budget;
     `, data.category_id, data.budget);
   } catch (error) {
     log.error({
