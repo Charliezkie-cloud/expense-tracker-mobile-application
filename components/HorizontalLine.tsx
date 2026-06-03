@@ -9,12 +9,8 @@ type Props = {
 
 export default function HorizontalLine({ color = "#6b7280", label, style }: Props) {
   return (
-    <View
-      style={[
-        {
-          flexDirection: "row",
-          alignItems: "center",
-        },
+    <View style={[
+        { flexDirection: "row", alignItems: "center" },
         label ? { gap: 14 } : { },
         style
       ]}

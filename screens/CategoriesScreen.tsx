@@ -247,7 +247,7 @@ export default function CategoriesScreen() {
 
       {/* Bottom Actions Container */}
       <View style={styles.buttonsContainer}>
-        <FAB mode="flat" icon="plus" onPress={addCategoryButtonOnPress} variant="primary" style={{ borderRadius: 16 }} />
+        <FAB mode="flat" icon="plus" onPress={addCategoryButtonOnPress} variant="primary" style={{ borderRadius: 30 }} />
       </View>
     </View>
   );

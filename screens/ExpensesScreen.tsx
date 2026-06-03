@@ -276,7 +276,7 @@ export default function ExpensesScreen() {
 
       {/* Bottom Actions Container */}
       <View style={styles.buttonsContainer}>
-        <FAB mode="flat" icon="plus" onPress={() => navigation.navigate("AddExpense")} variant="primary" style={{ borderRadius: 16 }} />
+        <FAB mode="flat" icon="plus" onPress={() => navigation.navigate("AddExpense")} variant="primary" style={{ borderRadius: 30 }} />
       </View>
     </View>
   );

@@ -600,6 +600,65 @@ export const getCategoriesStyles = (theme: MD3Theme) => StyleSheet.create({
   },
 });
 
+export const getCameraStyles = (theme: MD3Theme) => StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
+  centerContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  message: {
+    textAlign: 'center',
+    paddingBottom: 10,
+    color: 'white',
+  },
+  topContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingHorizontal: 24,
+    zIndex: 1,
+  },
+  buttonContainer: {
+    position: 'absolute',
+    bottom: 32,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: 'transparent',
+    paddingHorizontal: 32,
+    zIndex: 1,
+  },
+  button: {
+    height: 44,
+    width: 44,
+    borderRadius: 30,
+    justifyContent: "center",
+    alignItems: 'center',
+    backgroundColor: "white",
+  },
+  iconButton: {
+    height: 44,
+    width: 44,
+    borderRadius: 22,
+    justifyContent: "center",
+    alignItems: 'center',
+    backgroundColor: "white",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+});
+
 export const getExpensesStyles = (theme: MD3Theme) => StyleSheet.create({
   mainContainer: {
     flex: 1,

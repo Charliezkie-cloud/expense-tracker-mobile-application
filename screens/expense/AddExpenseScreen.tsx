@@ -20,6 +20,7 @@ import { RootParamStackList } from "../../types/navigation.types";
 import { validateAddExpenseForm } from "../../libs/validators.lib";
 import { createExpense, createExpenses } from "../../database/expense-queries";
 import { useSettingsStore } from "../../hooks/useSettingsStore";
+
 type RouteProps = NativeStackScreenProps<RootParamStackList, "AddExpense">;
 type NavProps = NativeStackNavigationProp<RootParamStackList, "AddExpense">;
 
@@ -98,7 +99,7 @@ export default function AddExpenseScreen({ route }: RouteProps) {
 
     try {
       await createExpenses(db, parsedData);
-      navigation.goBack();
+      navigation.navigate("Tabs", { screen: "Categories" });
     } catch {
       Alert.alert("Error", "Something went wrong while creating an expense.");
     }

@@ -1,5 +1,5 @@
 import { NativeStackNavigationProp, NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Alert, FlatList, View, TouchableOpacity, Modal, StyleSheet } from "react-native";
+import { Alert, FlatList, View, TouchableOpacity, Modal, StyleSheet, ActivityIndicator } from "react-native";
 import { BanknoteArrowUp, ChevronRight, Pencil, Wallet, SlidersHorizontal } from "lucide-react-native";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
@@ -34,19 +34,23 @@ export default function CategoryScreen({ route }: RouteProps) {
   const { Icon: CategoryIcon, color: categoryColor } = getCategoryIconAndColor(category.name);
 
   // States
+  const [expensesLoading, setExpensesLoading] = useState(true);
   const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);
   const [total, setTotal] = useState<number>(0.00);
   const [budget, setBudget] = useState<number>(0);
   const [remainingBudget, setRemainingBudget] = useState<number>(0);
   const [isBudgetExistsState, setIsBudgetExistsState] = useState(false);
   const [sortingModal, setSortingModal] = useState(false);
-
   const [sortBySelectedItem, setSortBySelectedItem] = useState<"price" | "quantity" | "created_at" | "updated_at">("updated_at");
   const [sortOrderSelectedItem, setSortOrderSelectedItem] = useState<"ASC" | "DESC">("DESC");
 
   // Handlers
   function addExpenseButtonOnPress() {
     navigation.navigate("CategoryAddExpense", category);
+  }
+
+  function addExpensesButtonOnPress() {
+    navigation.navigate("Tabs", { screen: "Camera" });
   }
 
   // Set NavProps target to fit correctly
@@ -120,11 +124,15 @@ export default function CategoryScreen({ route }: RouteProps) {
       }
 
       async function fetchCategoryExpenses() {
+        setExpensesLoading(true);
+
         try {
           const res = await getAllExpensesOfCategory(db, category.id, sortBySelectedItem, sortOrderSelectedItem);
           setFilteredExpenses(res ?? []);
         } catch (error) {
           Alert.alert("Error", "Something went wrong while fetching the category expenses.");
+        } finally {
+          setExpensesLoading(false);
         }
       }
 
@@ -366,6 +374,8 @@ export default function CategoryScreen({ route }: RouteProps) {
             )}
           />
         </View>
+      ) : expensesLoading ? (
+        <ActivityIndicator style={{ marginVertical: 15 }} color={theme.colors.primary} />
       ) : (
         <View style={styles.emptyContainer}>
           <View style={{ width: 48, height: 48, borderRadius: 24, backgroundColor: theme.colors.surfaceVariant, justifyContent: "center", alignItems: "center", marginBottom: 12, opacity: 0.8 }}>
@@ -384,10 +394,17 @@ export default function CategoryScreen({ route }: RouteProps) {
       <View style={styles.actionFooter}>
         <FAB
           mode="flat"
+          icon="camera"
+          onPress={addExpensesButtonOnPress}
+          variant="primary"
+          style={{ borderRadius: 30 }}
+        />
+        <FAB
+          mode="flat"
           icon="plus"
           onPress={addExpenseButtonOnPress}
           variant="primary"
-          style={{ borderRadius: 16 }}
+          style={{ borderRadius: 30 }}
         />
       </View>
     </View>

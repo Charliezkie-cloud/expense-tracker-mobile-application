@@ -153,6 +153,7 @@ export const getCategoryDetailStyles = (theme: MD3Theme) => StyleSheet.create({
     flexDirection: "row",
     justifyContent: "flex-end",
     marginTop: "auto",
+    gap: 8
   },
   primaryActionButton: {
     borderRadius: theme.roundness * 1.5,
